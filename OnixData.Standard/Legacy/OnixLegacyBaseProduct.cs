@@ -35,9 +35,8 @@ namespace OnixData.Legacy
             productIdentifierField  = shortProductIdentifierField  = new OnixLegacyProductId[0];
             productContentTypeField = shortProductContentTypeField = new string[0];
             publisherField          = shortPublisherField          = new OnixLegacyPublisher[0];
-            productFormDetailField  = shortProductFormDetailField  = new string[0];
+            productFormDetailField  = shortProductFormDetailField  = new Lists.OnixList78[0];
 
-            ProductForm = "";
             ProductFormDescription = "";
             EpubType               = EpubTypeVersion = EpubFormatDescription = EpubTypeNote = "";
 
@@ -65,18 +64,18 @@ namespace OnixData.Legacy
         protected string[] productContentTypeField;
         protected string[] shortProductContentTypeField;
 
-        protected string[] productFormDetailField;
-        protected string[] shortProductFormDetailField;
+        protected Lists.OnixList78[]  productFormDetailField;
+        protected Lists.OnixList78[]  shortProductFormDetailField;
 
-        protected string    barCodeField;
-        protected string    productFormField;
-        protected int       numberOfPiecesField;
-        protected int       tradeCategoryField;
-        protected string    epubTypeField;
-        protected string    epubTypeVersionField;
-        protected string    epubFormatDescriptionField;
-        protected string    epubTypeNoteField;
-        protected string    productFormDescriptionField;
+        protected string          barCodeField;
+        protected Lists.OnixList7 productFormField;
+        protected int             numberOfPiecesField;
+        protected int             tradeCategoryField;
+        protected string          epubTypeField;
+        protected string          epubTypeVersionField;
+        protected string          epubFormatDescriptionField;
+        protected string          epubTypeNoteField;
+        protected string          productFormDescriptionField;
 
         protected string imprintNameField;
         protected string publisherNameField;
@@ -250,18 +249,18 @@ namespace OnixData.Legacy
             }
         }
 
-        public string[] OnixProductFormDetailList
+        public Lists.OnixList78[] OnixProductFormDetailList
         {
             get
             {
-                string[] ProductFormDetailList = null;
+                Lists.OnixList78[] ProductFormDetailList = null;
 
                 if (this.productFormDetailField != null)
                     ProductFormDetailList = this.productFormDetailField;
                 else if (this.shortProductFormDetailField != null)
                     ProductFormDetailList = this.shortProductFormDetailField;
                 else
-                    ProductFormDetailList = new string[0];
+                    ProductFormDetailList = new Lists.OnixList78[0];
 
                 return ProductFormDetailList;
             }
@@ -387,7 +386,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string ProductForm
+        public Lists.OnixList7 ProductForm
         {
             get
             {
@@ -401,7 +400,7 @@ namespace OnixData.Legacy
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ProductFormDetail")]
-        public string[] ProductFormDetail
+        public Lists.OnixList78[] ProductFormDetail
         {
             get
             {
@@ -668,7 +667,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string b012
+        public Lists.OnixList7 b012
         {
             get { return ProductForm; }
             set { ProductForm = value; }
@@ -676,7 +675,7 @@ namespace OnixData.Legacy
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("b333")]
-        public string[] b333
+        public Lists.OnixList78[] b333
         {
             get { return shortProductFormDetailField; }
             set { shortProductFormDetailField = value; }

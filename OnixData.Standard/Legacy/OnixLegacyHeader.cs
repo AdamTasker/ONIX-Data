@@ -19,21 +19,20 @@ namespace OnixData.Legacy
             messageNoteField = "";
 
             defaultLanguageOfTextField = defaultCurrencyCodeField = "";
-            defaultLinearUnitField     = defaultWeightUnitField   = "";
             defaultClassOfTradeField   = "";
         }
 
-        private string fromCompanyField;
-        private string fromPersonField;
-        private string fromEmailField;
-        private string sentDateField;
-        private string messageNoteField;
-        private string defaultLanguageOfTextField;
-        private string defaultPriceTypeCodeField;
-        private string defaultCurrencyCodeField;
-        private string defaultLinearUnitField;
-        private string defaultWeightUnitField;
-        private string defaultClassOfTradeField;
+        private string            fromCompanyField;
+        private string            fromPersonField;
+        private string            fromEmailField;
+        private string            sentDateField;
+        private string            messageNoteField;
+        private string            defaultLanguageOfTextField;
+        private string            defaultPriceTypeCodeField;
+        private string            defaultCurrencyCodeField;
+        private Lists.OnixList50? defaultLinearUnitField;
+        private Lists.OnixList50? defaultWeightUnitField;
+        private string            defaultClassOfTradeField;
 
         #region Reference tags
 
@@ -142,7 +141,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string DefaultLinearUnit
+        public Lists.OnixList50? DefaultLinearUnit
         {
             get
             {
@@ -155,7 +154,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string DefaultWeightUnit
+        public Lists.OnixList50? DefaultWeightUnit
         {
             get
             {
@@ -289,7 +288,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string m187
+        public Lists.OnixList50? m187
         {
             get
             {
@@ -302,7 +301,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string m188
+        public Lists.OnixList50? m188
         {
             get
             {

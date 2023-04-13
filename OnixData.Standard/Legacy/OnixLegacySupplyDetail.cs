@@ -22,8 +22,6 @@ namespace OnixData.Legacy
             ReturnsCodeType     = "";
             ReturnsCode         = "";
             LastDateForReturns  = "";
-            AvailabilityCode    = "";
-            ProductAvailability = "";
             ExpectedShipDate    = "";
             OnSaleDate          = "";
             PackQuantity        = "";
@@ -36,8 +34,8 @@ namespace OnixData.Legacy
         private string returnsCodeTypeField;
         private string returnsCodeField;
         private string lastDateForReturnsField;
-        private string availabilityCodeField;
-        private string productAvailabilityField;
+        private Lists.OnixList54 availabilityCodeField;
+        private Lists.OnixList65 productAvailabilityField;
         private string expectedShipDateField;
         private string onSaleDateField;
         private string packQuantityField;
@@ -174,7 +172,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string AvailabilityCode
+        public Lists.OnixList54 AvailabilityCode
         {
             get
             {
@@ -187,7 +185,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string ProductAvailability
+        public Lists.OnixList65 ProductAvailability
         {
             get
             {
@@ -336,14 +334,14 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string j141
+        public Lists.OnixList54 j141
         {
             get { return AvailabilityCode; }
             set { AvailabilityCode = value; }
         }
 
         /// <remarks/>
-        public string j396
+        public Lists.OnixList65 j396
         {
             get { return ProductAvailability; }
             set { ProductAvailability = value; }

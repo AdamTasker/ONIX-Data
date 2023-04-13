@@ -12,43 +12,28 @@ namespace OnixData.Legacy
     {
         #region CONSTANTS
 
-        public const int CONST_MEASURE_TYPE_HEIGHT = 1;
-        public const int CONST_MEASURE_TYPE_WIDTH  = 2;
-        public const int CONST_MEASURE_TYPE_THICK  = 3;
-        public const int CONST_MEASURE_TYPE_WEIGHT = 8;
-        public const int CONST_MEASURE_TYPE_DIAMTR = 9;
+        public static readonly Lists.OnixList48[] MEASURE_TYPES_DIM = 
+            new Lists.OnixList48[] { Lists.OnixList48.Height, Lists.OnixList48.Width, Lists.OnixList48.Thickness, Lists.OnixList48.SphereDiameter };
 
-        public const string CONST_MEASURE_UNIT_US_WEIGHT_LB  = "lb";
-        public const string CONST_MEASURE_UNIT_US_WEIGHT_OZ  = "oz";
-        public const string CONST_MEASURE_UNIT_METRIC_WEIGHT = "gr";
+        public static readonly Lists.OnixList48[] MEASURE_TYPES_WEIGHT = new Lists.OnixList48[] { Lists.OnixList48.UnitWeight };
 
-        public const string CONST_MEASURE_UNIT_US_LENGTH_IN  = "in";
-        public const string CONST_MEASURE_UNIT_METRIC_LENGTH = "mm";
-
-        public static readonly int[] MEASURE_TYPES_DIM = 
-            new int[] { CONST_MEASURE_TYPE_HEIGHT, CONST_MEASURE_TYPE_WIDTH, CONST_MEASURE_TYPE_THICK, CONST_MEASURE_TYPE_DIAMTR };
-
-        public static readonly int[] MEASURE_TYPES_WEIGHT = new int[] { CONST_MEASURE_TYPE_WEIGHT };
-
-        public static readonly string[] MEASURE_WEIGHTS_US = new string[] { CONST_MEASURE_UNIT_US_WEIGHT_LB, CONST_MEASURE_UNIT_US_WEIGHT_OZ };
+        public static readonly Lists.OnixList50[] MEASURE_WEIGHTS_US = new Lists.OnixList50[] { Lists.OnixList50.Pounds, Lists.OnixList50.Ounces };
 
         #endregion
 
         public OnixLegacyMeasure()
         {
-            MeasureTypeCode = -1;
             Measurement     = "";
-            MeasureUnitCode = "";
         }
 
-        private int     measureTypeCodeField;
-        private string  measurementField;
-        private string  measureUnitCodeField;
+        private Lists.OnixList48  measureTypeCodeField;
+        private string            measurementField;
+        private Lists.OnixList50  measureUnitCodeField;
 
         #region Reference Tags
 
         /// <remarks/>
-        public int MeasureTypeCode
+        public Lists.OnixList48 MeasureTypeCode
         {
             get
             {
@@ -87,7 +72,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string MeasureUnitCode
+        public Lists.OnixList50 MeasureUnitCode
         {
             get
             {
@@ -104,7 +89,7 @@ namespace OnixData.Legacy
         #region Short Tags
 
         /// <remarks/>
-        public int c093
+        public Lists.OnixList48 c093
         {
             get { return MeasureTypeCode; }
             set { MeasureTypeCode = value; }
@@ -118,7 +103,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string c095
+        public Lists.OnixList50 c095
         {
             get { return MeasureUnitCode; }
             set { MeasureUnitCode = value; }

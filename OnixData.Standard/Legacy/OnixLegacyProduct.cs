@@ -13,16 +13,6 @@ namespace OnixData.Legacy
     {
         #region CONSTANTS
 
-        private const int CONST_PRD_PACK_SLIPSLEEVE      = 1;
-        private const int CONST_PRD_PACK_CLAMSHELL       = 2;
-        private const int CONST_PRD_PACK_JEWELCASE       = 5;
-        private const int CONST_PRD_PACK_IN_BOX          = 9;
-        private const int CONST_PRD_PACK_SLIP_CASE_SNGL  = 10;
-        private const int CONST_PRD_PACK_SLIP_CASE_MULT  = 11;
-        private const int CONST_PRD_PACK_TUBE_ROLL       = 12;
-        private const int CONST_PRD_PACK_BINDER          = 13;
-        private const int CONST_PRD_PACK_WALLET          = 14;
-
         private const char CONST_KEYWORDS_DELIM = ';';
 
         #endregion
@@ -38,8 +28,7 @@ namespace OnixData.Legacy
             ProductIdentifier = new OnixLegacyProductId[0];
 
             BookFormDetail         = "";
-            ProductPackaging       = ProductForm = "";
-            ProductFormDetail      = new string[0];
+            ProductFormDetail      = new Lists.OnixList78[0];
             ProductFormDescription = "";
             ProductContentType     = new string[0];
             EpubType               = EpubTypeVersion = EpubFormatDescription  = "";
@@ -99,9 +88,9 @@ namespace OnixData.Legacy
         private bool NoSalesRightsInUS;
         private bool SalesRightsAllWorld;
 
-        private string bookFormDetailField;
-        private string productPackagingField;
-        private string editionStatementField;
+        private string            bookFormDetailField;
+        private Lists.OnixList80  productPackagingField;
+        private string            editionStatementField;
 
         private string[] audienceCodeField;
         private string[] shortAudienceCodeField;
@@ -339,22 +328,22 @@ namespace OnixData.Legacy
 
         public OnixLegacyMeasure Height
         {
-            get { return GetMeasurement(OnixLegacyMeasure.CONST_MEASURE_TYPE_HEIGHT); }
+            get { return GetMeasurement(Lists.OnixList48.Height); }
         }
 
         public OnixLegacyMeasure Thick
         {
-            get { return GetMeasurement(OnixLegacyMeasure.CONST_MEASURE_TYPE_THICK); }
+            get { return GetMeasurement(Lists.OnixList48.Thickness); }
         }
 
         public OnixLegacyMeasure Weight
         {
-            get { return GetMeasurement(OnixLegacyMeasure.CONST_MEASURE_TYPE_WEIGHT); }
+            get { return GetMeasurement(Lists.OnixList48.UnitWeight); }
         }
 
         public OnixLegacyMeasure Width
         {
-            get { return GetMeasurement(OnixLegacyMeasure.CONST_MEASURE_TYPE_WIDTH); }
+            get { return GetMeasurement(Lists.OnixList48.Width); }
         }
 
         public string Keywords
@@ -1230,7 +1219,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string ProductPackaging
+        public Lists.OnixList80 ProductPackaging
         {
             get { return this.productPackagingField; }
             set { this.productPackagingField = value; }
@@ -1555,7 +1544,7 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        public string b225
+        public Lists.OnixList80 b225
         {
             get { return ProductPackaging; }
             set { ProductPackaging = value; }
@@ -1848,7 +1837,7 @@ namespace OnixData.Legacy
 
         #region Support Methods
 
-        public OnixLegacyMeasure GetMeasurement(int Type, bool PreferUSMeasurement = true)
+        public OnixLegacyMeasure GetMeasurement(Lists.OnixList48 Type, bool PreferUSMeasurement = true)
         {
             OnixLegacyMeasure FoundMeasurement = new OnixLegacyMeasure();
 
@@ -1861,13 +1850,13 @@ namespace OnixData.Legacy
                     {
                         FoundMeasurement =
                             MeasureList.Where(x => (x.MeasureTypeCode == Type) &&
-                                                   (x.MeasureUnitCode.ToLower() == OnixLegacyMeasure.CONST_MEASURE_UNIT_US_LENGTH_IN)).LastOrDefault();
+                                                   (x.MeasureUnitCode == Lists.OnixList50.Inches)).LastOrDefault();
                     }
                     else if (OnixLegacyMeasure.MEASURE_TYPES_WEIGHT.Contains(Type))
                     {
                         FoundMeasurement =
                             MeasureList.Where(x => (x.MeasureTypeCode == Type) && 
-                                                   (OnixLegacyMeasure.MEASURE_WEIGHTS_US.Contains(x.MeasureUnitCode.ToLower()))).LastOrDefault();
+                                                   (OnixLegacyMeasure.MEASURE_WEIGHTS_US.Contains(x.MeasureUnitCode))).LastOrDefault();
                     }
                 }
 
