@@ -197,18 +197,6 @@ namespace OnixData.Legacy
             }
         }
 
-        public int ProductAvailabilityNum
-        {
-            get
-            {
-                int nProductAvailabilityVal = -1;
-                if (!String.IsNullOrEmpty(ProductAvailability))
-                    Int32.TryParse(ProductAvailability, out nProductAvailabilityVal);
-
-                return nProductAvailabilityVal;
-            }
-        }
-
         /// <remarks/>
         public string ExpectedShipDate
         {
