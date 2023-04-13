@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Legacy
 {
@@ -12,103 +9,50 @@ namespace OnixData.Legacy
     /// using the legacy standard (i.e., Version 2.1).
     /// 
     /// </summary>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     // [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-    [System.Xml.Serialization.XmlRootAttribute(IsNullable = false)]
+    [XmlRoot(IsNullable = false)]
     public partial class OnixLegacyMessage
     {
         public OnixLegacyMessage()
         {
             Header  = new OnixLegacyHeader();
             Product = null;
-            product = null;
         }
-
-        private OnixLegacyHeader    headerField;
-
-        private OnixLegacyProduct[] productField;
-        private OnixLegacyProduct[] altProductField;
-
-        #region ONIX Lists
-
-        public OnixLegacyProduct[] OnixProducts
-        {
-            get
-            {
-                OnixLegacyProduct[] productList = null;
-
-                if (Product != null)
-                    productList = Product;
-                else if (product != null)
-                    productList = product;
-                else
-                    productList = new OnixLegacyProduct[0];
-
-                return productList;
-            }
-        }
-
-        #endregion
 
         #region Reference Tags
 
-        /// <remarks/>
-        public OnixLegacyHeader Header
-        {
-            get
-            {
-                return this.headerField;
-            }
-            set
-            {
-                this.headerField = value;
-            }
-        }
+        /// <summary>
+        /// A group of data elements which together constitute a message header.
+        /// The elements may alternatively be sent without being grouped into a composite, but the composite approach is recommended since it makes it easier to maintain a standard header “package” to drop into any new ONIX Product Information Message.
+        ///
+        /// Note that the Sender and Addressee Identifier composites can only be used within the Header composite, and future extensions to the Header will be defined only within the composite.
+        /// </summary>
+        [XmlChoiceIdentifier("HeaderChoice")]
+        [XmlElement("Header")]
+        [XmlElement("header")]
+        public OnixLegacyHeader Header { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum HeaderEnum { Header, header };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public HeaderEnum HeaderChoice;
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Product")]
-        public OnixLegacyProduct[] Product
-        {
-            get
-            {
-                return this.productField;
-            }
-            set
-            {
-                this.productField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public OnixLegacyHeader header
-        {
-            get
-            {
-                return Header;
-            }
-            set
-            {
-                Header = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("product")]
-        public OnixLegacyProduct[] product
-        {
-            get
-            {
-                return altProductField;
-            }
-            set
-            {
-                altProductField = value;
-            }
-        }
+        /// <summary>
+        /// A product is described by a group of data elements beginning with an XML label <Product> and ending with an XML label </Product>.
+        /// The entire group of data elements which is enclosed between these two labels constitutes an ONIX product record.
+        /// The product record is the fundamental unit within an ONIX Product Information message.
+        /// In almost every case, each product record describes an individually tradable item.
+        /// </summary>
+        [XmlChoiceIdentifier("ProductChoice")]
+        [XmlElement("Product")]
+        [XmlElement("product")]
+        public OnixLegacyProduct[] Product { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductEnum { Product, product };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductEnum[] ProductChoice;
 
         #endregion
     }
