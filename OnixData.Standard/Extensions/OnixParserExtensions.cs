@@ -91,29 +91,6 @@ namespace OnixData.Extensions
                     if ((poOnixProduct.Language != null) && (String.IsNullOrEmpty(poOnixProduct.Language.LanguageCode)))
                         poOnixProduct.Language.LanguageCode = poOnixHeader.DefaultLanguageOfText;
                 }
-
-                if (poOnixProduct.OnixMeasureList != null)
-                {
-                    foreach (OnixLegacyMeasure TmpMeasure in poOnixProduct.OnixMeasureList)
-                    {
-                        if (TmpMeasure.MeasureTypeCode > 0)
-                        {
-                            if ((TmpMeasure.MeasureTypeCode == OnixLegacyMeasure.CONST_MEASURE_TYPE_HEIGHT) ||
-                                (TmpMeasure.MeasureTypeCode == OnixLegacyMeasure.CONST_MEASURE_TYPE_THICK)  ||
-                                (TmpMeasure.MeasureTypeCode == OnixLegacyMeasure.CONST_MEASURE_TYPE_WIDTH)  ||
-                                (TmpMeasure.MeasureTypeCode == OnixLegacyMeasure.CONST_MEASURE_TYPE_DIAMTR))
-                            {
-                                if (!String.IsNullOrEmpty(poOnixHeader.DefaultLinearUnit) && String.IsNullOrEmpty(TmpMeasure.MeasureUnitCode))
-                                    TmpMeasure.MeasureUnitCode = poOnixHeader.DefaultLinearUnit;
-                            }
-                            else if (TmpMeasure.MeasureTypeCode == OnixLegacyMeasure.CONST_MEASURE_TYPE_WEIGHT)
-                            {
-                                if (!String.IsNullOrEmpty(poOnixHeader.DefaultWeightUnit) && String.IsNullOrEmpty(TmpMeasure.MeasureUnitCode))
-                                    TmpMeasure.MeasureUnitCode = poOnixHeader.DefaultWeightUnit;
-                            }
-                        }
-                    }
-                }
             }
         }
 

@@ -309,23 +309,6 @@ namespace OnixData.Legacy
             return SalesRightsAllWorld;
         }
 
-        public string DimensionUnitCode
-        {
-            get
-            {
-                string sUnitCode = "";
-
-                if ((this.Thick != null) && !String.IsNullOrEmpty(this.Thick.Measurement))
-                    sUnitCode = this.Thick.MeasureUnitCode;
-                else if ((this.Height != null) && !String.IsNullOrEmpty(this.Height.Measurement))
-                    sUnitCode = this.Height.MeasureUnitCode;
-                else if ((this.Width != null) && !String.IsNullOrEmpty(this.Width.Measurement))
-                    sUnitCode = this.Width.MeasureUnitCode;
-
-                return sUnitCode;
-            }
-        }
-
         public OnixLegacyMeasure Height
         {
             get { return GetMeasurement(Lists.OnixList48.Height); }
