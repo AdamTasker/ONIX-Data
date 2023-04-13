@@ -625,6 +625,29 @@ namespace OnixData.Legacy
             }
         }
 
+        public string OnixDescription
+        {
+            get
+            {
+                string Description = "";
+
+                foreach (OnixLegacyOtherText ot in OtherText)
+                {
+                    if (ot.TextTypeCode == 3 && !string.IsNullOrEmpty(ot.Text))
+                    {
+                        Description = ot.Text;
+                        break;
+                    }
+                    else if (ot.TextTypeCode == 2 && !string.IsNullOrEmpty(ot.Text))
+                    {
+                        Description = ot.Text;
+                    }
+                }
+
+                return Description;
+            }
+        }
+
         public OnixLegacyContributor PrimaryAuthor
         {
             get
