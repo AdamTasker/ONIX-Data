@@ -18,6 +18,8 @@ namespace OnixData.Version3.Related
         }
 
         private int productRelationCodeField;
+        private string productFormField;
+        private string productFormDetailField;
 
         private OnixProductId[] productIdentifierField;
         private OnixProductId[] shortProductIdentifierField;
@@ -103,6 +105,30 @@ namespace OnixData.Version3.Related
             }
         }
 
+        public string ProductForm
+        {
+            get
+            {
+                return this.productFormField;
+            }
+            set
+            {
+                this.productFormField = value;
+            }
+        }
+
+        public string ProductFormDetail
+        {
+            get
+            {
+                return this.productFormDetailField;
+            }
+            set
+            {
+                this.productFormDetailField = value;
+            }
+        }
+
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ProductIdentifier")]
         public OnixProductId[] ProductIdentifier
@@ -126,6 +152,18 @@ namespace OnixData.Version3.Related
         {
             get { return ProductRelationCode; }
             set { ProductRelationCode = value; }
+        }
+
+        public string b012
+        {
+            get { return ProductForm; }
+            set { ProductForm = value; }
+        }
+
+        public string b333
+        {
+            get { return ProductFormDetail; }
+            set { ProductFormDetail = value; }
         }
 
         /// <remarks/>
