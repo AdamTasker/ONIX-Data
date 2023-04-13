@@ -75,7 +75,7 @@ namespace OnixData.Version3.Related
         {
             get
             {
-                OnixProductId[] ProductIds = null;
+                OnixProductId[] ProductIds;
 
                 if (this.productIdentifierField != null)
                     ProductIds = this.productIdentifierField;
