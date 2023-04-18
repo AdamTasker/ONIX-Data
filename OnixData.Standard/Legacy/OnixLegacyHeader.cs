@@ -127,7 +127,7 @@ namespace OnixData.Legacy
         [XmlChoiceIdentifier("DefaultPriceTypeCodeChoice")]
         [XmlElement("DefaultPriceTypeCode")]
         [XmlElement("m185")]
-        public OnixList58 DefaultPriceTypeCode { get; set; }
+        public OnixList58? DefaultPriceTypeCode { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum DefaultPriceTypeCodeEnum { DefaultPriceTypeCode, m185 };
         [XmlIgnore]
