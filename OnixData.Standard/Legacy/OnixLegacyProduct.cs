@@ -886,7 +886,7 @@ namespace OnixData.Legacy
         public enum LanguageEnum { Language, language };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public LanguageEnum LanguageChoice;
+        public LanguageEnum[] LanguageChoice;
 
         /// <summary>
         /// An indication of the total number of pages in a book or other printed product. This is not intended to represent a precise count of numbered and unnumbered pages.
