@@ -759,9 +759,9 @@ namespace OnixData.Legacy
 
         /// <summary>
         /// An ONIX code specifying more detail of the product format when the product is a book. Repeatable when two or more coded characteristics apply.
-        /// This field is optional, but must only be included when the code in the <ProductForm> element begins with letter B.
+        /// This field is optional, but must only be included when the code in the <see cref="OnixLegacyBaseProduct.ProductForm"/> element begins with letter B.
         /// 
-        /// This field will be superseded by the new element <ProductFormDetail>, and the code list will not be further developed.
+        /// This field will be superseded by the new element <see cref="OnixLegacyBaseProduct.ProductFormDetail"/>, and the code list will not be further developed.
         /// The field is retained only for purposes of upwards compatibility, and its use is now to be deprecated.
         /// </summary>
         [XmlChoiceIdentifier("BookFormDetailChoice")]
@@ -820,8 +820,8 @@ namespace OnixData.Legacy
         /// <summary>
         /// A short free-text description of a version or edition.
         /// Optional and non-repeating.
-        /// When used, the <EditionStatement> must carry a complete description of the nature of the edition, ie it should not be treated as merely supplementary to an <EditionTypeCode> or an <EditionNumber>.
-        /// The <EditionStatement> should be strictly limited to describing features of the content of the edition, and should not include aspects such as rights or market restrictions which are properly covered elsewhere in the ONIX record.
+        /// When used, must carry a complete description of the nature of the edition, ie it should not be treated as merely supplementary to an <see cref="EditionTypeCode"/> or an <see cref="EditionNumber"/>.
+        /// The element should be strictly limited to describing features of the content of the edition, and should not include aspects such as rights or market restrictions which are properly covered elsewhere in the ONIX record.
         /// </summary>
         [XmlChoiceIdentifier("EditionStatementChoice")]
         [XmlElement("EditionStatement")]
@@ -861,9 +861,9 @@ namespace OnixData.Legacy
 
         /// <summary>
         /// Free text showing how the authorship should be described in an online display, when a standard concatenation of individual contributor elements would not give a satisfactory presentation.
-        /// When this field is sent, the receiver should use it to replace all name detail sent in the <Contributor> composite for display purposes only.
-        /// It does not replace the <BiographicalNote> element.
-        /// The individual name detail must also be sent in the <Contributor> composite for indexing and retrieval.
+        /// When this field is sent, the receiver should use it to replace all name detail sent in the <see cref="OnixLegacyContributor"/> composite for display purposes only.
+        /// It does not replace the <see cref="OnixLegacyContributor.BiographicalNote"/> element.
+        /// The individual name detail must also be sent in the <see cref="OnixLegacyContributor"/> composite for indexing and retrieval.
         /// </summary>
         [XmlChoiceIdentifier("ContributorStatementChoice")]
         [XmlElement("ContributorStatement")]
@@ -895,7 +895,7 @@ namespace OnixData.Legacy
         ///
         /// For multi-volume books, enter the total for all the volumes combined.
         ///
-        /// This field is optional, but it is normally required for a printed book unless the <PagesRoman> and <PagesArabic> elements are used, and is non-repeating.
+        /// This field is optional, but it is normally required for a printed book unless the <see cref="PagesRoman"/> and <see cref="PagesArabic"/> elements are used, and is non-repeating.
         /// </summary>
         [XmlChoiceIdentifier("NumberOfPagesChoice")]
         [XmlElement("NumberOfPages")]
@@ -909,8 +909,8 @@ namespace OnixData.Legacy
 
         /// <summary>
         /// The number of pages numbered in roman numerals.
-        /// The <PagesRoman> and <PagesArabic> elements together represent an alternative to <NumberOfPages> where there is a requirement to specify these numbering sequences separately.
-        /// For most ONIX applications, however, <NumberOfPages> will be preferred.
+        /// The <see cref="PagesRoman"/> and <see cref="PagesArabic"/> elements together represent an alternative to <see cref="NumberOfPages"/> where there is a requirement to specify these numbering sequences separately.
+        /// For most ONIX applications, however, <see cref="NumberOfPages"/> will be preferred.
         /// Optional and non-repeating.
         /// </summary>
         [XmlChoiceIdentifier("PagesRomanChoice")]
@@ -925,8 +925,8 @@ namespace OnixData.Legacy
 
         /// <summary>
         /// The number of pages numbered in Arabic numerals.
-        /// The <PagesRoman> and <PagesArabic> elements together represent an alternative to <NumberOfPages> where there is a requirement to specify these numbering sequences separately.
-        /// For most ONIX applications, however, <NumberOfPages> will be preferred.
+        /// The <see cref="PagesRoman"/> and <see cref="PagesArabic"/> elements together represent an alternative to <see cref="NumberOfPages"/> where there is a requirement to specify these numbering sequences separately.
+        /// For most ONIX applications, however, <see cref="NumberOfPages"/> will be preferred.
         /// Optional and non-repeating.
         /// </summary>
         [XmlChoiceIdentifier("PagesArabicChoice")]
@@ -941,7 +941,7 @@ namespace OnixData.Legacy
 
         /// <summary>
         /// A repeatable group of data elements which together specify the number of illustrations or other content items of a stated type which the product carries.
-        /// Use of the <Illustrations> composite is optional.
+        /// Use of the <see cref="OnixLegacyIllustrations"/> composite is optional.
         /// </summary>
         [XmlChoiceIdentifier("IllustrationsChoice")]
         [XmlElement("Illustrations")]
@@ -956,7 +956,7 @@ namespace OnixData.Legacy
         /// <summary>
         /// A BISAC subject category code which identifies the main subject of the product.
         /// Optional and non-repeating.
-        /// Additional BISAC subject category codes may be sent using the <Subject> composite.
+        /// Additional BISAC subject category codes may be sent using the <see cref="OnixLegacySubject"/> composite.
         /// 
         /// Note that the data element reference name was assigned during a period when the BISAC name had been changed to “BASIC”.
         /// The name has now officially reverted to “BISAC”, but the ONIX data element name cannot be changed for reasons of upwards compatibility.
@@ -1206,12 +1206,12 @@ namespace OnixData.Legacy
         public TradeAnnouncementDateEnum TradeAnnouncementDateChoice;
 
         /// <summary>
-        /// The date of first publication of this product in the home market of the publisher (that is, under the current ISBN or other identifier, as distinct from the date of first publication of the work, which may be given in <YearFirstPublished> on the next page).
+        /// The date of first publication of this product in the home market of the publisher (that is, under the current ISBN or other identifier, as distinct from the date of first publication of the work, which may be given in <see cref="YearFirstPublished"/> on the next page).
         /// In advance information, this will be an expected date, which should be replaced by the actual date of publication when known.
         /// The date should be given as precisely as possible, but in early notifications a month and year are sufficient; and for backlist titles the year of publication is sufficient.
         ///
         /// Note that in advance information this date must not be interpreted as the date when the product will first be available in a territory other than the publisher’s home market.
-        /// See the <SupplyDetail> and <MarketRepresentation> composites for other market-specific detail.
+        /// See the <see cref="OnixLegacySupplyDetail"/> and <see cref="OnixLegacyMarketRepresentation"/> composites for other market-specific detail.
         ///
         /// Optional and non-repeating.
         /// </summary>
@@ -1267,7 +1267,7 @@ namespace OnixData.Legacy
 
         /// <summary>
         /// A repeatable group of data elements which together identify territorial sales rights which a publisher chooses to exercise in a product.
-        /// The <SalesRights> composite may occur once for each value of <SalesRightsType>.
+        /// The <see cref="OnixLegacySalesRights"/> composite may occur once for each value of <see cref="SalesRightsType"/>.
         /// </summary>
         [XmlChoiceIdentifier("SalesRightsChoice")]
         [XmlElement("SalesRights")]
@@ -1321,9 +1321,9 @@ namespace OnixData.Legacy
 
         /// <summary>
         /// A repeatable group of data elements which together describe a product which has a specified relationship to the product which is described in the ONIX record.
-        /// Although for reasons of upwards compatibility the composite includes individual fields for ISBN and EAN-13 number, use of the nested <ProductIdentifier> composite is to be preferred, since it allows any recognized identifier scheme (eg DOI) to be used.
+        /// Although for reasons of upwards compatibility the composite includes individual fields for ISBN and EAN-13 number, use of the nested <see cref="OnixLegacyProductId"/> composite is to be preferred, since it allows any recognized identifier scheme (eg DOI) to be used.
         ///
-        /// The minimum required content of an occurrence of the <RelatedProduct> composite is a <RelationCode> and either a product identifier or a <ProductForm> value.
+        /// The minimum required content of an occurrence of the <see cref="OnixLegacyRelatedProduct"/> composite is a <see cref="OnixLegacyRelatedProduct.RelationCode"/> and either a product identifier or a <see cref="OnixLegacyBaseProduct.ProductForm"/> value.
         /// In other words, it is valid to list related products by relationship and identifier only, or by relationship and form only.
         /// </summary>
         [XmlChoiceIdentifier("RelatedProductsChoice")]
