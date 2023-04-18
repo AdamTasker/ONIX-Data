@@ -553,16 +553,16 @@ namespace OnixData
                         CurrentRecord.ApplyHeaderDefaults(this.OnixHeader);
 
                     if ((CurrentRecord != null) && 
-                        (CurrentRecord.OnixOtherTextList != null) && 
-                        (CurrentRecord.OnixOtherTextList.Length > 0))
+                        (CurrentRecord.OtherText != null) && 
+                        (CurrentRecord.OtherText.Length > 0))
                     {
-                        int nOTCount = CurrentRecord.OnixOtherTextList.Length;
+                        int nOTCount = CurrentRecord.OtherText.Length;
 
                         for (int nIdx = 0; nIdx < OtherTextList.Count; ++nIdx)
                         {
                             if (nIdx < nOTCount)
                             {
-                                OnixLegacyOtherText TempText = CurrentRecord.OnixOtherTextList[nIdx];
+                                OnixLegacyOtherText TempText = CurrentRecord.OtherText[nIdx];
                                 TempText.Text = OtherTextList[nIdx];
                             }
                         }

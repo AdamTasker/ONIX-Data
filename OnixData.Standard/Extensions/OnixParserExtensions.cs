@@ -54,16 +54,16 @@ namespace OnixData.Extensions
         {
             if (poOnixHeader != null)
             {
-                foreach (OnixLegacySupplyDetail TmpSupplyDetail in poOnixProduct.OnixSupplyDetailList)
+                foreach (OnixLegacySupplyDetail TmpSupplyDetail in poOnixProduct.SupplyDetail)
                 {
                     if ((TmpSupplyDetail != null) && (TmpSupplyDetail.OnixPriceList != null))
                     {
                         foreach (OnixLegacyPrice TmpPrice in TmpSupplyDetail.OnixPriceList)
                         {
-                            if (!String.IsNullOrEmpty(poOnixHeader.DefaultCurrencyCode) && String.IsNullOrEmpty(TmpPrice.CurrencyCode))
+                            if (!string.IsNullOrEmpty(poOnixHeader.DefaultCurrencyCode) && string.IsNullOrEmpty(TmpPrice.CurrencyCode))
                                 TmpPrice.CurrencyCode = poOnixHeader.DefaultCurrencyCode;
 
-                            if (!String.IsNullOrEmpty(poOnixHeader.DefaultPriceTypeCode) && (TmpPrice.PriceTypeCode <= 0))
+                            if (poOnixHeader.DefaultPriceTypeCode != null && (TmpPrice.PriceTypeCode <= 0))
                             {
                                 int nDefPriceTypeCd = -1;
 
@@ -88,8 +88,8 @@ namespace OnixData.Extensions
 
                 if (!String.IsNullOrEmpty(poOnixHeader.DefaultLanguageOfText))
                 {
-                    if ((poOnixProduct.Language != null) && (String.IsNullOrEmpty(poOnixProduct.Language.LanguageCode)))
-                        poOnixProduct.Language.LanguageCode = poOnixHeader.DefaultLanguageOfText;
+                    if ((poOnixProduct.Language != null) && (String.IsNullOrEmpty(poOnixProduct.Language[0].LanguageCode)))
+                        poOnixProduct.Language[0].LanguageCode = poOnixHeader.DefaultLanguageOfText;
                 }
             }
         }
