@@ -868,6 +868,16 @@ namespace OnixData.Version3
             set { this.measureField = value; }
         }
 
+        [System.Xml.Serialization.XmlChoiceIdentifier("ProductClassificationChoice")]
+        [System.Xml.Serialization.XmlElement("ProductClassification")]
+        [System.Xml.Serialization.XmlElement("productclassification")]
+        public OnixProductClassification[] ProductClassification { get; set; }
+        [System.Xml.Serialization.XmlType(IncludeInSchema = false)]
+        public enum ProductClassificationEnum { ProductClassification, productclassification }
+        [System.Xml.Serialization.XmlIgnore]
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+        public ProductClassificationEnum[] ProductClassificationChoice;
+
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ProductPart")]
         public OnixProductPart[] ProductPart
