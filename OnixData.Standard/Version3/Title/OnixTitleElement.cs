@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3.Title
 {
-    /// <remarks/>
+    /// <summary>
+    /// A group of data elements which together represent an element of a collection title.
+    /// An instance of the <TitleElement> composite must include at least one of: <PartNumber>; <YearOfAnnual>; <TitleText>, <NoPrefix/> together with <TitleWithoutPrefix>, or <TitlePrefix> together with <TitleWithoutPrefix>.
+    /// In other words, it must carry either the text of a title element or a part or year designation, and it may carry both.
+    ///
+    /// A title element must be designated as belonging to product level, collection level, or subcollection level (the first of these may not occur in a title element representing a collective identity, and the last-named may only occur in the case of a multi-level collection).
+    ///
+    /// In the simplest case, title detail sent in a <Collection> composite will consist of a single title element, at collection level.
+    /// However, the composite structure in ONIX 3.0 allows more complex combinations of titles and part designations in multi-level collections to be correctly represented.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixTitleElement
     {
@@ -91,19 +100,17 @@ namespace OnixData.Version3.Title
 
         #region Reference Tags
 
-        public string PartNumber
-        {
-            get
-            {
-                return partNumberField;
-            }
-            set
-            {
-                partNumberField = value;
-            }
-        }
+        /// <summary>
+        /// A number which specifies a single overall sequence of title elements, which is the preferred order for display of the various title elements when constructing a complete title.
+        /// Optional and non-repeating. It is strongly recommended that each occurrence of the <see cref="OnixTitleElement"/> composite should carry a <see cref="SequenceNumber">.
+        /// </summary>
+        public int SquenceNumber { get; set; }
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code indicating the level of a title element: collection level, subcollection level, or product level.
+        /// Mandatory in each occurrence of the <see cref="OnixTitleElement"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 149</remarks>
         public int TitleElementLevel
         {
             get
@@ -116,7 +123,35 @@ namespace OnixData.Version3.Title
             }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// When a title element includes a part designation within a larger whole (eg Part I, or Volume 3), this field should be used to carry the number and its ‘caption’ as text.
+        /// Optional and non-repeating.
+        /// </summary>
+        public string PartNumber
+        {
+            get
+            {
+                return partNumberField;
+            }
+            set
+            {
+                partNumberField = value;
+            }
+        }
+
+        /// <summary>
+        /// When the year of an annual is part of a title, this field should be used to carry the year (or, if required, a spread of years such as 2009–2010).
+        /// Optional and non-repeating.
+        /// </summary>
+        public string YearOfAnnual { get; set; }
+
+        /// <summary>
+        /// The text of a title element, excluding any subtitle.
+        /// Optional and non-repeating, may only be used where <see cref="TitlePrefix"/>, <see cref="NoPrefix"/> and <see cref="TitleWithoutPrefix"/> are not used.
+        /// <para/>
+        /// This element is intended to be used only when the sending system cannot reliably provide prefixes that are ignored for sorting purposes in a separate data element.
+        /// If the system can reliably separate prefixes, it should state whether a prefix is present (using <see cref="TitlePrefix"/> and <see cref="TitleWithoutPrefix"/>) or absent (using <see cref="NoPrefix"/> and <see cref="TitleWithoutPrefix"/>).
+        /// </summary>
         public string TitleText
         {
             get
@@ -129,19 +164,11 @@ namespace OnixData.Version3.Title
             }
         }
 
-        public string Subtitle
-        {
-            get
-            {
-                return this.subtitleField;
-            }
-            set
-            {
-                this.subtitleField = value;
-            }
-        }
-
-        /// <remarks/>
+        /// <summary>
+        /// Text at the beginning of a title element which is to be ignored for alphabetical sorting.
+        /// Optional and non-repeating; can only be used when <TitleText> is omitted, and if the <TitleWithoutPrefix> element is also present.
+        /// These two elements may be used in combination in applications where it is necessary to distinguish an initial word or character string which is to be ignored for filing purposes, eg in library systems and in some bookshop databases.
+        /// </summary>
         public string TitlePrefix
         {
             get
@@ -154,7 +181,16 @@ namespace OnixData.Version3.Title
             }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// An empty element that provides a positive indication that a title element does not include any prefix that is ignored for sorting purposes.
+        /// Optional and non-repeating, and must only be used when <see cref="TitleWithoutPrefix"/> is used and no <see cref="TitlePrefix"/> element is present.
+        /// </summary>
+        public string NoPrefix { get; set; }
+
+        /// <summary>
+        /// The text of a title element without the title prefix; and excluding any subtitle.
+        /// Optional and non-repeating; can only be used if one of the <see cref="NoPrefix"/> or <see cref="TitlePrefix"/> elements is also present.
+        /// </summary>
         public string TitleWithoutPrefix
         {
             get
@@ -164,6 +200,23 @@ namespace OnixData.Version3.Title
             set
             {
                 this.titleWithoutPrefixField = value;
+            }
+        }
+
+        /// <summary>
+        /// The text of a subtitle, if any.
+        /// ‘Subtitle’ means any added words which appear with the title element given in an occurrence of the <see cref="TitleElement"/> composite, and which amplify and explain the title element, but which are not considered to be part of the title element itself.
+        /// Optional and non-repeating.
+        /// </summary>
+        public string Subtitle
+        {
+            get
+            {
+                return this.subtitleField;
+            }
+            set
+            {
+                this.subtitleField = value;
             }
         }
 

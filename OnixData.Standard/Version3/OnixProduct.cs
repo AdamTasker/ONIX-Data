@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using OnixData.Version3.Content;
 using OnixData.Version3.Language;
@@ -17,81 +17,35 @@ using OnixData.Version3.Title;
 namespace OnixData.Version3
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixProduct
     {
         #region CONSTANTS
 
-        public const int CONST_PRODUCT_TYPE_PROP   = 1;
-        public const int CONST_PRODUCT_TYPE_ISBN   = 2;
-        public const int CONST_PRODUCT_TYPE_EAN    = 3;
-        public const int CONST_PRODUCT_TYPE_UPC    = 4;
-        public const int CONST_PRODUCT_TYPE_ISMN   = 5;
-        public const int CONST_PRODUCT_TYPE_DOI    = 6;
-        public const int CONST_PRODUCT_TYPE_LCCN   = 13;
-        public const int CONST_PRODUCT_TYPE_GTIN   = 14;
+        public const int CONST_PRODUCT_TYPE_PROP = 1;
+        public const int CONST_PRODUCT_TYPE_ISBN = 2;
+        public const int CONST_PRODUCT_TYPE_EAN = 3;
+        public const int CONST_PRODUCT_TYPE_UPC = 4;
+        public const int CONST_PRODUCT_TYPE_ISMN = 5;
+        public const int CONST_PRODUCT_TYPE_DOI = 6;
+        public const int CONST_PRODUCT_TYPE_LCCN = 13;
+        public const int CONST_PRODUCT_TYPE_GTIN = 14;
         public const int CONST_PRODUCT_TYPE_ISBN13 = 15;
 
         #endregion
 
-        public OnixProduct()
-        {
-            RecordReference = "";
-
-            NotificationType = RecordSourceType = -1;
-
-            ISBN = UPC = "";
-
-            eanField = -1;
-
-            productIdentifierField = shortProductIdentifierField = new OnixProductId[0];
-            barcodeField           = shortBarcodeField           = new OnixBarcode[0];
-            productSupplyField     = shortProductSupplyField     = new OnixProductSupply[0];
-
-            ContentDetail     = new OnixContentDetail();
-            DescriptiveDetail = new OnixDescriptiveDetail();
-            CollateralDetail  = new OnixCollateralDetail();
-            PublishingDetail  = new OnixPublishingDetail();
-            RelatedMaterial   = new OnixRelatedMaterial();            
-
-            ParsingError = null;
-        }
-
-        private string recordReferenceField;
-        private int    notificationTypeField;
-        private int    recordSourceTypeField;
-
-        private string isbnField;
-        private long   eanField;
-        private string upcField;
-
-        private OnixProductId[]       productIdentifierField;
-        private OnixProductId[]       shortProductIdentifierField;
-
-        private OnixBarcode[]         barcodeField;
-        private OnixBarcode[]         shortBarcodeField;
-
-        private OnixProductSupply[]     productSupplyField;
-        private OnixProductSupply[]     shortProductSupplyField;
-
-        private OnixCollateralDetail  collateralDetailField;
-        private OnixContentDetail     contentDetailField;
-        private OnixDescriptiveDetail descriptiveDetailField;
-        private OnixPublishingDetail  publishingDetailField;
-        private OnixRelatedMaterial   relatedMaterialField;
-
         #region Parsing Error
 
-        private string    InputXml;
+        private string InputXml;
         private Exception ParsingError;
 
-        public string    GetInputXml() { return InputXml; }
-        public void      SetInputXml(string value) { InputXml = value; }
+        public string GetInputXml() { return InputXml; }
+        public void SetInputXml(string value) { InputXml = value; }
 
         public bool IsValid() { return (ParsingError == null); }
 
         public Exception GetParsingError() { return ParsingError; }
-        public void      SetParsingError(Exception value) { ParsingError = value; }
+        public void SetParsingError(Exception value) { ParsingError = value; }
 
         #endregion
 
@@ -133,11 +87,12 @@ namespace OnixData.Version3
             }
         }
 
+        private string isbnField;
         public string ISBN
         {
             get
             {
-                OnixProductId[] ProductIdList = OnixProductIdList;
+                OnixProductId[] ProductIdList = ProductIdentifier;
 
                 string TempISBN = this.isbnField;
                 if (String.IsNullOrEmpty(TempISBN))
@@ -160,11 +115,12 @@ namespace OnixData.Version3
             }
         }
 
+        private long eanField = -1;
         public long EAN
         {
             get
             {
-                OnixProductId[] ProductIdList = OnixProductIdList;
+                OnixProductId[] ProductIdList = ProductIdentifier;
 
                 long TempEAN = this.eanField;
                 if (TempEAN <= 0)
@@ -235,7 +191,7 @@ namespace OnixData.Version3
             {
                 string sLibCongressNum = "";
 
-                OnixProductId[] ProductIdList = OnixProductIdList;
+                OnixProductId[] ProductIdList = ProductIdentifier;
 
                 if ((ProductIdList != null) && (ProductIdList.Length > 0))
                 {
@@ -308,7 +264,7 @@ namespace OnixData.Version3
             {
                 string sPropId = "";
 
-                OnixProductId[] ProductIdList = OnixProductIdList;
+                OnixProductId[] ProductIdList = ProductIdentifier;
 
                 if ((ProductIdList != null) && (ProductIdList.Length > 0))
                 {
@@ -351,9 +307,9 @@ namespace OnixData.Version3
             {
                 List<OnixSupplierId> PropSupplierIds = new List<OnixSupplierId>();
 
-                if (this.OnixProductSupplyList != null)
+                if (this.ProductSupply != null)
                 {
-                    foreach (OnixProductSupply TmpSupply in this.OnixProductSupplyList)
+                    foreach (OnixProductSupply TmpSupply in this.ProductSupply)
                     {
                         foreach (OnixSupplyDetail TmpSupplyDetail in TmpSupply.OnixSupplyDetailList)
                         {
@@ -486,12 +442,12 @@ namespace OnixData.Version3
         {
             bool bHasUSDPrice = false;
 
-            if (this.OnixProductSupplyList != null)
+            if (this.ProductSupply != null)
             {
-                foreach (OnixProductSupply TmpProductSupply in this.OnixProductSupplyList)
+                foreach (OnixProductSupply TmpProductSupply in this.ProductSupply)
                 {
                     foreach (OnixSupplyDetail TmpSupplyDetail in TmpProductSupply.OnixSupplyDetailList)
-                    {                        
+                    {
                         OnixPrice[] Prices = TmpSupplyDetail.OnixPriceList;
 
                         bHasUSDPrice = Prices.Any(x => x.HasSoughtPriceTypeCode() && (x.CurrencyCode == "USD"));
@@ -510,9 +466,9 @@ namespace OnixData.Version3
         {
             bool bHasSoughtPrice = false;
 
-            if (this.OnixProductSupplyList != null)
+            if (this.ProductSupply != null)
             {
-                foreach (OnixProductSupply TmpProductSupply in this.OnixProductSupplyList)
+                foreach (OnixProductSupply TmpProductSupply in this.ProductSupply)
                 {
                     foreach (OnixSupplyDetail TmpSupplyDetail in TmpProductSupply.OnixSupplyDetailList)
                     {
@@ -597,7 +553,7 @@ namespace OnixData.Version3
         {
             get
             {
-                OnixPrice        USDPrice           = new OnixPrice();
+                OnixPrice USDPrice = new OnixPrice();
                 OnixSupplyDetail TargetSupplyDetail = USDRetailSupplyDetail;
 
                 if ((TargetSupplyDetail != null) && (TargetSupplyDetail.OnixPriceList != null) && (TargetSupplyDetail.OnixPriceList.Length > 0))
@@ -634,9 +590,9 @@ namespace OnixData.Version3
             {
                 List<OnixPrice> USDPriceList = new List<OnixPrice>();
 
-                if (this.OnixProductSupplyList != null)
+                if (this.ProductSupply != null)
                 {
-                    foreach (OnixProductSupply TmpPrdSupply in this.OnixProductSupplyList)
+                    foreach (OnixProductSupply TmpPrdSupply in this.ProductSupply)
                     {
                         foreach (var TmpSupplyDetail in TmpPrdSupply.OnixSupplyDetailList)
                         {
@@ -669,9 +625,9 @@ namespace OnixData.Version3
             {
                 OnixSupplyDetail SupplyDetail = new OnixSupplyDetail();
 
-                if (this.OnixProductSupplyList != null)
+                if (this.ProductSupply != null)
                 {
-                    foreach (OnixProductSupply TmpPrdSupply in this.OnixProductSupplyList)
+                    foreach (OnixProductSupply TmpPrdSupply in this.ProductSupply)
                     {
                         foreach (OnixSupplyDetail TmpSupplyDetail in TmpPrdSupply.OnixSupplyDetailList)
                         {
@@ -692,11 +648,13 @@ namespace OnixData.Version3
                 return SupplyDetail;
             }
         }
+
+        private string upcField;
         public string UPC
         {
             get
             {
-                OnixProductId[] ProductIdList = OnixProductIdList;
+                OnixProductId[] ProductIdList = ProductIdentifier;
 
                 string TempUPC = this.upcField;
                 if (String.IsNullOrEmpty(TempUPC))
@@ -721,118 +679,237 @@ namespace OnixData.Version3
 
         #endregion
 
-        #region ONIX Lists
-
-        public OnixProductId[] OnixProductIdList
-        {
-            get
-            {
-                OnixProductId[] ProductIdList = null;
-
-                if (this.productIdentifierField != null)
-                    ProductIdList = this.productIdentifierField;
-                else if (this.shortProductIdentifierField != null)
-                    ProductIdList = this.shortProductIdentifierField;
-                else
-                    ProductIdList = new OnixProductId[0];
-
-                return ProductIdList;
-            }
-        }
-
-        public OnixBarcode[] OnixBarcodeList
-        {
-            get
-            {
-                OnixBarcode[] BarcodeList = null;
-
-                if (this.barcodeField != null)
-                    BarcodeList = this.barcodeField;
-                else if (this.shortBarcodeField != null)
-                    BarcodeList = this.shortBarcodeField;
-                else
-                    BarcodeList = new OnixBarcode[0];
-
-                return BarcodeList;
-            }
-        }
-
-        public OnixProductSupply[] OnixProductSupplyList
-        {
-            get
-            {
-                OnixProductSupply[] ProductSupplyList = null;
-
-                if (this.productSupplyField != null)
-                    ProductSupplyList = this.productSupplyField;
-                else if (this.shortProductSupplyField != null)
-                    ProductSupplyList = this.shortProductSupplyField;
-                else
-                    ProductSupplyList = new OnixProductSupply[0];
-
-                return ProductSupplyList;
-            }
-        }
-
-        #endregion
-
         #region Reference Tags
 
-        /// <remarks/>
-        public string RecordReference
+        /// <summary>
+        /// For every product, you must choose a single record reference which will uniquely identify the Information record which you send out about that product, and which will remain as its permanent identifier every time you send an update.
+        /// It doesn’t matter what reference you choose, provided that it is unique and permanent.
+        /// This record reference doesn’t identify the product – even though you may choose to use the ISBN or another product identifier as a part or the whole of your record reference – it identifies your information record about the product, so that the person to whom you are sending an update can match it with what you have previously sent.
+        /// A good way of generating references which are not part of a recognized product identification scheme but which can be guaranteed to be unique is to prefix a product identifier or a meaningless row ID from your internal database with a reversed Internet domain name which is registered to your organization (reversal prevents the record reference appearing to be a resolvable URL).
+        /// Alternatively, use a UUID.
+        /// This field is mandatory and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("RecordReferenceChoice")]
+        [XmlElement("RecordReference")]
+        [XmlElement("a001")]
+        public string RecordReference { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum RecordReferenceEnum { RecordReference, a001 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RecordReferenceEnum RecordReferenceChoice
         {
-            get { return this.recordReferenceField; }
-            set { this.recordReferenceField = value; }
+            get { return SerializationSettings.UseShortTags ? RecordReferenceEnum.a001 : RecordReferenceEnum.RecordReference; }
+            set { }
+        }
+
+        /// <summary>
+        /// An ONIX code which indicates the type of notification or update which you are sending.
+        /// Mandatory and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 1</remarks>
+        [XmlChoiceIdentifier("NotificationTypeChoice")]
+        [XmlElement("NotificationType")]
+        [XmlElement("a002")]
+        public int NotificationType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NotificationTypeEnum { NotificationType, a002 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NotificationTypeEnum NotificationTypeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? NotificationTypeEnum.a002 : NotificationTypeEnum.NotificationType; }
+            set { }
+        }
+
+        /// <summary>
+        /// Free text which indicates the reason why an ONIX record is being deleted.
+        /// Optional and repeatable, and may occur only when the <see cref="NotificationType"/> element carries the code value 05.
+        /// The language attribute is optional for a single instance of <see cref="DeletionText"/>, but must be included in each instance if <see cref="DeletionText"/> is repeated.
+        /// Note that it refers to the reason why the record is being deleted, not the reason why a product has been ‘deleted’ (in industries which use this terminology when a product is withdrawn).
+        /// </summary>
+        [XmlChoiceIdentifier("DeletionTextChoice")]
+        [XmlElement("DeletionText")]
+        [XmlElement("a199")]
+        public string[] DeletionText { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum DeletionTextEnum { DeletionText, a199 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DeletionTextEnum[] DeletionTextChoice
+        {
+            get
+            {
+                if (DeletionText == null) return null;
+                DeletionTextEnum choice = SerializationSettings.UseShortTags ? DeletionTextEnum.a199 : DeletionTextEnum.DeletionText;
+                DeletionTextEnum[] result = new DeletionTextEnum[DeletionText.Length];
+                for (int i = 0; i < DeletionText.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An ONIX code which indicates the type of source which has issued the ONIX record.
+        /// Optional and non-repeating, independently of the occurrence of any other field.
+        /// </summary>
+        /// <remarks>Onix List 3</remarks>
+        [XmlChoiceIdentifier("RecordSourceTypeChoice")]
+        [XmlElement("RecordSourceType")]
+        [XmlElement("a194")]
+        public int RecordSourceType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum RecordSourceTypeEnum { RecordSourceType, a194 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RecordSourceTypeEnum RecordSourceTypeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? RecordSourceTypeEnum.a194 : RecordSourceTypeEnum.RecordSourceType; }
+            set { }
+        }
+
+        /// <summary>
+        /// A group of data elements which together define an identifier of the organization which is the source of the ONIX record.
+        /// Optional, and repeatable in order to send multiple identifiers for the same organization.
+        /// </summary>
+        [XmlChoiceIdentifier("RecordSourceIdentifierChoice")]
+        [XmlElement("RecordSourceIdentifier")]
+        [XmlElement("recordsourceidentifier")]
+        public OnixRecordSourceIdentifier[] RecordSourceIdentifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum RecordSourceIdentifierEnum { RecordSourceIdentifier, recordsourceidentifier }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RecordSourceIdentifierEnum[] RecordSourceIdentifierChoice
+        {
+            get
+            {
+                if (RecordSourceIdentifier == null) return null;
+                RecordSourceIdentifierEnum choice = SerializationSettings.UseShortTags ? RecordSourceIdentifierEnum.recordsourceidentifier : RecordSourceIdentifierEnum.RecordSourceIdentifier;
+                RecordSourceIdentifierEnum[] result = new RecordSourceIdentifierEnum[RecordSourceIdentifier.Length];
+                for (int i = 0; i < RecordSourceIdentifier.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// The name of the party which issued the record, as free text.
+        /// Optional and non-repeating, independently of the occurrence of any other field.
+        /// </summary>
+        [XmlChoiceIdentifier("RecordSourceNameChoice")]
+        [XmlElement("RecordSourceName")]
+        [XmlElement("a197")]
+        public string RecordSourceName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum RecordSourceNameEnum { RecordSourceName, a197 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RecordSourceNameEnum RecordSourceNameChoice
+        {
+            get { return SerializationSettings.UseShortTags ? RecordSourceNameEnum.a197 : RecordSourceNameEnum.RecordSourceName; }
+            set { }
+        }
+
+        /// <summary>
+        /// <para>A group of data elements which together specify an identifier of a product in accordance with a particular scheme.</para>
+        /// 
+        /// <para>Mandatory within <see cref="OnixProduct"/>, and repeatable with different identifiers for the same product.
+        /// As well as standard identifiers, the composite allows proprietary identifiers (for example SKUs assigned by wholesalers or vendors) to be sent as part of the ONIX record.</para>
+        /// 
+        /// <para>ISBN-13 numbers in their unhyphenated form constitute a range of EAN.UCC GTIN-13 numbers that has been reserved for the international book trade.
+        /// Effective from 1 January 2007, it was agreed by ONIX national groups that it should be mandatory in an ONIX <see cref="OnixProduct"/> record for any item carrying an ISBN-13 to include the ISBN-13 labelled as an EAN.UCC GTIN-13 number (ProductIDType code 03), since this is how the ISBN-13 will be used in book trade transactions.
+        /// For many ONIX applications this will also be sufficient.</para>
+        /// 
+        /// <para>For some ONIX applications, however, particularly when data is to be supplied to the library sector, there may be reasons why the ISBN-13 must also be sent labelled distinctively as an ISBN-13 (ProductIDType code 15).
+        /// Users should consult ‘good practice’ guidelines and/or discuss with their trading partners.</para>
+        /// 
+        /// <para>Note that for some identifiers such as ISBN, punctuation (typically hyphens or spaces for ISBNs) is used to enhance readability when printed, but the punctuation is dropped when carried in ONIX data.
+        /// But for other identifiers – for example DOI – the punctuation is an integral part of the identifier and must always be included.</para>
+        /// </summary>
+        [XmlChoiceIdentifier("ProductIdentifierChoice")]
+        [XmlElement("ProductIdentifier")]
+        [XmlElement("productidentifier")]
+        public OnixProductId[] ProductIdentifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductIdentifierEnum { ProductIdentifier, productidentifier }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductIdentifierEnum[] ProductIdentifierChoice
+        {
+            get
+            {
+                if (ProductIdentifier == null) return null;
+                ProductIdentifierEnum choice = SerializationSettings.UseShortTags ? ProductIdentifierEnum.productidentifier : ProductIdentifierEnum.ProductIdentifier;
+                ProductIdentifierEnum[] result = new ProductIdentifierEnum[ProductIdentifier.Length];
+                for (int i = 0; i < ProductIdentifier.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// A group of data elements which together specify a barcode type and its position on a product.
+        /// Optional: expected to be used only in North America.
+        /// Repeatable if more than one type of barcode is carried on a single product.
+        /// The absence of this composite does not mean that a product is not bar-coded.
+        /// </summary>
+        [XmlChoiceIdentifier("BarcodeChoice")]
+        [XmlElement("Barcode")]
+        [XmlElement("barcode")]
+        public OnixBarcode[] Barcode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum BarcodeEnum { Barcode, barcode }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public BarcodeEnum[] BarcodeChoice
+        {
+            get
+            {
+                if (Barcode == null) return null;
+                BarcodeEnum choice = SerializationSettings.UseShortTags ? BarcodeEnum.barcode : BarcodeEnum.Barcode;
+                BarcodeEnum[] result = new BarcodeEnum[Barcode.Length];
+                for (int i = 0; i < Barcode.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// The descriptive detail block covers data elements which are essentially part of the factual description of the form and content of a product.
+        /// The block as a whole is non-repeating.
+        /// It is mandatory in any <see cref="OnixProduct"/> record unless <see cref="NotificationType"/> indicates that the record is an update notice which carries only those blocks in which changes have occurred.
+        /// </summary>
+        [XmlChoiceIdentifier("DescriptiveDetailChoice")]
+        [XmlElement("DescriptiveDetail")]
+        [XmlElement("descriptivedetail")]
+        public OnixDescriptiveDetail DescriptiveDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum DescriptiveDetailEnum { DescriptiveDetail, descriptivedetail };
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DescriptiveDetailEnum DescriptiveDetailChoice
+        {
+            get { return SerializationSettings.UseShortTags ? DescriptiveDetailEnum.descriptivedetail : DescriptiveDetailEnum.DescriptiveDetail; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("CollateralDetailChoice")]
+        [XmlElement("CollateralDetail")]
+        [XmlElement("collateraldetail")]
+        public OnixCollateralDetail CollateralDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CollateralDetailEnum { CollateralDetail, collateraldetail };
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CollateralDetailEnum CollateralDetailChoice
+        {
+            get { return SerializationSettings.UseShortTags ? CollateralDetailEnum.collateraldetail : CollateralDetailEnum.CollateralDetail; }
+            set { }
         }
 
         /// <remarks/>
-        public int NotificationType
+        [XmlChoiceIdentifier("ContentDetailChoice")]
+        [XmlElement("ContentDetail")]
+        [XmlElement("contentdetail")]
+        public OnixContentDetail ContentDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContentDetailEnum { ContentDetail, contentdetail };
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContentDetailEnum ContentDetailChoice
         {
-            get { return this.notificationTypeField; }
-            set { this.notificationTypeField = value; }
-        }
-
-        /// <remarks/>
-        public int RecordSourceType
-        {
-            get { return this.recordSourceTypeField; }
-            set { this.recordSourceTypeField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ProductIdentifier", IsNullable = false)]
-        public OnixProductId[] ProductIdentifier
-        {
-            get { return this.productIdentifierField; }
-            set { this.productIdentifierField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Barcode")]
-        public OnixBarcode[] Barcode
-        {
-            get { return this.barcodeField; }
-            set { this.barcodeField = value; }
-        }
-
-        public OnixCollateralDetail CollateralDetail
-        {
-            get { return this.collateralDetailField; }
-            set { this.collateralDetailField = value; }
-        }
-
-        /// <remarks/>
-        public OnixContentDetail ContentDetail
-        {
-            get { return this.contentDetailField; }
-            set { this.contentDetailField = value; }
-        }
-
-        /// <remarks/>
-        public OnixDescriptiveDetail DescriptiveDetail
-        {
-            get { return this.descriptiveDetailField; }
-            set { this.descriptiveDetailField = value; }
+            get { return SerializationSettings.UseShortTags ? ContentDetailEnum.contentdetail : ContentDetailEnum.ContentDetail; }
+            set { }
         }
 
         public string Title
@@ -861,109 +938,52 @@ namespace OnixData.Version3
         }
 
         /// <remarks/>
-        public OnixPublishingDetail PublishingDetail
+        [XmlChoiceIdentifier("PublishingDetailChoice")]
+        [XmlElement("PublishingDetail")]
+        [XmlElement("publishingdetail")]
+        public OnixPublishingDetail PublishingDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PublishingDetailEnum { PublishingDetail, publishingdetail }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PublishingDetailEnum PublishingDetailChoice
         {
-            get { return this.publishingDetailField; }
-            set { this.publishingDetailField = value; }
+            get { return SerializationSettings.UseShortTags ? PublishingDetailEnum.publishingdetail : PublishingDetailEnum.PublishingDetail; }
+            set { }
         }
 
         /// <remarks/>
-        public OnixRelatedMaterial RelatedMaterial
+        [XmlChoiceIdentifier("RelatedMaterialChoice")]
+        [XmlElement("RelatedMaterial")]
+        [XmlElement("relatedmaterial")]
+        public OnixRelatedMaterial RelatedMaterial { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum RelatedMaterialEnum { RelatedMaterial, relatedmaterial }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RelatedMaterialEnum RelatedMaterialChoice
         {
-            get { return this.relatedMaterialField; }
-            set { this.relatedMaterialField = value; }
+            get { return SerializationSettings.UseShortTags ? RelatedMaterialEnum.relatedmaterial : RelatedMaterialEnum.RelatedMaterial; }
+            set { }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ProductSupply")]
-        public OnixProductSupply[] ProductSupply
+        [XmlChoiceIdentifier("ProductSupplyChoice")]
+        [XmlElement("ProductSupply")]
+        [XmlElement("productsupply")]
+        public OnixProductSupply[] ProductSupply { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductSupplyEnum { ProductSupply, productsupply }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductSupplyEnum[] ProductSupplyChoice
         {
-            get { return this.productSupplyField; }
-            set { this.productSupplyField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string a001
-        {
-            get { return this.recordReferenceField; }
-            set { this.recordReferenceField = value; }
-        }
-
-        /// <remarks/>
-        public int a002
-        {
-            get { return this.notificationTypeField; }
-            set { this.notificationTypeField = value; }
-        }
-
-        /// <remarks/>
-        public int a194
-        {
-            get { return this.recordSourceTypeField; }
-            set { this.recordSourceTypeField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("productidentifier", IsNullable = false)]
-        public OnixProductId[] productidentifier
-        {
-            get { return this.shortProductIdentifierField; }
-            set { this.shortProductIdentifierField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("barcode")]
-        public OnixBarcode[] barcode
-        {
-            get { return this.shortBarcodeField; }
-            set { this.shortBarcodeField = value; }
-        }
-
-        /// <remarks/>
-        public OnixContentDetail contentdetail
-        {
-            get { return ContentDetail; }
-            set { ContentDetail = value; }
-        }
-
-        /// <remarks/>
-        public OnixDescriptiveDetail descriptivedetail
-        {
-            get { return DescriptiveDetail; }
-            set { DescriptiveDetail = value; }
-        }
-
-        /// <remarks/>
-        public OnixCollateralDetail collateraldetail
-        {
-            get { return CollateralDetail; }
-            set { CollateralDetail = value; }
-        }
-
-        /// <remarks/>
-        public OnixPublishingDetail publishingdetail
-        {
-            get { return PublishingDetail; }
-            set { PublishingDetail = value; }
-        }
-
-        /// <remarks/>
-        public OnixRelatedMaterial relatedmaterial
-        {
-            get { return RelatedMaterial; }
-            set { RelatedMaterial = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("productsupply")]
-        public OnixProductSupply[] productsupply
-        {
-            get { return shortProductSupplyField; }
-            set { shortProductSupplyField = value; }
+            get
+            {
+                if (ProductSupply == null) return null;
+                ProductSupplyEnum choice = SerializationSettings.UseShortTags ? ProductSupplyEnum.productsupply : ProductSupplyEnum.ProductSupply;
+                ProductSupplyEnum[] result = new ProductSupplyEnum[ProductSupply.Length];
+                for (int i = 0; i < ProductSupply.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         #endregion

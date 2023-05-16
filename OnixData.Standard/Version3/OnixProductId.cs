@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class OnixProductId
+    /// <summary>
+    /// A group of data elements which together specify an identifier of a product in accordance with a particular scheme.
+    /// </summary>
+    [XmlType(AnonymousType = true)]
+    public partial class OnixProductId : OnixIdentifier
     {
         #region CONSTANTS
 
@@ -24,42 +23,14 @@ namespace OnixData.Version3
 
         #endregion
 
-        public OnixProductId()
-        {
-            ProductIDType = -1;
-            IDValue       = "";
-        }
-
-        private int    productIDTypeField;
-        private string iDValueField;
-
         #region Reference Tags
 
-        /// <remarks/>
-        public int ProductIDType
-        {
-            get
-            {
-                return this.productIDTypeField;
-            }
-            set
-            {
-                this.productIDTypeField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string IDValue
-        {
-            get
-            {
-                return this.iDValueField;
-            }
-            set
-            {
-                this.iDValueField = value;
-            }
-        }
+        /// <summary>
+        /// An ONIX code identifying the scheme from which the identifier in the <see cref="IDValue"/> element is taken.
+        /// <para>Mandatory in each occurrence of the <see cref="OnixProductId"/> composite, and non-repeating.</para>
+        /// </summary>
+        /// <remarks>Onix List 5</remarks>
+        public int ProductIDType { get; set; }
 
         #endregion
 
@@ -75,19 +46,6 @@ namespace OnixData.Version3
             set
             {
                 ProductIDType = value;
-            }
-        }
-
-        /// <remarks/>
-        public string b244
-        {
-            get
-            {
-                return IDValue;
-            }
-            set
-            {
-                IDValue = value;
             }
         }
 

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3.Epub
 {
-    /// <remarks/>
+    /// <summary>
+    /// An group of data elements which together specify a quantitative limit on a particular type of usage of a digital product.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class OnixEpubUsageLimit
     {
@@ -20,12 +22,21 @@ namespace OnixData.Version3.Epub
 
         #region Reference Tags
 
+        /// <summary>
+        /// A numeric value representing the maximum permitted quantity of a particular type of usage.
+        /// Mandatory in each occurrence of the <see cref="OnixEpubUsageLimit"/> composite, and non-repeating.
+        /// </summary>
         public string Quantity
         {
             get { return this.quantityField; }
             set { this.quantityField = value; }
         }
 
+        /// <summary>
+        /// An ONIX code for a unit in which a permitted usage quantity is stated.
+        /// Mandatory in each occurrence of the <see cref="OnixEpubUsageLimit"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 147</remarks>
         public string EpubUsageUnit
         {
             get { return this.epubUsageUnitField; }

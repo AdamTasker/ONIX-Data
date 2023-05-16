@@ -13,7 +13,7 @@ namespace OnixData.Version3.Text
             resourceFeatureField = shortResourceFeatureField = Array.Empty<OnixResourceFeature>();
             resourceVersionField = shortResourceVersionField = Array.Empty<OnixResourceVersion>();
         }
-        private int resourceContentTypeField;
+        private string resourceContentTypeField;
 
         private int[] contentAudienceField;
         private int[] shortContentAudienceField;
@@ -86,7 +86,7 @@ namespace OnixData.Version3.Text
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ResourceContentType", IsNullable = false)]
-        public int ResourceContentType
+        public string ResourceContentType
         {
             get => resourceContentTypeField;
             set => resourceContentTypeField = value;
@@ -137,7 +137,7 @@ namespace OnixData.Version3.Text
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("x436", IsNullable = false)]
-        public int x436
+        public string x436
         {
             get => ResourceContentType;
             set => ResourceContentType = value;

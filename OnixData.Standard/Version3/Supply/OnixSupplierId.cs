@@ -8,7 +8,7 @@ namespace OnixData.Version3.Supply
 {
     /// <remarks/>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class OnixSupplierId
+    public partial class OnixSupplierId : OnixIdentifier
     {
         #region CONSTANTS
 
@@ -23,12 +23,9 @@ namespace OnixData.Version3.Supply
         public OnixSupplierId()
         {
             SupplierIDType = -1;
-            IDTypeName     = IDValue = "";
         }
 
         private int    supplierIDTypeField;
-        private string idTypeNameField;
-        private string idValueField;
 
         #region Reference Tags
 
@@ -45,32 +42,6 @@ namespace OnixData.Version3.Supply
             }
         }
 
-        /// <remarks/>
-        public string IDTypeName
-        {
-            get
-            {
-                return this.idTypeNameField;
-            }
-            set
-            {
-                this.idTypeNameField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string IDValue
-        {
-            get
-            {
-                return this.idValueField;
-            }
-            set
-            {
-                this.idValueField = value;
-            }
-        }
-
         #endregion
 
         #region Short Tags
@@ -80,20 +51,6 @@ namespace OnixData.Version3.Supply
         {
             get { return SupplierIDType; }
             set { SupplierIDType = value; }
-        }
-
-        /// <remarks/>
-        public string b233
-        {
-            get { return IDTypeName; }
-            set { IDTypeName = value; }
-        }
-
-        /// <remarks/>
-        public string b244
-        {
-            get { return IDValue; }
-            set { IDValue = value; }
         }
 
         #endregion

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3.Epub
 {
-    /// <remarks/>
+    /// <summary>
+    /// An group of data elements which together describe a usage constraint on a digital product (or the absence of such a constraint), whether enforced by DRM technical protection, inherent in the platform used, or specified by license agreement.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class OnixEpubUsageConstraint
     {
@@ -65,19 +67,32 @@ namespace OnixData.Version3.Epub
 
         #region Reference Tags
 
+        /// <summary>
+        /// An ONIX code specifying a usage of a digital product.
+        /// Mandatory in each occurrence of the <see cref="OnixEpubUsageConstraint"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 145</remarks>
         public string EpubUsageType
         {
             get { return this.epubUsageTypeField; }
             set { this.epubUsageTypeField = value; }
         }
 
+        /// <summary>
+        /// An ONIX code specifying the status of a usage of a digital product, eg permitted without limit, permitted with limit, prohibited.
+        /// Mandatory in each occurrence of the <see cref="OnixEpubUsageConstraint"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 146</remarks>
         public string EpubUsageStatus
         {
             get { return this.epubUsageStatusField; }
             set { this.epubUsageStatusField = value; }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// An optional group of data elements which together specify a quantitative limit on a particular type of usage of a digital product.
+        /// Repeatable in order to specify two or more limits on the usage type.
+        /// </summary>
         [System.Xml.Serialization.XmlElementAttribute("EpubUsageLimit")]
         public OnixEpubUsageLimit[] EpubUsageLimit
         {

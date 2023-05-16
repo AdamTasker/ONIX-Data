@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3
 {
-    /// <remarks/>
+    /// <summary>
+    /// An optional group of data elements which together identify a measurement and the units in which it is expressed; used to specify the overall dimensions of a physical product including its packaging (if any).
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixMeasure
     {
@@ -58,7 +60,11 @@ namespace OnixData.Version3
 
         #region Reference Tags
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code indicating the dimension which is specified by an occurrence of the measure composite.
+        /// Mandatory in each occurrence of the <see cref="OnixMeasure"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 48</remarks>
         public int MeasureType
         {
             get
@@ -71,7 +77,10 @@ namespace OnixData.Version3
             }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// The number which represents the dimension specified in <see cref="MeasureType"/> in the measure units specified in <see cref="MeasureUnitCode"/>.
+        /// Mandatory in each occurrence of the <see cref="OnixMeasure"/> composite, and non-repeating.
+        /// </summary>
         public decimal Measurement
         {
             get
@@ -84,7 +93,12 @@ namespace OnixData.Version3
             }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code indicating the measure unit in which dimensions are given.
+        /// Mandatory in each occurrence of the <see cref="OnixMeasure"/> composite, and non-repeating.
+        /// This element must follow the dimension to which the measure unit applies.
+        /// </summary>
+        /// <remarks>Onix List 50</remarks>
         public string MeasureUnitCode
         {
             get

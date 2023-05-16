@@ -110,7 +110,7 @@ namespace OnixData.Extensions
             {
                 if (!String.IsNullOrEmpty(pOnixHeader.DefaultCurrencyCode) || !String.IsNullOrEmpty(pOnixHeader.DefaultPriceType))
                 {
-                    foreach (OnixProductSupply TmpSupply in pOnixProduct.OnixProductSupplyList)
+                    foreach (OnixProductSupply TmpSupply in pOnixProduct.ProductSupply)
                     {
                         foreach (OnixSupplyDetail TmpSupplyDetail in TmpSupply.OnixSupplyDetailList)
                         {

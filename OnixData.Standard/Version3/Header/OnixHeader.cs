@@ -1,158 +1,195 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Header
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    /// <summary>
+    /// A group of data elements which together constitute a message header.
+    /// In ONIX 3.0, a number of redundant elements have been deleted, and the Sender and Addressee structures and the name and format of the <see cref="SentDateTime"/> element have been made consistent with other current ONIX formats.
+    /// </summary>
+    [XmlType(AnonymousType = true)]
     public partial class OnixHeader
     {
-        public OnixHeader()
-        {
-            Sender       = new OnixHeaderSender();
-            Addressee    = new OnixHeaderAddressee();
-            SentDateTime = DefaultLanguageOfText = DefaultCurrencyCode = DefaultPriceType = String.Empty;
-            MessageNote  = MessageNumber = MessageRepeat = String.Empty;
-        }
-
-        private OnixHeaderSender    senderField;
-        private OnixHeaderAddressee addresseeField;
-
-        private string              sentDateTimeField;
-        private string              messageNumber;
-        private string              messageRepeat;
-        private string              messageNote;
-        private string              defLangOfText;
-        private string              defPriceType;
-        private string              defCurrencyCode;
 
         #region Reference Tags
 
-        /// <remarks/>
-        public OnixHeaderSender Sender
-        {
-            get { return this.senderField; }
-            set { this.senderField = value; }
+        /// <summary>
+        /// A group of data elements which together specify the sender of an ONIX for Books message.
+        /// Mandatory in any ONIX for Books message, and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("SenderChoice")]
+        [XmlElement("Sender")]
+        [XmlElement("sender")]
+        public OnixHeaderSender Sender { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SenderEnum { Sender, sender }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SenderEnum SenderChoice {
+            get { return SerializationSettings.UseShortTags ? SenderEnum.sender : SenderEnum.Sender; }
+            set { }
         }
 
-        /// <remarks/>
-        public OnixHeaderAddressee Addressee
+        /// <summary>
+        /// A group of data elements which together specify the addressee of an ONIX for Books message.
+        /// Optional, and repeatable if there are several addressees.
+        /// </summary>
+        [XmlChoiceIdentifier("AddresseeChoice")]
+        [XmlElement("Addressee")]
+        [XmlElement("addressee")]
+        public OnixHeaderAddressee[] Addressee { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AddresseeEnum { Addressee, addressee }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AddresseeEnum[] AddresseeChoice
         {
-            get { return this.addresseeField; }
-            set { this.addresseeField = value; }
+            get
+            {
+                if (Addressee == null) return null;
+                AddresseeEnum choice = SerializationSettings.UseShortTags ? AddresseeEnum.addressee : AddresseeEnum.Addressee;
+                AddresseeEnum[] result = new AddresseeEnum[Addressee.Length];
+                for (int i = 0; i < Addressee.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        /// <remarks/>
-        public string SentDateTime
+        /// <summary>
+        /// A monotonic sequence number of the messages in a series sent between trading partners, to enable the receiver to check against gaps and duplicates.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("MessageNumberChoice")]
+        [XmlElement("MessageNumber")]
+        [XmlElement("m180")]
+        public string MessageNumber { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MessageNumberEnum { MessageNumber, m180 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MessageNumberEnum MessageNumberChoice
         {
-            get { return this.sentDateTimeField; }
-            set { this.sentDateTimeField = value; }
+            get { return SerializationSettings.UseShortTags ? MessageNumberEnum.m180 : MessageNumberEnum.MessageNumber; }
+            set { }
         }
 
-        public string MessageNumber
+        /// <summary>
+        /// A number which distinguishes any repeat transmissions of a message.
+        /// If this element is used, the original is numbered 1 and repeats are numbered 2, 3 etc.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("MessageRepeatChoice")]
+        [XmlElement("MessageRepeat")]
+        [XmlElement("m181")]
+        public string MessageRepeat { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MessageRepeatEnum { MessageRepeat, m181 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MessageRepeatEnum MessageRepeatChoice
         {
-            get { return this.messageNumber; }
-            set { this.messageNumber = value; }
+            get { return SerializationSettings.UseShortTags ? MessageRepeatEnum.m181 : MessageRepeatEnum.MessageRepeat; }
+            set { }
         }
 
-        public string MessageRepeat
+        /// <summary>
+        /// The date on which the message is sent.
+        /// Optionally, the time may be added, using the 24-hour clock, with an explicit indication of the time zone if required, in a format based on ISO 8601.
+        /// Mandatory and non-repeating.
+        /// </summary>
+        /// <remarks>
+        /// The calendar date must use the Gregorian calendar, even if other dates within the message use a different calendar.
+        /// For all practical purposes, UTC is the same as GMT.
+        /// </remarks>
+        [XmlChoiceIdentifier("SentDateTimeChoice")]
+        [XmlElement("SentDateTime")]
+        [XmlElement("x307")]
+        public string SentDateTime { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SentDateTimeEnum { SentDateTime, x307 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SentDateTimeEnum SentDateTimeChoice
         {
-            get { return this.messageRepeat; }
-            set { this.messageRepeat = value; }
+            get { return SerializationSettings.UseShortTags ? SentDateTimeEnum.x307 : SentDateTimeEnum.SentDateTime; }
+            set { }
         }
 
-        public string MessageNote 
+        /// <summary>
+        /// Free text giving additional information about the message.
+        /// Optional, and repeatable in order to provide a note in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="MessageNote"/>, but must be included in each instance if <see cref="MessageNote"/> is repeated.
+        /// </summary>
+        [XmlChoiceIdentifier("MessageNoteChoice")]
+        [XmlElement("MessageNote")]
+        [XmlElement("m183")]
+        public string[] MessageNote { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MessageNoteEnum { MessageNote, m183 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MessageNoteEnum[] MessageNoteChoice
         {
-            get { return this.messageNote; }
-            set { this.messageNote = value; }
+            get
+            {
+                if (MessageNote == null) return null;
+                MessageNoteEnum choice = SerializationSettings.UseShortTags ? MessageNoteEnum.m183 : MessageNoteEnum.MessageNote;
+                MessageNoteEnum[] result = new MessageNoteEnum[MessageNote.Length];
+                for (int i = 0; i < MessageNote.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        /// <remarks/>
-        public string DefaultLanguageOfText
+        /// <summary>
+        /// An ISO standard code indicating the default language which is assumed for the text of products listed in the message, unless explicitly stated otherwise by sending a ‘language of text’ element in the product record.
+        /// This default will be assumed for all product records which do not specify a language in <see cref="OnixDescriptiveDetail.Language"/>.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 74</remarks>
+        [XmlChoiceIdentifier("DefaultLanguageOfTextChoice")]
+        [XmlElement("DefaultLanguageOfText")]
+        [XmlElement("m184")]
+        public string DefaultLanguageOfText { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum DefaultLanguageOfTextEnum { DefaultLanguageOfText, m184 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DefaultLanguageOfTextEnum DefaultLanguageOfTextChoice
         {
-            get { return this.defLangOfText; }
-            set { this.defLangOfText = value; }
+            get { return SerializationSettings.UseShortTags ? DefaultLanguageOfTextEnum.m184 : DefaultLanguageOfTextEnum.DefaultLanguageOfText; }
+            set { }
         }
 
-        /// <remarks/>
-        public string DefaultPriceType
+        /// <summary>
+        /// An ONIX code indicating the default price type which is assumed for prices listed in the message, unless explicitly stated otherwise in a <see cref="Supply.OnixSupplyDetail.Price"/> composite in the product record.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 58</remarks>
+        [XmlChoiceIdentifier("DefaultPriceTypeChoice")]
+        [XmlElement("DefaultPriceType")]
+        [XmlElement("x310")]
+        public string DefaultPriceType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum DefaultPriceTypeEnum { DefaultPriceType, x310 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DefaultPriceTypeEnum DefaultPriceTypeChoice
         {
-            get { return this.defPriceType; }
-            set { this.defPriceType = value; }
+            get { return SerializationSettings.UseShortTags ? DefaultPriceTypeEnum.x310 : DefaultPriceTypeEnum.DefaultPriceType; }
+            set { }
         }
 
-        /// <remarks/>
-        public string DefaultCurrencyCode
+        /// <summary>
+        /// An ISO standard code indicating the currency which is assumed for prices listed in the message, unless explicitly stated otherwise in a <see cref="Supply.OnixSupplyDetail.Price"/> composite in a product record.
+        /// Optional and non-repeating.
+        /// All ONIX messages must include an explicit statement of the currency used for any prices.
+        /// To avoid any possible ambiguity, it is strongly recommended that the currency should be repeated in the <see cref="Price.OnixPrice"/> composite for each individual price.
+        /// </summary>
+        /// <remarks>Onix List 96</remarks>
+        [XmlChoiceIdentifier("DefaultCurrencyCodeChoice")]
+        [XmlElement("DefaultCurrencyCode")]
+        [XmlElement("m186")]
+        public string DefaultCurrencyCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum DefaultCurrencyCodeEnum { DefaultCurrencyCode, m186 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DefaultCurrencyCodeEnum DefaultCurrencyCodeChoice
         {
-            get { return this.defCurrencyCode; }
-            set { this.defCurrencyCode = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public OnixHeaderSender sender
-        {
-            get { return Sender; }
-            set { Sender = value; }
-        }
-
-        /// <remarks/>
-        public OnixHeaderAddressee addressee
-        {
-            get { return Addressee; }
-            set { Addressee = value; }
-        }
-
-        /// <remarks/>
-        public string x307
-        {
-            get { return SentDateTime; }
-            set { SentDateTime = value; }
-        }
-
-        public string m180
-        {
-            get { return MessageNumber; }
-            set { MessageNumber = value; }
-        }
-
-        public string m181
-        {
-            get { return MessageRepeat; }
-            set { MessageRepeat = value; }
-        }
-
-        public string m183
-        {
-            get { return MessageNote; }
-            set { MessageNote = value; }
-        }
-
-        /// <remarks/>
-        public string m184
-        {
-            get { return DefaultLanguageOfText; }
-            set { DefaultLanguageOfText = value; }
-        }
-
-        /// <remarks/>
-        public string x310
-        {
-            get { return DefaultPriceType; }
-            set { DefaultPriceType = value; }
-        }
-
-        /// <remarks/>
-        public string m186
-        {
-            get { return DefaultCurrencyCode; }
-            set { DefaultCurrencyCode = value; }
+            get { return SerializationSettings.UseShortTags ? DefaultCurrencyCodeEnum.m186 : DefaultCurrencyCodeEnum.DefaultCurrencyCode; }
+            set { }
         }
 
         #endregion

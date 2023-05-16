@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3
 {
-    /// <remarks/>
+    /// <summary>
+    /// A group of data elements which together specify a barcode type and its position on a product.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixBarcode
     {
@@ -37,7 +39,11 @@ namespace OnixData.Version3
 
         #region Reference Tags
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code indicating whether, and in what form, a barcode is carried on a product.
+        /// <para>Mandatory in any instance of the <see cref="OnixBarcode"/> composite, and non-repeating.</para>
+        /// </summary>
+        /// <remarks>Onix List 141</remarks>
         public string BarcodeType
         {
             get
@@ -50,7 +56,13 @@ namespace OnixData.Version3
             }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code indicating a position on a product; in this case, the position in which a barcode appears.
+        /// Required if the <see cref="BarcodeType"/> element indicates that the barcode appears on the product, even if the position is ‘unknown’.
+        /// Omitted if the <see cref="BarcodeType"/> element specifies that the product does not carry a barcode.
+        /// Non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 142</remarks>
         public string PositionOnProduct
         {
             get

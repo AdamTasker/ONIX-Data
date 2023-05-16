@@ -12,7 +12,9 @@ using OnixData.Version3.Title;
 
 namespace OnixData.Version3
 {
-    /// <remarks/>
+    /// <summary>
+    /// The descriptive detail block covers data elements which are essentially part of the factual description of the form and content of a product.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixDescriptiveDetail
     {
@@ -20,12 +22,13 @@ namespace OnixData.Version3
         {
             ProductComposition = -1;
 
-            ProductForm            = ProductPackaging = AudienceCode = "";
-            ProductFormDescription = PrimaryContentType = CountryOfManufacture = "";
-            EpubType               = EpubTypeVersion = EpubFormatDescription = EpubTypeNote = "";
-            IllustrationsNote      = NumberOfIllustrations = "";
+            ProductForm        = ProductPackaging = AudienceCode = "";
+            PrimaryContentType = CountryOfManufacture = "";
+            EpubType           = EpubTypeVersion = EpubFormatDescription = EpubTypeNote = "";
+            IllustrationsNote  = NumberOfIllustrations = "";
 
             productContentTypeField = shortProductContentTypeField = new string[0];
+            productFormDescriptionField = new string[0];
             editionTypeField        = shortEditionTypeField        = new string[0];
             productFormDetailField  = shortProductFormDetailField  = new string[0];
             epubTechProtectionField = shortEpubTechProtectionField = new string[0];
@@ -49,7 +52,7 @@ namespace OnixData.Version3
 
         private int      productCompositionField;
         private string   productFormField;
-        private string   productFormDescriptionField;
+        private string[] productFormDescriptionField;
         private string   productPackagingField;
         private int      editionNumberField;
         private string   editionStatementField;
@@ -655,27 +658,33 @@ namespace OnixData.Version3
 
         #region Reference Tags
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code which indicates whether a product consists of a single item or multiple items. Mandatory in an occurrence of <see cref="OnixDescriptiveDetail"/>, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 2</remarks>
         public int ProductComposition
         {
             get { return this.productCompositionField; }
             set { this.productCompositionField = value; }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code which indicates the primary form of a product.
+        /// Mandatory in an occurrence of <see cref="OnixDescriptiveDetail"/>, and non-repeating.
+        /// In ONIX 3.0, the handling of multiple-item products has been changed so that the form of the contained items is now specified only in the <see cref="ProductPart"/> composite, which must be included for full description of any multiple-item product.
+        /// </summary>
+        /// <remarks>Onix List 150</remarks>
         public string ProductForm
         {
             get { return this.productFormField; }
             set { this.productFormField = value; }
         }
 
-        /// <remarks/>
-        public string ProductFormDescription
-        {
-            get { return this.productFormDescriptionField; }
-            set { this.productFormDescriptionField = value; }
-        }
-
+        /// <summary>
+        /// An ONIX code which provides added detail of the medium and/or format of the product.
+        /// Optional, and repeatable in order to provide multiple additional details.
+        /// </summary>
+        /// <remarks>Onix List 175</remarks>
         [System.Xml.Serialization.XmlElementAttribute("ProductFormDetail")]
         public string[] ProductFormDetail
         {
@@ -683,13 +692,60 @@ namespace OnixData.Version3
             set { this.productFormDetailField = value; }
         }
 
+        /// <summary>
+        /// An optional group of data elements which together describe an aspect of product form that is too specific to be covered in the <see cref="ProductForm"/> and <see cref="ProductFormDetail"/> elements.
+        /// Repeatable in order to describe different aspects of the product form.
+        /// </summary>
+        public OnixProductFormFeature[] ProductFormFeature { get; set; }
+
+        /// <summary>
+        /// An ONIX code which indicates the type of outer packaging used for the product.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 80</remarks>
+        public string ProductPackaging
+        {
+            get { return this.productPackagingField; }
+            set { this.productPackagingField = value; }
+        }
+
+        /// <summary>
+        /// If product form codes do not adequately describe the product, a short text description may be added to give a more detailed specification of the product form.
+        /// The field is optional, and repeatable to provide parallel descriptions in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="ProductFormDescription"/>, but must be included in each instance if <see cref="ProductFormDescription"/> is repeated to provide parallel descriptions in multiple languages.
+        /// </summary>
+        public string[] ProductFormDescription
+        {
+            get { return this.productFormDescriptionField; }
+            set { this.productFormDescriptionField = value; }
+        }
+
+        /// <summary>
+        /// An ONIX code which indicates a trade category which is somewhat related to, but not properly an attribute of, product form.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 12</remarks>
+        public string TradeCategory { get; set; }
+
+        /// <summary>
+        /// An ONIX code which indicates the primary or only content type included in a product.
+        /// The element is intended to be used in particular for digital products, when the sender wishes to make it clear that one of a number of content types (eg text, audio, video) is the primary type for the product.
+        /// Other content types may be specified in <see cref="ProductContentType"/>.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 81</remarks>
         public string PrimaryContentType
         {
             get { return this.primaryContentTypeField; }
             set { this.primaryContentTypeField = value; }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code which indicates a content type included in a product.
+        /// The element is intended to be used in particular for digital products, to specify content types other than the primary type, or to list content types when none is singled out as the primary type.
+        /// Optional, and repeatable to list multiple content types.
+        /// </summary>
+        /// <remarks>Onix List 81</remarks>
         [System.Xml.Serialization.XmlElementAttribute("ProductContentType")]
         public string[] ProductContentType
         {
@@ -697,11 +753,98 @@ namespace OnixData.Version3
             set { this.productContentTypeField = value; }
         }
 
-        /// <remarks/>
-        public string ProductPackaging
+        /// <summary>
+        /// An optional group of data elements which together identify a measurement and the units in which it is expressed; used to specify the overall dimensions of a physical product including its packaging (if any).
+        /// Repeatable to provide multiple combinations of dimension and unit.
+        /// </summary>
+        [System.Xml.Serialization.XmlElementAttribute("Measure")]
+        public OnixMeasure[] Measure
         {
-            get { return this.productPackagingField; }
-            set { this.productPackagingField = value; }
+            get { return this.measureField; }
+            set { this.measureField = value; }
+        }
+
+        /// <summary>
+        /// An ISO code identifying the country of manufacture of a single-item product, or of a multiple-item product when all items are manufactured in the same country.
+        /// This information is needed in some countries to meet regulatory requirements.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 91</remarks>
+        public string CountryOfManufacture
+        {
+            get { return this.countryOfManufactureField; }
+            set { this.countryOfManufactureField = value; }
+        }
+
+        /// <summary>
+        /// An ONIX code specifying whether a digital product has DRM or other technical protection features.
+        /// Optional, and repeatable if a product has two or more kinds of protection (ie different parts of a product are protected in different ways).
+        /// </summary>
+        /// <remarks>Onix List 144</remarks>
+        [System.Xml.Serialization.XmlElementAttribute("EpubTechnicalProtection")]
+        public string[] EpubTechnicalProtection
+        {
+            get { return this.epubTechProtectionField; }
+            set { this.epubTechProtectionField = value; }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together describe a usage constraint on a digital product (or the absence of such a constraint), whether enforced by DRM technical protection, inherent in the platform used, or specified by license agreement.
+        /// Repeatable in order to describe multiple constraints on usage.
+        /// </summary>
+        [System.Xml.Serialization.XmlElementAttribute("EpubUsageConstraint")]
+        public OnixEpubUsageConstraint[] EpubUsageConstraint
+        {
+            get { return this.epubUsageConstraintField; }
+            set { this.epubUsageConstraintField = value; }
+        }
+
+        /// <summary>
+        /// An optional and non-repeatable composite carrying the name or title of the license governing use of the product, and a link to the license terms in eye-readable or machine-readable form.
+        /// </summary>
+        public OnixEpubLicense EpubLicense { get; set; }
+
+        /// <summary>
+        /// The scale of a map, expressed as a ratio 1:nnnnn; only the number nnnnn is carried in the data element, without spaces or punctuation.
+        /// Optional, and repeatable if a product comprises maps with two or more different scales.
+        /// </summary>
+        public decimal MapScale { get; set; }
+
+        /// <summary>
+        /// An optional group of data elements which together define a product classification (not to be confused with a subject classification).
+        /// The intended use is to enable national or international trade classifications (also known as commodity codes) to be carried in an ONIX record.
+        /// The composite is repeatable if parts of the product are classified differently within a single product classification scheme, or to provide classification codes from multiple classification schemes.
+        /// </summary>
+        [System.Xml.Serialization.XmlChoiceIdentifier("ProductClassificationChoice")]
+        [System.Xml.Serialization.XmlElement("ProductClassification")]
+        [System.Xml.Serialization.XmlElement("productclassification")]
+        public OnixProductClassification[] ProductClassification { get; set; }
+        [System.Xml.Serialization.XmlType(IncludeInSchema = false)]
+        public enum ProductClassificationEnum { ProductClassification, productclassification }
+        [System.Xml.Serialization.XmlIgnore]
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+        public ProductClassificationEnum[] ProductClassificationChoice;
+
+        /// <summary>
+        /// A group of data elements which together describe an item which is part of or contained within a multiple-component or multiple-item product or a trade pack.
+        /// The composite must be repeated for each item or component.
+        /// </summary>
+        [System.Xml.Serialization.XmlElementAttribute("ProductPart")]
+        public OnixProductPart[] ProductPart
+        {
+            get { return this.prodPartField; }
+            set { this.prodPartField = value; }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which carry attributes of a collection of which the product is part.
+        /// The composite is repeatable, to provide details when the product belongs to multiple collections.
+        /// </summary>
+        [System.Xml.Serialization.XmlElementAttribute("Collection")]
+        public OnixCollection[] Collection
+        {
+            get { return this.collectionField; }
+            set { this.collectionField = value; }
         }
 
         /// <remarks/>
@@ -725,12 +868,6 @@ namespace OnixData.Version3
         {
             get { return this.audienceRangeField; }
             set { this.audienceRangeField = value; }
-        }
-
-        public string CountryOfManufacture
-        {
-            get { return this.countryOfManufactureField; }
-            set { this.countryOfManufactureField = value; }
         }
 
         /// <remarks/>
@@ -779,21 +916,6 @@ namespace OnixData.Version3
             set { this.epubTypeNoteField = value; }
         }
 
-        [System.Xml.Serialization.XmlElementAttribute("EpubTechnicalProtection")]
-        public string[] EpubTechnicalProtection
-        {
-            get { return this.epubTechProtectionField; }
-            set { this.epubTechProtectionField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Collection")]
-        public OnixCollection[] Collection
-        {
-            get { return this.collectionField; }
-            set { this.collectionField = value; }
-        }
-
         public string IllustrationsNote
         {
             get { return this.illustrationsNoteField; }
@@ -805,21 +927,6 @@ namespace OnixData.Version3
             get { return this.numOfIllustrationsField; }
             set { this.numOfIllustrationsField = value; }
         }
-
-        /*
-        public int SeriesNumber
-        {
-            get
-            {
-                int FoundSeriesNum = 0;
-
-                if ((Series != null) && (Series.Length > 0))
-                    FoundSeriesNum = Series[0].NumberWithinSeries;
-
-                return FoundSeriesNum;
-            }
-        }
-        */
 
         /// <remarks/>
         public OnixTitleDetail TitleDetail
@@ -837,14 +944,6 @@ namespace OnixData.Version3
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("EpubUsageConstraint")]
-        public OnixEpubUsageConstraint[] EpubUsageConstraint
-        {
-            get { return this.epubUsageConstraintField; }
-            set { this.epubUsageConstraintField = value; }
-        }
-
-        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Extent")]
         public OnixExtent[] Extent
         {
@@ -858,32 +957,6 @@ namespace OnixData.Version3
         {
             get { return this.languageField; }
             set { this.languageField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Measure")]
-        public OnixMeasure[] Measure
-        {
-            get { return this.measureField; }
-            set { this.measureField = value; }
-        }
-
-        [System.Xml.Serialization.XmlChoiceIdentifier("ProductClassificationChoice")]
-        [System.Xml.Serialization.XmlElement("ProductClassification")]
-        [System.Xml.Serialization.XmlElement("productclassification")]
-        public OnixProductClassification[] ProductClassification { get; set; }
-        [System.Xml.Serialization.XmlType(IncludeInSchema = false)]
-        public enum ProductClassificationEnum { ProductClassification, productclassification }
-        [System.Xml.Serialization.XmlIgnore]
-        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public ProductClassificationEnum[] ProductClassificationChoice;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ProductPart")]
-        public OnixProductPart[] ProductPart
-        {
-            get { return this.prodPartField; }
-            set { this.prodPartField = value; }
         }
 
         /// <remarks/>
@@ -921,7 +994,7 @@ namespace OnixData.Version3
         }
 
         /// <remarks/>
-        public string b014
+        public string[] b014
         {
             get { return ProductFormDescription; }
             set { ProductFormDescription = value; }

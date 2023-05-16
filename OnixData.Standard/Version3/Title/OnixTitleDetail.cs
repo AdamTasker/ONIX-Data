@@ -258,19 +258,36 @@ namespace OnixData.Version3.Title
 
         #region Reference Tags
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code indicating the type of a title.
+        /// Mandatory in each occurrence of the <see cref="OnixTitleDetail"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 15</remarks>
         public string TitleType
         {
             get { return this.titleTypeField; }
             set { this.titleTypeField = value; }
         }
 
+        /// <summary>
+        /// A group of data elements which together represent an element of a collection title.
+        /// At least one title element is mandatory in each occurrence of the <see cref="OnixTitleDetail"/> composite.
+        /// The composite is repeatable with different sequence numbers and/or title element levels.
+        /// </summary>
         [System.Xml.Serialization.XmlElementAttribute("TitleElement")]
         public OnixTitleElement[] TitleElement
         {
             get { return this.titleElementField; }
             set { this.titleElementField = value; }
         }
+
+        /// <summary>
+        /// Free text showing how the collection title should be presented in any display, particularly when a standard concatenation of individual title elements from <see cref="OnixCollection"/> (in the order specified by the <see cref="OnixTitleElement.SequenceNumber"/> data elements) would not give a satisfactory result.
+        /// Optional and non-repeating.
+        /// When this field is sent, the recipient should use it to replace all collection title detail sent in <see cref="OnixCollection"/> for display purposes only.
+        /// The individual collection title element detail must also be sent, for indexing and retrieval purposes.
+        /// </summary>
+        public string TitleStatement { get; set; }
 
         #endregion
 

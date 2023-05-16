@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3.Title
 {
-    /// <remarks/>
+    /// <summary>
+    /// A group of data elements which carry attributes of a collection of which the product is part.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixCollection
     {
@@ -198,14 +200,34 @@ namespace OnixData.Version3.Title
 
         #region Reference Tags
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code indicating the type of a collection: publisher collection, ascribed collection, or unspecified.
+        /// Mandatory in each occurrence of the <see cref="OnixCollection"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 148</remarks>
         public string CollectionType
         {
             get { return this.collTypeField; }
             set { this.collTypeField = value; }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// If the <see cref="CollectionType"/> code indicates an ascribed collection (ie a collection which has been identified and described by a supply chain organization other than the publisher), this element may be used to carry the name of the organization responsible.
+        /// Optional and non-repeating.
+        /// </summary>
+        public string SourceName { get; set; }
+
+        /// <summary>
+        /// A repeatable group of data elements which together specify an identifier of a bibliographic collection.
+        /// The composite is optional, and may only repeat if two or more identifiers of different types are sent for the same collection.
+        /// It is not permissible to have two identifiers of the same type.
+        /// </summary>
+        public OnixCollectionIdentifier[] CollectionIdentifier { get; set; }
+
+        /// <summary>
+        /// An optional and repeatable group of data elements which indicates some ordinal position of a product within a collection.
+        /// Different ordinal positions may be specified using separate repeats of the composite – for example, a product may be published first while also being third in narrative order within a collection.
+        /// </summary>
         [System.Xml.Serialization.XmlElementAttribute("CollectionSequence")]
         public OnixCollectionSequence[] CollectionSequence
         {
@@ -213,13 +235,25 @@ namespace OnixData.Version3.Title
             set { this.collSeqField = value; }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// A group of data elements which together give the text of a collection title and specify its type.
+        /// Optional, but the composite is required unless the only collection title is carried in full, and word-for-word, as an integral part of the product title in <see cref="OnixDescriptiveDetail.TitleDetail"/>, in which case it should not be repeated in <see cref="OnixCollection"/>.
+        /// The composite is repeatable with different title types.
+        /// </summary>
         [System.Xml.Serialization.XmlElementAttribute("TitleDetail")]
         public OnixTitleDetail[] TitleDetail
         {
             get { return this.titleDetailField; }
             set { this.titleDetailField = value; }
         }
+
+        /// <summary>
+        /// A group of data elements which together describe a personal or corporate contributor to a collection.
+        /// Optional, and repeatable to describe multiple contributors.
+        /// The <see cref="Contributor"/> composite is included here for use only by those ONIX communities whose national practice requires contributors to be identified at collection level.
+        /// In many countries, including the UK, USA, Canada and Spain, the required practice is to identify all contributors at product level in <see cref="OnixDescriptiveDetail.Contributor"/>.
+        /// </summary>
+        public OnixContributor[] Contributor { get; set; }
 
         #endregion
 

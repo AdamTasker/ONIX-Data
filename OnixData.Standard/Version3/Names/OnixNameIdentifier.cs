@@ -3,7 +3,7 @@
 namespace OnixData.Version3.Names
 {
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class OnixNameIdentifier
+    public partial class OnixNameIdentifier : OnixIdentifier
     {
         #region CONSTANTS
 
@@ -45,13 +45,11 @@ namespace OnixData.Version3.Names
 
         public OnixNameIdentifier()
         {
-            nameIDType = idTypeName = idValue = String.Empty;
+            nameIDType = String.Empty;
 
         }
 
         private string nameIDType;
-        private string idTypeName;
-        private string idValue;
 
         #region ONIX Helpers
 
@@ -78,18 +76,6 @@ namespace OnixData.Version3.Names
             set { this.nameIDType = value; }
         }
 
-        public string IDTypeName
-        {
-            get { return this.idTypeName; }
-            set { this.idTypeName = value; }
-        }
-
-        public string IDValue
-        {
-            get { return this.idValue; }
-            set { this.idValue = value; }
-        }
-
         #endregion
 
         #region Short Tags
@@ -98,18 +84,6 @@ namespace OnixData.Version3.Names
         {
             get { return NameIDType; }
             set { NameIDType = value; }
-        }
-
-        public string b233
-        {
-            get { return IDTypeName; }
-            set { IDTypeName = value; }
-        }
-
-        public string b244
-        {
-            get { return IDValue; }
-            set { IDValue = value; }
         }
 
         #endregion

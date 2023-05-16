@@ -1,88 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Header
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class OnixHeaderAddressee
+    /// <summary>
+    /// A group of data elements which together specify the addressee of an ONIX for Books message.
+    /// </summary>
+    [XmlType(AnonymousType = true)]
+    public partial class OnixHeaderAddressee : OnixContact
     {
-        public OnixHeaderAddressee()
-        {
-            AddresseeName = "";
-
-            AddresseeIdentifier = addresseeidentifier = new OnixHeaderAddresseeIdentifier[0];
-        }
-
-        private string addresseeNameField;
-
-        private OnixHeaderAddresseeIdentifier[] addresseeIdentifierField;
-        private OnixHeaderAddresseeIdentifier[] shortAddresseeIdentifierField;
-
-        #region Helper Methods
-
-        public OnixHeaderAddresseeIdentifier[] OnixAddresseeIdentifierList
-        {
-            get
-            {
-                OnixHeaderAddresseeIdentifier[] AddresseeIdList = null;
-
-                if (this.addresseeIdentifierField != null)
-                    AddresseeIdList = this.addresseeIdentifierField;
-                else if (this.shortAddresseeIdentifierField != null)
-                    AddresseeIdList = this.shortAddresseeIdentifierField;
-                else
-                    AddresseeIdList = new OnixHeaderAddresseeIdentifier[0];
-
-                return AddresseeIdList;
-            }
-        }
-
-        #endregion
 
         #region Reference Tags
 
-        /// <remarks/>
-        public string AddresseeName
+        /// <summary>
+        /// A group of data elements which together define an identifier of the addressee.
+        /// The composite is optional, and repeatable if more than one identifier of different types for the same addressee is sent; but either an <see cref="AddresseeName"/> or an <see cref="AddresseeIdentifier"/> must be included.
+        /// </summary>
+        [XmlChoiceIdentifier("AddresseeIdentifierChoice")]
+        [XmlElement("AddresseeIdentifier")]
+        [XmlElement("addresseeidentifier")]
+        public OnixHeaderAddresseeIdentifier[] AddresseeIdentifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AddresseeIdentifierEnum { AddresseeIdentifier, addresseeidentifier }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AddresseeIdentifierEnum[] AddresseeIdentifierChoice
         {
             get
             {
-                return this.addresseeNameField;
+                if (AddresseeIdentifier == null) return null;
+                AddresseeIdentifierEnum choice = SerializationSettings.UseShortTags ? AddresseeIdentifierEnum.addresseeidentifier : AddresseeIdentifierEnum.AddresseeIdentifier;
+                AddresseeIdentifierEnum[] result = new AddresseeIdentifierEnum[AddresseeIdentifier.Length];
+                for (int i = 0; i < AddresseeIdentifier.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.addresseeNameField = value;
-            }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AddresseeIdentifier")]
-        public OnixHeaderAddresseeIdentifier[] AddresseeIdentifier
+        /// <summary>
+        /// The name of the addressee organization, which should always be stated in a standard form agreed with the addressee.
+        /// Optional and non-repeating; but either a <see cref="AddresseeName"/> element or a <see cref="AddresseeIdentifier"/> composite must be included.
+        /// </summary>
+        [XmlChoiceIdentifier("AddresseeNameChoice")]
+        [XmlElement("AddresseeName")]
+        [XmlElement("x300")]
+        public string AddresseeName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AddresseeNameEnum { AddresseeName, x300 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AddresseeNameEnum AddresseeNameChoice
         {
-            get { return this.addresseeIdentifierField; }
-            set { this.addresseeIdentifierField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string x300
-        {
-            get { return AddresseeName; }
-            set { AddresseeName = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("addresseeidentifier")]
-        public OnixHeaderAddresseeIdentifier[] addresseeidentifier
-        {
-            get { return this.shortAddresseeIdentifierField; }
-            set { this.shortAddresseeIdentifierField = value; }
+            get { return SerializationSettings.UseShortTags ? AddresseeNameEnum.x300 : AddresseeNameEnum.AddresseeName; }
+            set { }
         }
 
         #endregion

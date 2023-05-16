@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3.Publishing
 {
-    public class OnixImprintIdentifier
+    public class OnixImprintIdentifier : OnixIdentifier
     {
         #region CONSTANTS
 
@@ -17,8 +17,6 @@ namespace OnixData.Version3.Publishing
         public OnixImprintIdentifier()
         {
             ImprintIDType = "";
-            IDTypeName    = "";
-            IDValue       = "";
         }
 
         private string imprintIdTypeField;
@@ -37,32 +35,6 @@ namespace OnixData.Version3.Publishing
             set
             {
                 this.imprintIdTypeField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string IDTypeName
-        {
-            get
-            {
-                return this.idTypeNameField;
-            }
-            set
-            {
-                this.idTypeNameField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string IDValue
-        {
-            get
-            {
-                return this.idValueField;
-            }
-            set
-            {
-                this.idValueField = value;
             }
         }
 
@@ -91,20 +63,6 @@ namespace OnixData.Version3.Publishing
         {
             get { return ImprintIDType; }
             set { ImprintIDType = value; }
-        }
-
-        /// <remarks/>
-        public string b233
-        {
-            get { return IDTypeName; }
-            set { IDTypeName = value; }
-        }
-
-        /// <remarks/>
-        public string b244
-        {
-            get { return IDValue; }
-            set { IDValue = value; }
         }
 
         #endregion

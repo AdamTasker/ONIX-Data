@@ -1,130 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Header
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class OnixHeaderSender
+    /// <summary>
+    /// A group of data elements which together specify the sender of an ONIX for Books message.
+    /// </summary>
+    [XmlType(AnonymousType = true)]
+    public partial class OnixHeaderSender : OnixContact
     {
-        public OnixHeaderSender()
-        {
-            SenderName = ContactName = EmailAddress = "";
-
-            SenderIdentifier = senderidentifier = new OnixHeaderSenderIdentifier[0];
-        }
-
-        private string senderNameField;
-        private string contactNameField;
-        private string emailAddressField;
-
-        private OnixHeaderSenderIdentifier[] senderIdentifierField;
-        private OnixHeaderSenderIdentifier[] shortSenderIdentifierField;
-
-        #region Helper Methods
-
-        public OnixHeaderSenderIdentifier[] OnixSenderIdentifierList
-        {
-            get
-            {
-                OnixHeaderSenderIdentifier[] SenderIdList = null;
-
-                if (this.senderIdentifierField != null)
-                    SenderIdList = this.senderIdentifierField;
-                else if (this.shortSenderIdentifierField != null)
-                    SenderIdList = this.shortSenderIdentifierField;
-                else
-                    SenderIdList = new OnixHeaderSenderIdentifier[0];
-
-                return SenderIdList;
-            }
-        }
-
-        #endregion
-
         #region Reference Tags
 
-        /// <remarks/>
-        public string SenderName
+        /// <summary>
+        /// A group of data elements which together define an identifier of the sender.
+        /// The composite is optional, and repeatable if more than one identifier of different types is sent; but either a <see cref="SenderName"/> or a <see cref="SenderIdentifier"/> must be included.
+        /// </summary>
+        [XmlChoiceIdentifier("SenderIdentifierChoice")]
+        [XmlElement("SenderIdentifier")]
+        [XmlElement("senderidentifier")]
+        public OnixHeaderSenderIdentifier[] SenderIdentifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SenderIdentifierEnum { SenderIdentifier, senderidentifier }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SenderIdentifierEnum[] SenderIdentifierChoice
         {
             get
             {
-                return this.senderNameField;
+                if (SenderIdentifier == null) return null;
+                SenderIdentifierEnum choice = SerializationSettings.UseShortTags ? SenderIdentifierEnum.senderidentifier : SenderIdentifierEnum.SenderIdentifier;
+                SenderIdentifierEnum[] result = new SenderIdentifierEnum[SenderIdentifier.Length];
+                for (int i = 0; i < SenderIdentifier.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.senderNameField = value;
-            }
+            set { }
         }
 
-        /// <remarks/>
-        public string ContactName
+        /// <summary>
+        /// The name of the sender organization, which should always be stated in a standard form agreed with the addressee.
+        /// Optional and non-repeating; but either a <see cref="SenderName"/> element or a <see cref="SenderIdentifier"/> composite must be included.
+        /// </summary>
+        [XmlChoiceIdentifier("SenderNameChoice")]
+        [XmlElement("SenderName")]
+        [XmlElement("x298")]
+        public string SenderName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SenderNameEnum { SenderName, x298 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SenderNameEnum SenderNameChoice
         {
-            get
-            {
-                return this.contactNameField;
-            }
-            set
-            {
-                this.contactNameField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string EmailAddress
-        {
-            get
-            {
-                return this.emailAddressField;
-            }
-            set
-            {
-                this.emailAddressField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("SenderIdentifier")]
-        public OnixHeaderSenderIdentifier[] SenderIdentifier
-        {
-            get { return this.senderIdentifierField; }
-            set { this.senderIdentifierField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string x298
-        {
-            get { return SenderName; }
-            set { SenderName = value; }
-        }
-
-        /// <remarks/>
-        public string x299
-        {
-            get { return ContactName; }
-            set { ContactName = value; }
-        }
-
-        /// <remarks/>
-        public string j272
-        {
-            get { return EmailAddress; }
-            set { EmailAddress = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("senderidentifier")]
-        public OnixHeaderSenderIdentifier[] senderidentifier
-        {
-            get { return this.shortSenderIdentifierField; }
-            set { this.shortSenderIdentifierField = value; }
+            get { return SerializationSettings.UseShortTags ? SenderNameEnum.x298 : SenderNameEnum.SenderName; }
+            set { }
         }
 
         #endregion

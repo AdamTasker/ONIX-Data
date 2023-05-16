@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace OnixData.Version3.Title
 {
-    /// <remarks/>
+    /// <summary>
+    /// A group of data elements which indicates some ordinal position of a product within a collection. Different ordinal positions may be specified using separate repeats of the composite – for example, a product may be published first while also being third in narrative order within a collection.
+    /// </summary>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixCollectionSequence
     {
@@ -77,7 +79,11 @@ namespace OnixData.Version3.Title
 
         #region Reference Tags
 
-        /// <remarks/>
+        /// <summary>
+        /// An ONIX code identifying the type of ordering used for the product’s sequence number within the collection.
+        /// Mandatory and non-repeating within the <see cref="OnixCollectionSequence"/> composite.
+        /// </summary>
+        /// <remarks>Onix List 197</remarks>
         public string CollectionSequenceType
         {
             get
@@ -90,7 +96,11 @@ namespace OnixData.Version3.Title
             }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// A name which describes a proprietary order used for the product’s sequence number within the collection.
+        /// Must be included when, and only when, the code in the <see cref="CollectionSequenceType"/> field indicates a proprietary scheme.
+        /// Optional and non-repeating.
+        /// </summary>
         public string CollectionSequenceTypeName
         {
             get
@@ -103,7 +113,13 @@ namespace OnixData.Version3.Title
             }
         }
 
-        /// <remarks/>
+        /// <summary>
+        /// <para>A number which specifies the ordinal position of the product in a collection.
+        /// The ordinal position may be a simple number (1st, 2nd, 3rd etc) or may be multi-level (eg 3.2) if the collection has a multi-level structure (ie there are both collection and sub-collection title elements).
+        /// Mandatory and non-repeating within the <see cref="OnixCollectionSequence"/> composite.</para>
+        ///
+        /// <para>A hyphen may be used in place of an integer within a multi-level number, where a particular level of the hierarchy is unnumbered, for example -.3 where a product is the third in a sub-collection, and the sub-collection is unnumbered within the collection.</para>
+        /// </summary>
         public string CollectionSequenceNumber
         {
             get
