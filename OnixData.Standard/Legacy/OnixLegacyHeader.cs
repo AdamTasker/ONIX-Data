@@ -13,17 +13,6 @@ namespace OnixData.Legacy
     [XmlType(AnonymousType = true)]
     public partial class OnixLegacyHeader
     {
-        public OnixLegacyHeader()
-        {
-            FromCompany = "";
-            FromPerson  = "";
-            FromEmail   = "";
-            SentDate    = "";
-            MessageNote = "";
-
-            DefaultLanguageOfText = DefaultCurrencyCode = "";
-            DefaultClassOfTrade   = "";
-        }
 
         #region Reference tags
 
@@ -41,7 +30,11 @@ namespace OnixData.Legacy
         public enum FromCompanyEnum { FromCompany, m174 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public FromCompanyEnum FromCompanyChoice;
+        public FromCompanyEnum FromCompanyChoice
+        {
+            get { return SerializationSettings.UseShortTags ? FromCompanyEnum.m174 : FromCompanyEnum.FromCompany; }
+            set { }
+        }
 
         /// <summary>
         /// Free text giving the name, department, phone number, etc for a contact person in the sender organization who is responsible for the content of the message.
@@ -57,7 +50,11 @@ namespace OnixData.Legacy
         public enum FromPersonEnum { FromPerson, m175 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public FromPersonEnum FromPersonChoice;
+        public FromPersonEnum FromPersonChoice
+        {
+            get { return SerializationSettings.UseShortTags ? FromPersonEnum.m175 : FromPersonEnum.FromPerson; }
+            set { }
+        }
 
         /// <summary>
         /// A text field giving the email address for a contact person in the sender organization who is responsible for the content of the message.
@@ -73,7 +70,11 @@ namespace OnixData.Legacy
         public enum FromEmailEnum { FromEmail, m283 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public FromEmailEnum FromEmailChoice;
+        public FromEmailEnum FromEmailChoice
+        {
+            get { return SerializationSettings.UseShortTags ? FromEmailEnum.m283 : FromEmailEnum.FromEmail; }
+            set { }
+        }
 
         /// <summary>
         /// The date on which the message is sent. Optionally, the time may be added, using the 24-hour clock.
@@ -87,7 +88,11 @@ namespace OnixData.Legacy
         public enum SentDateEnum { SentDate, m182 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SentDateEnum SentDateChoice;
+        public SentDateEnum SentDateChoice
+        {
+            get { return SerializationSettings.UseShortTags ? SentDateEnum.m182 : SentDateEnum.SentDate; }
+            set { }
+        }
 
         /// <summary>
         /// Free text giving additional information about the message.
@@ -103,7 +108,11 @@ namespace OnixData.Legacy
         public enum MessageNoteEnum { MessageNote, m183 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public MessageNoteEnum MessageNoteChoice;
+        public MessageNoteEnum MessageNoteChoice 
+        {
+            get { return SerializationSettings.UseShortTags ? MessageNoteEnum.m183 : MessageNoteEnum.MessageNote; }
+            set { }
+        }
 
         /// <summary>
         /// An ISO standard code indicating the default language which is assumed for the text of products listed in the message, unless explicitly stated otherwise by sending a “language of text” element in the product record.
@@ -118,7 +127,11 @@ namespace OnixData.Legacy
         public enum DefaultLanguageOfTextEnum { DefaultLanguageOfText, m184 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DefaultLanguageOfTextEnum DefaultLanguageOfTextChoice;
+        public DefaultLanguageOfTextEnum DefaultLanguageOfTextChoice
+        {
+            get { return SerializationSettings.UseShortTags ? DefaultLanguageOfTextEnum.m184 : DefaultLanguageOfTextEnum.DefaultLanguageOfText; }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code indicating the default price type which is assumed for prices listed in the message, unless explicitly stated otherwise in a <see cref="OnixLegacySupplyDetail.Price"/> composite in the product record.
@@ -132,7 +145,11 @@ namespace OnixData.Legacy
         public enum DefaultPriceTypeCodeEnum { DefaultPriceTypeCode, m185 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DefaultPriceTypeCodeEnum DefaultPriceTypeCodeChoice;
+        public DefaultPriceTypeCodeEnum DefaultPriceTypeCodeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? DefaultPriceTypeCodeEnum.m185 : DefaultPriceTypeCodeEnum.DefaultPriceTypeCode; }
+            set { }
+        }
 
         /// <summary>
         /// An ISO standard code indicating the currency which is assumed for prices listed in the message, unless explicitly stated otherwise in a <see cref="OnixLegacySupplyDetail.Price"/> composite in the product record.
@@ -146,7 +163,11 @@ namespace OnixData.Legacy
         public enum DefaultCurrencyCodeEnum { DefaultCurrencyCode, m186 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DefaultCurrencyCodeEnum DefaultCurrencyCodeChoice;
+        public DefaultCurrencyCodeEnum DefaultCurrencyCodeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? DefaultCurrencyCodeEnum.m186 : DefaultCurrencyCodeEnum.DefaultCurrencyCode; }
+            set { }
+        }
 
         /// <summary>
         /// A code indicating the default unit which is assumed for linear measurements listed in the message, unless otherwise specified in the product record.
@@ -161,7 +182,11 @@ namespace OnixData.Legacy
         public enum DefaultLinearUnitEnum { DefaultLinearUnit, m187 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DefaultLinearUnitEnum DefaultLinearUnitChoice;
+        public DefaultLinearUnitEnum DefaultLinearUnitChoice
+        {
+            get { return SerializationSettings.UseShortTags ? DefaultLinearUnitEnum.m187 : DefaultLinearUnitEnum.DefaultLinearUnit; }
+            set { }
+        }
 
         /// <summary>
         /// A code indicating the default unit which is assumed for weights listed in the message, unless otherwise specified in the product record.
@@ -176,7 +201,11 @@ namespace OnixData.Legacy
         public enum DefaultWeightUnitEnum { DefaultWeightUnit, m188 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DefaultWeightUnitEnum DefaultWeightUnitChoice;
+        public DefaultWeightUnitEnum DefaultWeightUnitChoice
+        {
+            get { return SerializationSettings.UseShortTags ? DefaultWeightUnitEnum.m188 : DefaultWeightUnitEnum.DefaultWeightUnit; }
+            set { }
+        }
 
         /// <summary>
         /// Free text indicating the class of trade which is assumed for prices given in the message, unless explicitly stated otherwise specified in <see cref="OnixLegacyPrice.ClassOfTrade"/>.
@@ -193,7 +222,11 @@ namespace OnixData.Legacy
         public enum DefaultClassOfTradeEnum { DefaultClassOfTrade, m193 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DefaultClassOfTradeEnum DefaultClassOfTradeChoice;
+        public DefaultClassOfTradeEnum DefaultClassOfTradeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? DefaultClassOfTradeEnum.m193 : DefaultClassOfTradeEnum.DefaultClassOfTrade; }
+            set { }
+        }
 
         #endregion
     }

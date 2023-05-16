@@ -14,11 +14,6 @@ namespace OnixData.Legacy
     [XmlRoot(IsNullable = false)]
     public partial class OnixLegacyMessage
     {
-        public OnixLegacyMessage()
-        {
-            Header  = new OnixLegacyHeader();
-            Product = null;
-        }
 
         #region Reference Tags
 
@@ -36,7 +31,11 @@ namespace OnixData.Legacy
         public enum HeaderEnum { Header, header };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public HeaderEnum HeaderChoice;
+        public HeaderEnum HeaderChoice
+        {
+            get { return SerializationSettings.UseShortTags ? HeaderEnum.header : HeaderEnum.Header; }
+            set { }
+        }
 
         /// <summary>
         /// A product is described by a group of data elements beginning with an XML label <Product> and ending with an XML label </Product>.
@@ -52,7 +51,18 @@ namespace OnixData.Legacy
         public enum ProductEnum { Product, product };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductEnum[] ProductChoice;
+        public ProductEnum[] ProductChoice
+        {
+            get
+            {
+                if (Product == null) return null;
+                ProductEnum choice = SerializationSettings.UseShortTags ? ProductEnum.product : ProductEnum.Product;
+                ProductEnum[] result = new ProductEnum[Product.Length];
+                for (int i = 0; i < Product.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         #endregion
     }

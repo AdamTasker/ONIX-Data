@@ -48,8 +48,6 @@ namespace OnixData.Legacy
 
             NumberOfPages = PagesArabic = PagesRoman = "";
 
-            Illustrations = new OnixLegacyIllustrations();
-
             BASICMainSubject = "";
             MainSubject = new OnixLegacySubject[0];
 
@@ -772,7 +770,11 @@ namespace OnixData.Legacy
         public enum BookFormDetailEnum { BookFormDetail, b013 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public BookFormDetailEnum BookFormDetailChoice;
+        public BookFormDetailEnum BookFormDetailChoice
+        {
+            get { return SerializationSettings.UseShortTags ? BookFormDetailEnum.b013 : BookFormDetailEnum.BookFormDetail; }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code which indicates the type of packaging used for the product.
@@ -786,7 +788,11 @@ namespace OnixData.Legacy
         public enum ProductPackagingEnum { ProductPackaging, b225 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductPackagingEnum ProductPackagingChoice;
+        public ProductPackagingEnum ProductPackagingChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ProductPackagingEnum.b225 : ProductPackagingEnum.ProductPackaging; }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code, indicating the type of a version or edition.
@@ -800,7 +806,18 @@ namespace OnixData.Legacy
         public enum EditionTypeCodeEnum { EditionTypeCode, b056 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EditionTypeCodeEnum[] EditionTypeCodesChoice;
+        public EditionTypeCodeEnum[] EditionTypeCodesChoice
+        {
+            get
+            {
+                if (EditionTypeCode == null) return null;
+                EditionTypeCodeEnum choice = SerializationSettings.UseShortTags ? EditionTypeCodeEnum.b056 : EditionTypeCodeEnum.EditionTypeCode;
+                EditionTypeCodeEnum[] result = new EditionTypeCodeEnum[EditionTypeCode.Length];
+                for (int i = 0; i < EditionTypeCode.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// The number of a numbered edition.
@@ -815,7 +832,18 @@ namespace OnixData.Legacy
         public enum EditionNumberEnum { EditionNumber, b057 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EditionNumberEnum[] EditionNumbersChoice;
+        public EditionNumberEnum[] EditionNumbersChoice
+        {
+            get
+            {
+                if (EditionNumber == null) return null;
+                EditionNumberEnum choice = SerializationSettings.UseShortTags ? EditionNumberEnum.b057 : EditionNumberEnum.EditionNumber;
+                EditionNumberEnum[] result = new EditionNumberEnum[EditionNumber.Length];
+                for (int i = 0; i < EditionNumber.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A short free-text description of a version or edition.
@@ -831,7 +859,11 @@ namespace OnixData.Legacy
         public enum EditionStatementEnum { EditionStatement, b058 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EditionStatementEnum EditionStatementChoice;
+        public EditionStatementEnum EditionStatementChoice
+        {
+            get { return SerializationSettings.UseShortTags ? EditionStatementEnum.b058 : EditionStatementEnum.EditionStatement; }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together give the text of a title of a content item and specify its type, used here to give alternate forms of title for a content item.
@@ -844,7 +876,18 @@ namespace OnixData.Legacy
         public enum TitleEnum { Title, title };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public TitleEnum[] TitlesChoice;
+        public TitleEnum[] TitlesChoice
+        {
+            get
+            {
+                if (Title == null) return null;
+                TitleEnum choice = SerializationSettings.UseShortTags ? TitleEnum.title : TitleEnum.Title;
+                TitleEnum[] result = new TitleEnum[Title.Length];
+                for (int i = 0; i < Title.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together describe a personal or corporate contributor to the series. The composite is optional in any occurrence of the <Series> composite.
@@ -857,7 +900,18 @@ namespace OnixData.Legacy
         public enum ContributorEnum { Contributor, contributor };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ContributorEnum[] ContributorsChoice;
+        public ContributorEnum[] ContributorsChoice
+        {
+            get
+            {
+                if (Contributor == null) return null;
+                ContributorEnum choice = SerializationSettings.UseShortTags ? ContributorEnum.contributor : ContributorEnum.Contributor;
+                ContributorEnum[] result = new ContributorEnum[Contributor.Length];
+                for (int i = 0; i < Contributor.Length; i++) result[i] |= choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// Free text showing how the authorship should be described in an online display, when a standard concatenation of individual contributor elements would not give a satisfactory presentation.
@@ -873,7 +927,11 @@ namespace OnixData.Legacy
         public enum ContributorStatementEnum { ContributorStatement, b049 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ContributorStatementEnum ContributorStatementChoice;
+        public ContributorStatementEnum ContributorStatementChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ContributorStatementEnum.b049 : ContributorStatementEnum.ContributorStatement; }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together represent a language, and specify its role and, where required, whether it is a country variant.
@@ -886,7 +944,18 @@ namespace OnixData.Legacy
         public enum LanguageEnum { Language, language };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public LanguageEnum[] LanguageChoice;
+        public LanguageEnum[] LanguageChoice
+        {
+            get
+            {
+                if (Language == null) return null;
+                LanguageEnum choice = SerializationSettings.UseShortTags ? LanguageEnum.language : LanguageEnum.Language;
+                LanguageEnum[] result = new LanguageEnum[Language.Length];
+                for (int i = 0; i < Language.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An indication of the total number of pages in a book or other printed product. This is not intended to represent a precise count of numbered and unnumbered pages.
@@ -905,7 +974,11 @@ namespace OnixData.Legacy
         public enum NumberOfPagesEnum { NumberOfPages, b061 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public NumberOfPagesEnum NumberOfPagesChoice;
+        public NumberOfPagesEnum NumberOfPagesChoice
+        {
+            get { return SerializationSettings.UseShortTags ? NumberOfPagesEnum.b061 : NumberOfPagesEnum.NumberOfPages; }
+            set { }
+        }
 
         /// <summary>
         /// The number of pages numbered in roman numerals.
@@ -921,7 +994,11 @@ namespace OnixData.Legacy
         public enum PagesRomanEnum { PagesRoman, b254 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public PagesRomanEnum PagesRomanChoice;
+        public PagesRomanEnum PagesRomanChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PagesRomanEnum.b254 : PagesRomanEnum.PagesRoman; }
+            set { }
+        }
 
         /// <summary>
         /// The number of pages numbered in Arabic numerals.
@@ -937,7 +1014,11 @@ namespace OnixData.Legacy
         public enum PagesArabicEnum { PagesArabic, b255 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public PagesArabicEnum PagesArabicChoice;
+        public PagesArabicEnum PagesArabicChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PagesArabicEnum.b255 : PagesArabicEnum.PagesArabic; }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together specify the number of illustrations or other content items of a stated type which the product carries.
@@ -946,12 +1027,23 @@ namespace OnixData.Legacy
         [XmlChoiceIdentifier("IllustrationsChoice")]
         [XmlElement("Illustrations")]
         [XmlElement("illustrations")]
-        public OnixLegacyIllustrations Illustrations { get; set; }
+        public OnixLegacyIllustrations[] Illustrations { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum IllustrationsEnum { Illustrations, illustrations };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IllustrationsEnum IllustrationsChoice;
+        public IllustrationsEnum[] IllustrationsChoice
+        {
+            get
+            {
+                if (Illustrations == null) return null;
+                IllustrationsEnum choice = SerializationSettings.UseShortTags ? IllustrationsEnum.illustrations : IllustrationsEnum.Illustrations;
+                IllustrationsEnum[] result = new IllustrationsEnum[Illustrations.Length];
+                for (int i = 0; i < Illustrations.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A BISAC subject category code which identifies the main subject of the product.
