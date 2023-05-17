@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3
 {
     /// <summary>
     /// An optional group of data elements which together identify a measurement and the units in which it is expressed; used to specify the overall dimensions of a physical product including its packaging (if any).
     /// </summary>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixMeasure
     {
         #region CONSTANTS
 
         public const int CONST_MEASURE_TYPE_HEIGHT = 1;
-        public const int CONST_MEASURE_TYPE_WIDTH  = 2;
-        public const int CONST_MEASURE_TYPE_THICK  = 3;
+        public const int CONST_MEASURE_TYPE_WIDTH = 2;
+        public const int CONST_MEASURE_TYPE_THICK = 3;
         public const int CONST_MEASURE_TYPE_WEIGHT = 8;
         public const int CONST_MEASURE_TYPE_DIAMTR = 9;
 
@@ -24,9 +22,9 @@ namespace OnixData.Version3
         public const string CONST_MEASURE_METRIC_UNIT_GR = "gr";
         public const string CONST_MEASURE_METRIC_UNIT_MM = "mm";
 
-        public const string CONST_MEASURE_USCS_UNIT_LB   = "lb";
-        public const string CONST_MEASURE_USCS_UNIT_OZ   = "oz";
-        public const string CONST_MEASURE_USCS_UNIT_IN   = "in";
+        public const string CONST_MEASURE_USCS_UNIT_LB = "lb";
+        public const string CONST_MEASURE_USCS_UNIT_OZ = "oz";
+        public const string CONST_MEASURE_USCS_UNIT_IN = "in";
 
         public readonly string[] CONST_METRIC_UNIT_TYPES
             = {
@@ -35,19 +33,6 @@ namespace OnixData.Version3
               };
 
         #endregion
-
-        public OnixMeasure()
-        {
-            MeasureType = -1;
-
-            Measurement = 0;
-
-            MeasureUnitCode = "";
-        }
-
-        private int     measureTypeField;
-        private decimal measurementField;
-        private string  measureUnitCodeField;
 
         #region Helper Methods
 
@@ -65,32 +50,34 @@ namespace OnixData.Version3
         /// Mandatory in each occurrence of the <see cref="OnixMeasure"/> composite, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 48</remarks>
-        public int MeasureType
+        [XmlChoiceIdentifier("MeasureTypeChoice")]
+        [XmlElement("MeasureType")]
+        [XmlElement("x315")]
+        public int MeasureType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MeasureTypeEnum { MeasureType, x315 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MeasureTypeEnum MeasureTypeChoice
         {
-            get
-            {
-                return this.measureTypeField;
-            }
-            set
-            {
-                this.measureTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? MeasureTypeEnum.x315 : MeasureTypeEnum.MeasureType; }
+            set { }
         }
 
         /// <summary>
         /// The number which represents the dimension specified in <see cref="MeasureType"/> in the measure units specified in <see cref="MeasureUnitCode"/>.
         /// Mandatory in each occurrence of the <see cref="OnixMeasure"/> composite, and non-repeating.
         /// </summary>
-        public decimal Measurement
+        [XmlChoiceIdentifier("MeasurementChoice")]
+        [XmlElement("Measurement")]
+        [XmlElement("c094")]
+        public decimal Measurement { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MeasurementEnum { Measurement, c094 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MeasurementEnum MeasurementChoice
         {
-            get
-            {
-                return this.measurementField;
-            }
-            set
-            {
-                this.measurementField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? MeasurementEnum.c094 : MeasurementEnum.Measurement; }
+            set { }
         }
 
         /// <summary>
@@ -99,41 +86,17 @@ namespace OnixData.Version3
         /// This element must follow the dimension to which the measure unit applies.
         /// </summary>
         /// <remarks>Onix List 50</remarks>
-        public string MeasureUnitCode
+        [XmlChoiceIdentifier("MeasureUnitCodeChoice")]
+        [XmlElement("MeasureUnitCode")]
+        [XmlElement("c095")]
+        public string MeasureUnitCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MeasureUnitCodeEnum { MeasureUnitCode, c095 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MeasureUnitCodeEnum MeasureUnitCodeChoice
         {
-            get
-            {
-                return this.measureUnitCodeField;
-            }
-            set
-            {
-                this.measureUnitCodeField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public int x315
-        {
-            get { return MeasureType; }
-            set { MeasureType = value; }
-        }
-
-        /// <remarks/>
-        public decimal c094
-        {
-            get { return Measurement; }
-            set { Measurement = value; }
-        }
-
-        /// <remarks/>
-        public string c095
-        {
-            get { return MeasureUnitCode; }
-            set { MeasureUnitCode = value; }
+            get { return SerializationSettings.UseShortTags ? MeasureUnitCodeEnum.c095 : MeasureUnitCodeEnum.MeasureUnitCode; }
+            set { }
         }
 
         #endregion

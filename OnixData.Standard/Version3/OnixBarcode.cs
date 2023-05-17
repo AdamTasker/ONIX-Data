@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3
 {
@@ -12,13 +9,6 @@ namespace OnixData.Version3
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixBarcode
     {
-        public OnixBarcode()
-        {
-            BarcodeType = PositionOnProduct = "";
-        }
-
-        private string barcodeTypeField;
-        private string posOnProdField;
 
         #region Helper Methods
 
@@ -28,7 +18,7 @@ namespace OnixData.Version3
             {
                 string sCombo = BarcodeType;
 
-                if (!String.IsNullOrEmpty(PositionOnProduct))
+                if (!string.IsNullOrEmpty(PositionOnProduct))
                     sCombo += PositionOnProduct;
 
                 return sCombo;
@@ -44,16 +34,17 @@ namespace OnixData.Version3
         /// <para>Mandatory in any instance of the <see cref="OnixBarcode"/> composite, and non-repeating.</para>
         /// </summary>
         /// <remarks>Onix List 141</remarks>
-        public string BarcodeType
+        [XmlChoiceIdentifier("BarcodeTypeChoice")]
+        [XmlElement("BarcodeType")]
+        [XmlElement("x312")]
+        public string BarcodeType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum BarcodeTypeEnum { BarcodeType, x312}
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public BarcodeTypeEnum BarcodeTypeChoice
         {
-            get
-            {
-                return this.barcodeTypeField;
-            }
-            set
-            {
-                this.barcodeTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? BarcodeTypeEnum.x312 : BarcodeTypeEnum.BarcodeType; }
+            set { }
         }
 
         /// <summary>
@@ -63,37 +54,21 @@ namespace OnixData.Version3
         /// Non-repeating.
         /// </summary>
         /// <remarks>Onix List 142</remarks>
-        public string PositionOnProduct
+        [XmlChoiceIdentifier("PositionOnProductChoice")]
+        [XmlElement("PositionOnProduct")]
+        [XmlElement("x313")]
+        public string PositionOnProduct { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PositionOnProductEnum { PositionOnProduct, x313 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PositionOnProductEnum PositionOnProductChoice
         {
-            get
-            {
-                return this.posOnProdField;
-            }
-            set
-            {
-                this.posOnProdField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? PositionOnProductEnum.x313 : PositionOnProductEnum.PositionOnProduct; }
+            set { }
         }
 
         #endregion
 
-        #region Short Tags
-
-        /// <remarks/>
-        public string x312
-        {
-            get { return BarcodeType; }
-            set { BarcodeType = value; }
-        }
-
-        /// <remarks/>
-        public string x313
-        {
-            get { return PositionOnProduct; }
-            set { PositionOnProduct = value; }
-        }
-
-        #endregion
     }
 }
 

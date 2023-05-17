@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using OnixData.Version3.Audience;
 using OnixData.Version3.Epub;
@@ -15,91 +14,9 @@ namespace OnixData.Version3
     /// <summary>
     /// The descriptive detail block covers data elements which are essentially part of the factual description of the form and content of a product.
     /// </summary>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixDescriptiveDetail
     {
-        public OnixDescriptiveDetail()
-        {
-            ProductComposition = -1;
-
-            ProductForm        = ProductPackaging = AudienceCode = "";
-            PrimaryContentType = CountryOfManufacture = "";
-            EpubType           = EpubTypeVersion = EpubFormatDescription = EpubTypeNote = "";
-            IllustrationsNote  = NumberOfIllustrations = "";
-
-            productContentTypeField = shortProductContentTypeField = new string[0];
-            productFormDescriptionField = new string[0];
-            editionTypeField        = shortEditionTypeField        = new string[0];
-            productFormDetailField  = shortProductFormDetailField  = new string[0];
-            epubTechProtectionField = shortEpubTechProtectionField = new string[0];
-            audienceField           = shortAudienceField           = new OnixAudience[0];
-            languageField           = shortLanguageField           = new OnixLanguage[0];
-            prodPartField           = shortProdPartField           = new OnixProductPart[0];
-
-            epubUsageConstraintField = shortEpubUsageConstraintField = new OnixEpubUsageConstraint[0];
-
-            EditionNumber    = -1;
-            EditionStatement = "";
-
-            Measure       = new OnixMeasure[0];
-            Collection    = new OnixCollection[0];
-            TitleDetail   = new OnixTitleDetail();
-            Contributor   = new OnixContributor[0];
-            Extent        = new OnixExtent[0];
-            Subject       = new OnixSubject[0];
-            AudienceRange = new OnixAudienceRange[0];
-        }
-
-        private int      productCompositionField;
-        private string   productFormField;
-        private string[] productFormDescriptionField;
-        private string   productPackagingField;
-        private int      editionNumberField;
-        private string   editionStatementField;
-        private string   audienceCodeField;
-        private string   countryOfManufactureField;
-
-        protected string epubTypeField;
-        protected string epubTypeVersionField;
-        protected string epubFormatDescriptionField;
-        protected string epubTypeNoteField;
-
-        protected string numOfIllustrationsField;
-        protected string illustrationsNoteField;
-        private   string primaryContentTypeField;
-
-        private string[]   productContentTypeField;
-        private string[]   shortProductContentTypeField;
-        private string[]   editionTypeField;
-        private string[]   shortEditionTypeField;
-        protected string[] productFormDetailField;
-        protected string[] shortProductFormDetailField;
-        protected string[] epubTechProtectionField;
-        protected string[] shortEpubTechProtectionField;
-
-        private OnixTitleDetail     titleDetailField;
-
-        private OnixAudience[]      audienceField;
-        private OnixAudience[]      shortAudienceField;
-        private OnixAudienceRange[] audienceRangeField;
-        private OnixAudienceRange[] shortAudienceRangeField;
-        private OnixCollection[]    collectionField;
-        private OnixCollection[]    shortCollectionField;
-        private OnixContributor[]   contributorField;
-        private OnixContributor[]   shortContributorField;
-        private OnixExtent[]        extentField;
-        private OnixExtent[]        shortExtentField;
-        private OnixLanguage[]      languageField;
-        private OnixLanguage[]      shortLanguageField;
-        private OnixMeasure[]       measureField;
-        private OnixMeasure[]       shortMeasureField;
-        private OnixProductPart[]   prodPartField;
-        private OnixProductPart[]   shortProdPartField;
-        private OnixSubject[]       subjectField;
-        private OnixSubject[]       shortSubjectField;
-
-        public OnixEpubUsageConstraint[] epubUsageConstraintField;
-        public OnixEpubUsageConstraint[] shortEpubUsageConstraintField;
 
         #region ONIX Lists
 
@@ -112,61 +29,10 @@ namespace OnixData.Version3
                 if (PrimaryContentType != null)
                     AllContentTypes.Add(PrimaryContentType);
 
-                if (OnixProductContentTypeList != null)
-                    AllContentTypes.AddRange(OnixProductContentTypeList);
+                if (ProductContentType != null)
+                    AllContentTypes.AddRange(ProductContentType);
 
                 return AllContentTypes.ToArray();
-            }
-        }
-
-        public string[] OnixProductContentTypeList
-        {
-            get
-            {
-                string[] ProductContentTypes = null;
-
-                if (this.productContentTypeField != null)
-                    ProductContentTypes = this.productContentTypeField;
-                else if (this.shortProductContentTypeField != null)
-                    ProductContentTypes = this.shortProductContentTypeField;
-                else
-                    ProductContentTypes = new string[0];
-
-                return ProductContentTypes;
-            }
-        }
-
-        public string[] OnixEditionTypeList
-        {
-            get
-            {
-                string[] EditionTypes = null;
-
-                if (this.editionTypeField != null)
-                    EditionTypes = this.editionTypeField;
-                else if (this.shortEditionTypeField != null)
-                    EditionTypes = this.shortEditionTypeField;
-                else
-                    EditionTypes = new string[0];
-
-                return EditionTypes;
-            }
-        }
-
-        public string[] OnixEpubTechProtectionList
-        {
-            get
-            {
-                string[] TechProtections = null;
-
-                if (this.epubTechProtectionField != null)
-                    TechProtections = this.epubTechProtectionField;
-                else if (this.shortEpubTechProtectionField != null)
-                    TechProtections = this.shortEpubTechProtectionField;
-                else
-                    TechProtections = new string[0];
-
-                return TechProtections;
             }
         }
 
@@ -176,9 +42,7 @@ namespace OnixData.Version3
             {
                 string[] AudCodes = null;
 
-                OnixAudience[] AudienceList = audienceField;
-                if ((AudienceList == null) || (AudienceList.Length <= 0))
-                    AudienceList = shortAudienceField;
+                OnixAudience[] AudienceList = Audience;
 
                 if ((AudienceList != null) && (AudienceList.Length > 0))
                 {
@@ -193,7 +57,7 @@ namespace OnixData.Version3
                         {
                             OnixAudience TmpAud = OnixAudCodeList[i];
 
-                            AudCodes[i] = (!String.IsNullOrEmpty(TmpAud.AudienceCodeValue)) ? TmpAud.AudienceCodeValue : "";
+                            AudCodes[i] = (!string.IsNullOrEmpty(TmpAud.AudienceCodeValue)) ? TmpAud.AudienceCodeValue : "";
                         }
                     }
                 }
@@ -204,192 +68,22 @@ namespace OnixData.Version3
             }
         }
 
-        public OnixAudienceRange[] OnixAudRangeList
-        {
-            get
-            {
-                OnixAudienceRange[] AudRanges = null;
-
-                if (this.audienceRangeField != null)
-                    AudRanges = this.audienceRangeField;
-                else if (this.shortAudienceRangeField != null)
-                    AudRanges = this.shortAudienceRangeField;
-                else
-                    AudRanges = new OnixAudienceRange[0];
-
-                return AudRanges;
-            }
-        }
-
-        public OnixCollection[] OnixCollectionList
-        {
-            get
-            {
-                OnixCollection[] Collections = null;
-
-                if (this.collectionField != null)
-                    Collections = this.collectionField;
-                else if (this.shortCollectionField != null)
-                    Collections = this.shortCollectionField;
-                else
-                    Collections = new OnixCollection[0];
-
-                return Collections;
-            }
-        }
-
-        public OnixContributor[] OnixContributorList
-        {
-            get
-            {
-                OnixContributor[] Contributors = null;
-
-                if (this.contributorField != null)
-                    Contributors = this.contributorField;
-                else if (this.shortContributorField != null)
-                    Contributors = this.shortContributorField;
-                else
-                    Contributors = new OnixContributor[0];
-
-                return Contributors;
-            }
-        }
-
-        public OnixEpubUsageConstraint[] OnixEpubUsageConstraintList
-        {
-            get
-            {
-                OnixEpubUsageConstraint[] Constraints = null;
-
-                if (this.epubUsageConstraintField != null)
-                    Constraints = this.epubUsageConstraintField;
-                else if (this.shortEpubUsageConstraintField != null)
-                    Constraints = this.shortEpubUsageConstraintField;
-                else
-                    Constraints = new OnixEpubUsageConstraint[0];
-
-                return Constraints;
-            }
-        }
-
-        public OnixExtent[] OnixExtentList
-        {
-            get
-            {
-                OnixExtent[] Extents = null;
-
-                if (this.extentField != null)
-                    Extents = this.extentField;
-                else if (this.shortExtentField != null)
-                    Extents = this.shortExtentField;
-                else
-                    Extents = new OnixExtent[0];
-
-                return Extents;
-            }
-        }
-
-        public OnixLanguage[] OnixLanguageList
-        {
-            get
-            {
-                OnixLanguage[] Languages = null;
-
-                if (this.languageField != null)
-                    Languages = this.languageField;
-                else if (this.shortLanguageField != null)
-                    Languages = this.shortLanguageField;
-                else
-                    Languages = new OnixLanguage[0];
-
-                return Languages;
-            }
-        }
-
         public OnixSubject[] OnixMainSubjectList
         {
             get
             {
                 OnixSubject[] MainSubjects = new OnixSubject[0];
 
-                if ((OnixSubjectList != null) && (OnixSubjectList.Length > 0))
+                if ((Subject != null) && (Subject.Length > 0))
                 {
                     var MainSubjList =
-                        OnixSubjectList.Where(x => x.IsMainSubject()).ToList();
+                        Subject.Where(x => x.IsMainSubject()).ToList();
 
                     if (MainSubjList != null)
                         MainSubjects = MainSubjList.ToArray();
                 }
 
                 return MainSubjects;
-            }
-        }
-
-        public OnixMeasure[] OnixMeasureList
-        {
-            get
-            {
-                OnixMeasure[] Measures = null;
-
-                if (this.measureField != null)
-                    Measures = this.measureField;
-                else if (this.shortMeasureField != null)
-                    Measures = this.shortMeasureField;
-                else
-                    Measures = new OnixMeasure[0];
-
-                return Measures;
-            }
-        }
-
-        public string[] OnixProductFormDetailList
-        {
-            get
-            {
-                string[] ProductFormDetailList = null;
-
-                if (this.productFormDetailField != null)
-                    ProductFormDetailList = this.productFormDetailField;
-                else if (this.shortProductFormDetailField != null)
-                    ProductFormDetailList = this.shortProductFormDetailField;
-                else
-                    ProductFormDetailList = new string[0];
-
-                return ProductFormDetailList;
-            }
-        }
-
-        public OnixProductPart[] OnixProductPartList
-        {
-            get
-            {
-                OnixProductPart[] ProductParts = null;
-
-                if (this.prodPartField != null)
-                    ProductParts = this.prodPartField;
-                else if (this.shortProdPartField != null)
-                    ProductParts = this.shortProdPartField;
-                else
-                    ProductParts = new OnixProductPart[0];
-
-                return ProductParts;
-            }
-        }
-
-        public OnixSubject[] OnixSubjectList
-        {
-            get
-            {
-                OnixSubject[] Subjects = null;
-
-                if (this.subjectField != null)
-                    Subjects = this.subjectField;
-                else if (this.shortSubjectField != null)
-                    Subjects = this.shortSubjectField;
-                else
-                    Subjects = new OnixSubject[0];
-
-                return Subjects;
             }
         }
 
@@ -403,20 +97,18 @@ namespace OnixData.Version3
             {
                 string sAudAgeFrom = "";
 
-                OnixAudienceRange[] AudRangeList = this.OnixAudRangeList;
-                if ((AudRangeList == null) || (AudRangeList.Length <= 0))
-                    AudRangeList = shortAudienceRangeField;
+                OnixAudienceRange[] AudRangeList = this.AudienceRange;
 
                 if ((AudRangeList != null) && (AudRangeList.Length > 0))
                 {
                     foreach (OnixAudienceRange TempAudRange in AudRangeList)
                     {
-                        if (!String.IsNullOrEmpty(TempAudRange.USAgeFrom))
+                        if (!string.IsNullOrEmpty(TempAudRange.USAgeFrom))
                             sAudAgeFrom = TempAudRange.USAgeFrom;
                     }
                 }
 
-                if (String.IsNullOrEmpty(sAudAgeFrom))
+                if (string.IsNullOrEmpty(sAudAgeFrom))
                     sAudAgeFrom = TranslateAudienceGradeToAge(AudienceGradeFrom);
 
                 return sAudAgeFrom;
@@ -429,20 +121,18 @@ namespace OnixData.Version3
             {
                 string sAudAgeTo = "";
 
-                OnixAudienceRange[] AudRangeList = this.OnixAudRangeList;
-                if ((AudRangeList == null) || (AudRangeList.Length <= 0))
-                    AudRangeList = shortAudienceRangeField;
+                OnixAudienceRange[] AudRangeList = this.AudienceRange;
 
                 if ((AudRangeList != null) && (AudRangeList.Length > 0))
                 {
                     foreach (OnixAudienceRange TempAudRange in AudRangeList)
                     {
-                        if (!String.IsNullOrEmpty(TempAudRange.USAgeTo))
+                        if (!string.IsNullOrEmpty(TempAudRange.USAgeTo))
                             sAudAgeTo = TempAudRange.USAgeTo;
                     }
                 }
 
-                if (String.IsNullOrEmpty(sAudAgeTo))
+                if (string.IsNullOrEmpty(sAudAgeTo))
                     sAudAgeTo = TranslateAudienceGradeToAge(AudienceGradeTo);
 
                 return sAudAgeTo;
@@ -455,17 +145,15 @@ namespace OnixData.Version3
             {
                 string sAudGradeFrom = "";
 
-                OnixAudienceRange[] AudRangeList = this.OnixAudRangeList;
-                if ((AudRangeList == null) || (AudRangeList.Length <= 0))
-                    AudRangeList = shortAudienceRangeField;
+                OnixAudienceRange[] AudRangeList = this.AudienceRange;
 
                 if ((AudRangeList != null) && (AudRangeList.Length > 0))
                 {
                     foreach (OnixAudienceRange TempAudRange in AudRangeList)
                     {
-                        if (!String.IsNullOrEmpty(TempAudRange.USGradeFrom))
+                        if (!string.IsNullOrEmpty(TempAudRange.USGradeFrom))
                             sAudGradeFrom = TempAudRange.USGradeFrom;
-                        else if (!String.IsNullOrEmpty(TempAudRange.USGradeExact))
+                        else if (!string.IsNullOrEmpty(TempAudRange.USGradeExact))
                             sAudGradeFrom = TempAudRange.USGradeExact;
                     }
                 }
@@ -480,17 +168,15 @@ namespace OnixData.Version3
             {
                 string sAudGradeTo = "";
 
-                OnixAudienceRange[] AudRangeList = this.OnixAudRangeList;
-                if ((AudRangeList == null) || (AudRangeList.Length <= 0))
-                    AudRangeList = shortAudienceRangeField;
+                OnixAudienceRange[] AudRangeList = this.AudienceRange;
 
                 if ((AudRangeList != null) && (AudRangeList.Length > 0))
                 {
                     foreach (OnixAudienceRange TempAudRange in AudRangeList)
                     {
-                        if (!String.IsNullOrEmpty(TempAudRange.USGradeTo))
+                        if (!string.IsNullOrEmpty(TempAudRange.USGradeTo))
                             sAudGradeTo = TempAudRange.USGradeTo;
-                        else if (!String.IsNullOrEmpty(TempAudRange.USGradeExact))
+                        else if (!string.IsNullOrEmpty(TempAudRange.USGradeExact))
                             sAudGradeTo = TempAudRange.USGradeExact;
                     }
                 }
@@ -503,7 +189,7 @@ namespace OnixData.Version3
         {
             get
             {
-                OnixLanguage[] LangList = OnixLanguageList;
+                OnixLanguage[] LangList = Language;
 
                 string sLangOfText = "";
 
@@ -512,7 +198,7 @@ namespace OnixData.Version3
                     OnixLanguage LangOfText =
                         LangList.Where(x => x.IsLanguageOfText()).LastOrDefault();
 
-                    if ((LangOfText != null) && !String.IsNullOrEmpty(LangOfText.LanguageCode))
+                    if ((LangOfText != null) && !string.IsNullOrEmpty(LangOfText.LanguageCode))
                         sLangOfText = LangOfText.LanguageCode;
                 }
 
@@ -526,10 +212,10 @@ namespace OnixData.Version3
             {
                 int nPageNum = 0;
 
-                if (this.OnixExtentList != null)
+                if (this.Extent != null)
                 {
                     OnixExtent[] PageCountExtents =
-                        this.OnixExtentList
+                        this.Extent
                             .Where(x => x.HasSoughtPageCountType() && (x.ExtentValueNum > 0))
                             .OrderBy(x => x.ExtentType)
                             .ToArray();
@@ -561,7 +247,7 @@ namespace OnixData.Version3
         {
             get
             {
-                OnixCollection[] CollList = this.OnixCollectionList;
+                OnixCollection[] CollList = this.Collection;
 
                 string sSeriesNum = "";
 
@@ -578,8 +264,8 @@ namespace OnixData.Version3
                         sSeriesNum = SeriesCollection.SeriesSequence;
                     }
 
-                    if (String.IsNullOrEmpty(sSeriesNum)               && 
-                        (SeriesCollection != null)                     &&
+                    if (string.IsNullOrEmpty(sSeriesNum) &&
+                        (SeriesCollection != null) &&
                         (SeriesCollection.OnixTitleDetailList != null) &&
                         (SeriesCollection.OnixTitleDetailList.Length > 0))
                     {
@@ -588,8 +274,8 @@ namespace OnixData.Version3
 
                         if (TitleDetailFound != null)
                         {
-                            var TitleElement = 
-                                TitleDetailFound.OnixTitleElementList.Where(x => !String.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
+                            var TitleElement =
+                                TitleDetailFound.OnixTitleElementList.Where(x => !string.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
 
                             if (TitleElement != null)
                                 sSeriesNum = TitleElement.PartNumber;
@@ -597,7 +283,7 @@ namespace OnixData.Version3
                     }
                 }
 
-                if (String.IsNullOrEmpty(sSeriesNum))
+                if (string.IsNullOrEmpty(sSeriesNum))
                 {
                     if ((this.TitleDetail != null) &&
                         (this.TitleDetail.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT))
@@ -607,7 +293,7 @@ namespace OnixData.Version3
                         if (MainTitleDetail != null)
                         {
                             var TitleElement =
-                                MainTitleDetail.OnixTitleElementList.Where(x => !String.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
+                                MainTitleDetail.OnixTitleElementList.Where(x => !string.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
 
                             if (TitleElement != null)
                                 sSeriesNum = TitleElement.PartNumber;
@@ -623,7 +309,7 @@ namespace OnixData.Version3
         {
             get
             {
-                OnixCollection[] CollList = this.OnixCollectionList;
+                OnixCollection[] CollList = this.Collection;
 
                 string sSeriesTitle = "";
 
@@ -640,10 +326,10 @@ namespace OnixData.Version3
                         var SeriesTitleDetail =
                             SeriesCollection.OnixTitleDetailList
                                             .Where(x => x.HasDistinctiveTitle())
-                                            .Where(x => !String.IsNullOrEmpty(x.AssembledSeriesName))
+                                            .Where(x => !string.IsNullOrEmpty(x.AssembledSeriesName))
                                             .FirstOrDefault();
 
-                        if ((SeriesTitleDetail != null) && !String.IsNullOrEmpty(SeriesTitleDetail.AssembledSeriesName))
+                        if ((SeriesTitleDetail != null) && !string.IsNullOrEmpty(SeriesTitleDetail.AssembledSeriesName))
                         {
                             sSeriesTitle = SeriesTitleDetail.AssembledSeriesName;
                         }
@@ -662,10 +348,17 @@ namespace OnixData.Version3
         /// An ONIX code which indicates whether a product consists of a single item or multiple items. Mandatory in an occurrence of <see cref="OnixDescriptiveDetail"/>, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 2</remarks>
-        public int ProductComposition
+        [XmlChoiceIdentifier("ProductCompositionChoice")]
+        [XmlElement("ProductComposition")]
+        [XmlElement("x314")]
+        public int ProductComposition { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductCompositionEnum { ProductComposition, x314 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductCompositionEnum ProductCompositionChoice
         {
-            get { return this.productCompositionField; }
-            set { this.productCompositionField = value; }
+            get { return SerializationSettings.UseShortTags ? ProductCompositionEnum.x314 : ProductCompositionEnum.ProductComposition; }
+            set { }
         }
 
         /// <summary>
@@ -674,10 +367,17 @@ namespace OnixData.Version3
         /// In ONIX 3.0, the handling of multiple-item products has been changed so that the form of the contained items is now specified only in the <see cref="ProductPart"/> composite, which must be included for full description of any multiple-item product.
         /// </summary>
         /// <remarks>Onix List 150</remarks>
-        public string ProductForm
+        [XmlChoiceIdentifier("ProductFormChoice")]
+        [XmlElement("ProductForm")]
+        [XmlElement("b012")]
+        public string ProductForm { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormEnum { ProductForm, b012 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormEnum ProductFormChoice
         {
-            get { return this.productFormField; }
-            set { this.productFormField = value; }
+            get { return SerializationSettings.UseShortTags ? ProductFormEnum.b012 : ProductFormEnum.ProductForm; }
+            set { }
         }
 
         /// <summary>
@@ -685,28 +385,66 @@ namespace OnixData.Version3
         /// Optional, and repeatable in order to provide multiple additional details.
         /// </summary>
         /// <remarks>Onix List 175</remarks>
-        [System.Xml.Serialization.XmlElementAttribute("ProductFormDetail")]
-        public string[] ProductFormDetail
+        [XmlChoiceIdentifier("ProductFormDetailChoice")]
+        [XmlElement("ProductFormDetail")]
+        [XmlElement("b333")]
+        public string[] ProductFormDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormDetailEnum { ProductFormDetail, b333 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormDetailEnum[] ProductFormDetailChoice
         {
-            get { return this.productFormDetailField; }
-            set { this.productFormDetailField = value; }
+            get
+            {
+                if (ProductFormDetail == null) return null;
+                ProductFormDetailEnum choice = SerializationSettings.UseShortTags ? ProductFormDetailEnum.b333 : ProductFormDetailEnum.ProductFormDetail;
+                ProductFormDetailEnum[] result = new ProductFormDetailEnum[ProductFormDetail.Length];
+                for (int i = 0; i < ProductFormDetail.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
         /// An optional group of data elements which together describe an aspect of product form that is too specific to be covered in the <see cref="ProductForm"/> and <see cref="ProductFormDetail"/> elements.
         /// Repeatable in order to describe different aspects of the product form.
         /// </summary>
+        [XmlChoiceIdentifier("ProductFormFeatureChoice")]
+        [XmlElement("ProductFormFeature")]
+        [XmlElement("productformfeature")]
         public OnixProductFormFeature[] ProductFormFeature { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormFeatureEnum { ProductFormFeature, productformfeature }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormFeatureEnum[] ProductFormFeatureChoice
+        {
+            get
+            {
+                if (ProductFormFeature == null) return null;
+                ProductFormFeatureEnum choice = SerializationSettings.UseShortTags ? ProductFormFeatureEnum.productformfeature : ProductFormFeatureEnum.ProductFormFeature;
+                ProductFormFeatureEnum[] result = new ProductFormFeatureEnum[ProductFormFeature.Length];
+                for (int i = 0; i < ProductFormFeature.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code which indicates the type of outer packaging used for the product.
         /// Optional and non-repeating.
         /// </summary>
         /// <remarks>Onix List 80</remarks>
-        public string ProductPackaging
+        [XmlChoiceIdentifier("ProductPackagingChoice")]
+        [XmlElement("ProductPackaging")]
+        [XmlElement("b225")]
+        public string ProductPackaging { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductPackagingEnum { ProductPackaging, b225 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductPackagingEnum ProductPackagingChoice
         {
-            get { return this.productPackagingField; }
-            set { this.productPackagingField = value; }
+            get { return SerializationSettings.UseShortTags ? ProductPackagingEnum.b225 : ProductPackagingEnum.ProductPackaging; }
+            set { }
         }
 
         /// <summary>
@@ -714,10 +452,24 @@ namespace OnixData.Version3
         /// The field is optional, and repeatable to provide parallel descriptions in multiple languages.
         /// The language attribute is optional for a single instance of <see cref="ProductFormDescription"/>, but must be included in each instance if <see cref="ProductFormDescription"/> is repeated to provide parallel descriptions in multiple languages.
         /// </summary>
-        public string[] ProductFormDescription
+        [XmlChoiceIdentifier("ProductFormDescriptionChoice")]
+        [XmlElement("ProductFormDescription")]
+        [XmlElement("b014")]
+        public string[] ProductFormDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormDescriptionEnum { ProductFormDescription, b014 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormDescriptionEnum[] ProductFormDescriptionChoice
         {
-            get { return this.productFormDescriptionField; }
-            set { this.productFormDescriptionField = value; }
+            get
+            {
+                if (ProductFormDescription == null) return null;
+                ProductFormDescriptionEnum choice = SerializationSettings.UseShortTags ? ProductFormDescriptionEnum.b014 : ProductFormDescriptionEnum.ProductFormDescription;
+                ProductFormDescriptionEnum[] result = new ProductFormDescriptionEnum[ProductFormDescription.Length];
+                for (int i = 0; i < ProductFormDescription.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
@@ -725,7 +477,18 @@ namespace OnixData.Version3
         /// Optional and non-repeating.
         /// </summary>
         /// <remarks>Onix List 12</remarks>
+        [XmlChoiceIdentifier("TradeCategoryChoice")]
+        [XmlElement("TradeCategory")]
+        [XmlElement("b384")]
         public string TradeCategory { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TradeCategoryEnum { TradeCategory, b384 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TradeCategoryEnum TradeCategoryChoice
+        {
+            get { return SerializationSettings.UseShortTags ? TradeCategoryEnum.b384 : TradeCategoryEnum.TradeCategory; }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code which indicates the primary or only content type included in a product.
@@ -734,10 +497,17 @@ namespace OnixData.Version3
         /// Optional and non-repeating.
         /// </summary>
         /// <remarks>Onix List 81</remarks>
-        public string PrimaryContentType
+        [XmlChoiceIdentifier("PrimaryContentTypeChoice")]
+        [XmlElement("PrimaryContentType")]
+        [XmlElement("x416")]
+        public string PrimaryContentType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PrimaryContentTypeEnum { PrimaryContentType, x416 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PrimaryContentTypeEnum PrimaryContentTypeChoice
         {
-            get { return this.primaryContentTypeField; }
-            set { this.primaryContentTypeField = value; }
+            get { return SerializationSettings.UseShortTags ? PrimaryContentTypeEnum.x416 : PrimaryContentTypeEnum.PrimaryContentType; }
+            set { }
         }
 
         /// <summary>
@@ -746,22 +516,48 @@ namespace OnixData.Version3
         /// Optional, and repeatable to list multiple content types.
         /// </summary>
         /// <remarks>Onix List 81</remarks>
-        [System.Xml.Serialization.XmlElementAttribute("ProductContentType")]
-        public string[] ProductContentType
+        [XmlChoiceIdentifier("ProductContentTypeChoice")]
+        [XmlElement("ProductContentType")]
+        [XmlElement("b385")]
+        public string[] ProductContentType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductContentTypeEnum { ProductContentType, b385 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductContentTypeEnum[] ProductContentTypeChoice
         {
-            get { return this.productContentTypeField; }
-            set { this.productContentTypeField = value; }
+            get
+            {
+                if (ProductContentType == null) return null;
+                ProductContentTypeEnum choice = SerializationSettings.UseShortTags ? ProductContentTypeEnum.b385 : ProductContentTypeEnum.ProductContentType;
+                ProductContentTypeEnum[] result = new ProductContentTypeEnum[ProductContentType.Length];
+                for (int i = 0; i < ProductContentType.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
         /// An optional group of data elements which together identify a measurement and the units in which it is expressed; used to specify the overall dimensions of a physical product including its packaging (if any).
         /// Repeatable to provide multiple combinations of dimension and unit.
         /// </summary>
-        [System.Xml.Serialization.XmlElementAttribute("Measure")]
-        public OnixMeasure[] Measure
+        [XmlChoiceIdentifier("MeasureChoice")]
+        [XmlElement("Measure")]
+        [XmlElement("measure")]
+        public OnixMeasure[] Measure { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MeasureEnum { Measure, measure }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MeasureEnum[] MeasureChoice
         {
-            get { return this.measureField; }
-            set { this.measureField = value; }
+            get
+            {
+                if (Measure == null) return null;
+                MeasureEnum choice = SerializationSettings.UseShortTags ? MeasureEnum.measure : MeasureEnum.Measure;
+                MeasureEnum[] result = new MeasureEnum[Measure.Length];
+                for (int i = 0; i < Measure.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
@@ -770,10 +566,17 @@ namespace OnixData.Version3
         /// Optional and non-repeating.
         /// </summary>
         /// <remarks>Onix List 91</remarks>
-        public string CountryOfManufacture
+        [XmlChoiceIdentifier("CountryOfManufactureChoice")]
+        [XmlElement("CountryOfManufacture")]
+        [XmlElement("x316")]
+        public string CountryOfManufacture { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CountryOfManufactureEnum { CountryOfManufacture, x316 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CountryOfManufactureEnum CountryOfManufactureChoice
         {
-            get { return this.countryOfManufactureField; }
-            set { this.countryOfManufactureField = value; }
+            get { return SerializationSettings.UseShortTags ? CountryOfManufactureEnum.x316 : CountryOfManufactureEnum.CountryOfManufacture; }
+            set { }
         }
 
         /// <summary>
@@ -781,70 +584,143 @@ namespace OnixData.Version3
         /// Optional, and repeatable if a product has two or more kinds of protection (ie different parts of a product are protected in different ways).
         /// </summary>
         /// <remarks>Onix List 144</remarks>
-        [System.Xml.Serialization.XmlElementAttribute("EpubTechnicalProtection")]
-        public string[] EpubTechnicalProtection
+        [XmlChoiceIdentifier("EpubTechnicalProtectionChoice")]
+        [XmlElement("EpubTechnicalProtection")]
+        [XmlElement("x317")]
+        public string[] EpubTechnicalProtection { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EpubTechnicalProtectionEnum { EpubTechnicalProtection, x317 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EpubTechnicalProtectionEnum[] EpubTechnicalProtectionChoice
         {
-            get { return this.epubTechProtectionField; }
-            set { this.epubTechProtectionField = value; }
+            get
+            {
+                if (EpubTechnicalProtection == null) return null;
+                EpubTechnicalProtectionEnum choice = SerializationSettings.UseShortTags ? EpubTechnicalProtectionEnum.x317 : EpubTechnicalProtectionEnum.EpubTechnicalProtection;
+                EpubTechnicalProtectionEnum[] result = new EpubTechnicalProtectionEnum[EpubTechnicalProtection.Length];
+                for (int i = 0; i < EpubTechnicalProtection.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
         /// An optional group of data elements which together describe a usage constraint on a digital product (or the absence of such a constraint), whether enforced by DRM technical protection, inherent in the platform used, or specified by license agreement.
         /// Repeatable in order to describe multiple constraints on usage.
         /// </summary>
-        [System.Xml.Serialization.XmlElementAttribute("EpubUsageConstraint")]
-        public OnixEpubUsageConstraint[] EpubUsageConstraint
+        [XmlChoiceIdentifier("EpubUsageConstraintChoice")]
+        [XmlElement("EpubUsageConstraint")]
+        [XmlElement("epubusageconstraint")]
+        public OnixEpubUsageConstraint[] EpubUsageConstraint { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EpubUsageConstraintEnum { EpubUsageConstraint, epubusageconstraint }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EpubUsageConstraintEnum[] EpubUsageConstraintChoice
         {
-            get { return this.epubUsageConstraintField; }
-            set { this.epubUsageConstraintField = value; }
+            get
+            {
+                if (EpubUsageConstraint == null) return null;
+                EpubUsageConstraintEnum choice = SerializationSettings.UseShortTags ? EpubUsageConstraintEnum.epubusageconstraint : EpubUsageConstraintEnum.EpubUsageConstraint;
+                EpubUsageConstraintEnum[] result = new EpubUsageConstraintEnum[EpubUsageConstraint.Length];
+                for (int i = 0; i < EpubUsageConstraint.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
         /// An optional and non-repeatable composite carrying the name or title of the license governing use of the product, and a link to the license terms in eye-readable or machine-readable form.
         /// </summary>
+        [XmlChoiceIdentifier("EpubLicenseChoice")]
+        [XmlElement("EpubLicense")]
+        [XmlElement("epublicense")]
         public OnixEpubLicense EpubLicense { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EpubLicenseEnum { EpubLicense, epublicense }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EpubLicenseEnum EpubLicenseChoice
+        {
+            get { return SerializationSettings.UseShortTags ? EpubLicenseEnum.epublicense : EpubLicenseEnum.EpubLicense; }
+            set { }
+        }
 
         /// <summary>
         /// The scale of a map, expressed as a ratio 1:nnnnn; only the number nnnnn is carried in the data element, without spaces or punctuation.
         /// Optional, and repeatable if a product comprises maps with two or more different scales.
         /// </summary>
+        [XmlChoiceIdentifier("MapScaleChoice")]
+        [XmlElement("MapScale")]
+        [XmlElement("b063")]
         public decimal MapScale { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MapScaleEnum { MapScale, b063 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MapScaleEnum MapScaleChoice
+        {
+            get { return SerializationSettings.UseShortTags ? MapScaleEnum.b063 : MapScaleEnum.MapScale; }
+            set { }
+        }
 
         /// <summary>
         /// An optional group of data elements which together define a product classification (not to be confused with a subject classification).
         /// The intended use is to enable national or international trade classifications (also known as commodity codes) to be carried in an ONIX record.
         /// The composite is repeatable if parts of the product are classified differently within a single product classification scheme, or to provide classification codes from multiple classification schemes.
         /// </summary>
-        [System.Xml.Serialization.XmlChoiceIdentifier("ProductClassificationChoice")]
-        [System.Xml.Serialization.XmlElement("ProductClassification")]
-        [System.Xml.Serialization.XmlElement("productclassification")]
+        [XmlChoiceIdentifier("ProductClassificationChoice")]
+        [XmlElement("ProductClassification")]
+        [XmlElement("productclassification")]
         public OnixProductClassification[] ProductClassification { get; set; }
-        [System.Xml.Serialization.XmlType(IncludeInSchema = false)]
+        [XmlType(IncludeInSchema = false)]
         public enum ProductClassificationEnum { ProductClassification, productclassification }
-        [System.Xml.Serialization.XmlIgnore]
-        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductClassificationEnum[] ProductClassificationChoice;
 
         /// <summary>
         /// A group of data elements which together describe an item which is part of or contained within a multiple-component or multiple-item product or a trade pack.
         /// The composite must be repeated for each item or component.
         /// </summary>
-        [System.Xml.Serialization.XmlElementAttribute("ProductPart")]
-        public OnixProductPart[] ProductPart
+        [XmlChoiceIdentifier("ProductPartChoice")]
+        [XmlElement("ProductPart")]
+        [XmlElement("productpart")]
+        public OnixProductPart[] ProductPart { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductPartEnum { ProductPart, productpart }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductPartEnum[] ProductPartChoice
         {
-            get { return this.prodPartField; }
-            set { this.prodPartField = value; }
+            get
+            {
+                if (ProductPart == null) return null;
+                ProductPartEnum choice = SerializationSettings.UseShortTags ? ProductPartEnum.productpart : ProductPartEnum.ProductPart;
+                ProductPartEnum[] result = new ProductPartEnum[ProductPart.Length];
+                for (int i = 0; i < ProductPart.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
         /// An optional group of data elements which carry attributes of a collection of which the product is part.
         /// The composite is repeatable, to provide details when the product belongs to multiple collections.
         /// </summary>
-        [System.Xml.Serialization.XmlElementAttribute("Collection")]
-        public OnixCollection[] Collection
+        [XmlChoiceIdentifier("CollectionChoice")]
+        [XmlElement("Collection")]
+        [XmlElement("collection")]
+        public OnixCollection[] Collection { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CollectionEnum { Collection, collection }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CollectionEnum[] CollectionChoice
         {
-            get { return this.collectionField; }
-            set { this.collectionField = value; }
+            get
+            {
+                if (Collection == null) return null;
+                CollectionEnum choice = SerializationSettings.UseShortTags ? CollectionEnum.collection : CollectionEnum.Collection;
+                CollectionEnum[] result = new CollectionEnum[Collection.Length];
+                for (int i = 0; i < Collection.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <remarks/>
@@ -969,226 +845,6 @@ namespace OnixData.Version3
 
         #endregion
 
-        #region Short Tags
-
-        /// <remarks/>
-        public int x314
-        {
-            get { return ProductComposition; }
-            set { ProductComposition = value; }
-        }
-
-        /// <remarks/>
-        public string b012
-        {
-            get { return ProductForm; }
-            set { ProductForm = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("b333")]
-        public string[] b333
-        {
-            get { return shortProductFormDetailField; }
-            set { shortProductFormDetailField = value; }
-        }
-
-        /// <remarks/>
-        public string[] b014
-        {
-            get { return ProductFormDescription; }
-            set { ProductFormDescription = value; }
-        }
-
-        /// <remarks/>
-        public string x416
-        {
-            get { return PrimaryContentType; }
-            set { PrimaryContentType = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("b385")]
-        public string[] b385
-        {
-            get { return shortProductContentTypeField; }
-            set { shortProductContentTypeField = value; }
-        }
-
-        /// <remarks/>
-        public string b225
-        {
-            get { return ProductPackaging; }
-            set { ProductPackaging = value; }
-        }
-
-        public string b211
-        {
-            get { return EpubType; }
-            set { EpubType = value; }
-        }
-
-        public string b212
-        {
-            get { return EpubTypeVersion; }
-            set { EpubTypeVersion = value; }
-        }
-
-        public string b216
-        {
-            get { return EpubFormatDescription; }
-            set { EpubFormatDescription = value; }
-        }
-
-        public string b277
-        {
-            get { return EpubTypeNote; }
-            set { EpubTypeNote = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x419")]
-        public string[] x419
-        {
-            get { return shortEditionTypeField; }
-            set { shortEditionTypeField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x317")]
-        public string[] x317
-        {
-            get { return shortEpubTechProtectionField; }
-            set { shortEpubTechProtectionField = value; }
-        }
-
-        public int b057
-        {
-            get { return EditionNumber; }
-            set { EditionNumber = value; }
-        }
-
-        /// <remarks/>
-        public string b058
-        {
-            get { return EditionStatement; }
-            set { EditionStatement = value; }
-        }
-
-        /// <remarks/>
-        public string b073
-        {
-            get { return AudienceCode; }
-            set { AudienceCode = value; }
-        }
-
-        public string b062
-        {
-            get { return IllustrationsNote; }
-            set { IllustrationsNote = value; }
-        }
-
-        public string b125
-        {
-            get { return NumberOfIllustrations; }
-            set { NumberOfIllustrations = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("audience")]
-        public OnixAudience[] audience
-        {
-            get { return this.shortAudienceField; }
-            set { this.shortAudienceField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("audiencerange")]
-        public OnixAudienceRange[] audiencerange
-        {
-            get { return shortAudienceRangeField; }
-            set { shortAudienceRangeField = value; }
-        }
-
-        public string x316
-        {
-            get { return this.CountryOfManufacture; }
-            set { this.CountryOfManufacture = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("collection")]
-        public OnixCollection[] collection
-        {
-            get { return shortCollectionField; }
-            set { shortCollectionField = value; }
-        }
-
-        /// <remarks/>
-        public OnixTitleDetail titledetail
-        {
-            get { return TitleDetail; }
-            set { TitleDetail = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("contributor")]
-        public OnixContributor[] contributor
-        {
-            get { return shortContributorField; }
-            set { shortContributorField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("epubusageconstraint")]
-        public OnixEpubUsageConstraint[] epubusageconstraint
-        {
-            get { return this.shortEpubUsageConstraintField; }
-            set { this.shortEpubUsageConstraintField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("extent")]
-        public OnixExtent[] extent
-        {
-            get { return shortExtentField; }
-            set { shortExtentField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("language")]
-        public OnixLanguage[] language
-        {
-            get { return shortLanguageField; }
-            set { shortLanguageField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("measure")]
-        public OnixMeasure[] measure
-        {
-            get { return shortMeasureField; }
-            set { shortMeasureField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("productpart")]
-        public OnixProductPart[] productpart
-        {
-            get { return this.shortProdPartField; }
-            set { this.shortProdPartField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("subject")]
-        public OnixSubject[] subject
-        {
-            get { return shortSubjectField; }
-            set { shortSubjectField = value; }
-        }
-
-        #endregion
-
         #region Support Methods
 
         public string TranslateAudienceGradeToAge(string psGradeValue)
@@ -1196,18 +852,18 @@ namespace OnixData.Version3
             int nAgeVal = 0;
             string sAgeVal = "";
 
-            if (!String.IsNullOrEmpty(psGradeValue))
+            if (!string.IsNullOrEmpty(psGradeValue))
             {
                 if ((psGradeValue == OnixAudienceRange.CONST_AUD_GRADE_PRESCHOOL_CD) || (psGradeValue == OnixAudienceRange.CONST_AUD_GRADE_PRESCHOOL_TXT))
                     nAgeVal = 4;
                 else if ((psGradeValue == OnixAudienceRange.CONST_AUD_GRADE_KNDGRTN_CD) || (psGradeValue == OnixAudienceRange.CONST_AUD_GRADE_KNDGRTN_TXT))
                     nAgeVal = 5;
-                else if (Int32.TryParse(psGradeValue, out nAgeVal))
+                else if (int.TryParse(psGradeValue, out nAgeVal))
                     nAgeVal += 5;
             }
 
             if (nAgeVal > 0)
-                sAgeVal = Convert.ToString(nAgeVal);
+                sAgeVal = nAgeVal.ToString();
 
             return sAgeVal;
         }

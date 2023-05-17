@@ -30,23 +30,17 @@ namespace OnixData.Version3
         /// <para>Mandatory in each occurrence of the <see cref="OnixProductId"/> composite, and non-repeating.</para>
         /// </summary>
         /// <remarks>Onix List 5</remarks>
+        [XmlChoiceIdentifier("ProductIDTypeChoice")]
+        [XmlElement("ProductIDType")]
+        [XmlElement("b221")]
         public int ProductIDType { get; set; }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public int b221
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductIDTypeEnum { ProductIDType, b221 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductIDTypeEnum ProductIDTypeChoice
         {
-            get
-            {
-                return ProductIDType;
-            }
-            set
-            {
-                ProductIDType = value;
-            }
+            get { return SerializationSettings.UseShortTags ? ProductIDTypeEnum.b221 : ProductIDTypeEnum.ProductIDType; }
+            set { }
         }
 
         #endregion

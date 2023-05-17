@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Title
 {
     /// <summary>
     /// A group of data elements which indicates some ordinal position of a product within a collection. Different ordinal positions may be specified using separate repeats of the composite – for example, a product may be published first while also being third in narrative order within a collection.
     /// </summary>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixCollectionSequence
     {
         #region CONSTANTS
@@ -28,15 +26,6 @@ namespace OnixData.Version3.Title
 
         #endregion
 
-        public OnixCollectionSequence()
-        {
-            CollectionSequenceType = CollectionSequenceTypeName = CollectionSequenceNumber = "";
-        }
-      
-        private string collSeqTypeField;
-        private string collSeqTypeNameField;
-        private string collSeqField;
-
         #region Helper Methods
 
         public int CollectionSequenceTypeNum
@@ -45,8 +34,8 @@ namespace OnixData.Version3.Title
             {
                 int nCollSeqType = -1;
 
-                if (!String.IsNullOrEmpty(CollectionSequenceType))
-                    Int32.TryParse(CollectionSequenceType, out nCollSeqType);
+                if (!string.IsNullOrEmpty(CollectionSequenceType))
+                    int.TryParse(CollectionSequenceType, out nCollSeqType);
 
                 return nCollSeqType;
             }
@@ -58,8 +47,8 @@ namespace OnixData.Version3.Title
             {
                 int nCollSeq = -1;
 
-                if (!String.IsNullOrEmpty(CollectionSequenceNumber))
-                    Int32.TryParse(CollectionSequenceNumber, out nCollSeq);
+                if (!string.IsNullOrEmpty(CollectionSequenceNumber))
+                    int.TryParse(CollectionSequenceNumber, out nCollSeq);
 
                 return nCollSeq;
             }
@@ -84,16 +73,17 @@ namespace OnixData.Version3.Title
         /// Mandatory and non-repeating within the <see cref="OnixCollectionSequence"/> composite.
         /// </summary>
         /// <remarks>Onix List 197</remarks>
-        public string CollectionSequenceType
+        [XmlChoiceIdentifier("CollectionSequenceTypeChoice")]
+        [XmlElement("CollectionSequenceType")]
+        [XmlElement("x479")]
+        public string CollectionSequenceType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CollectionSequenceTypeEnum { CollectionSequenceType, x479 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CollectionSequenceTypeEnum CollectionSequenceTypeChoice
         {
-            get
-            {
-                return this.collSeqTypeField;
-            }
-            set
-            {
-                this.collSeqTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? CollectionSequenceTypeEnum.x479 : CollectionSequenceTypeEnum.CollectionSequenceType; }
+            set { }
         }
 
         /// <summary>
@@ -101,16 +91,17 @@ namespace OnixData.Version3.Title
         /// Must be included when, and only when, the code in the <see cref="CollectionSequenceType"/> field indicates a proprietary scheme.
         /// Optional and non-repeating.
         /// </summary>
-        public string CollectionSequenceTypeName
+        [XmlChoiceIdentifier("CollectionSequenceTypeNameChoice")]
+        [XmlElement("CollectionSequenceTypeName")]
+        [XmlElement("x480")]
+        public string CollectionSequenceTypeName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CollectionSequenceTypeNameEnum { CollectionSequenceTypeName, x480 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CollectionSequenceTypeNameEnum CollectionSequenceTypeNameChoice
         {
-            get
-            {
-                return this.collSeqTypeNameField;
-            }
-            set
-            {
-                this.collSeqTypeNameField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? CollectionSequenceTypeNameEnum.x480 : CollectionSequenceTypeNameEnum.CollectionSequenceTypeName; }
+            set { }
         }
 
         /// <summary>
@@ -120,59 +111,17 @@ namespace OnixData.Version3.Title
         ///
         /// <para>A hyphen may be used in place of an integer within a multi-level number, where a particular level of the hierarchy is unnumbered, for example -.3 where a product is the third in a sub-collection, and the sub-collection is unnumbered within the collection.</para>
         /// </summary>
-        public string CollectionSequenceNumber
+        [XmlChoiceIdentifier("CollectionSequenceNumberChoice")]
+        [XmlElement("CollectionSequenceNumber")]
+        [XmlElement("x481")]
+        public string CollectionSequenceNumber { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CollectionSequenceNumberEnum { CollectionSequenceNumber, x481 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CollectionSequenceNumberEnum CollectionSequenceNumberChoice
         {
-            get
-            {
-                return this.collSeqField;
-            }
-            set
-            {
-                this.collSeqField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string x479
-        {
-            get
-            {
-                return CollectionSequenceType;
-            }
-            set
-            {
-                CollectionSequenceType = value;
-            }
-        }
-
-        /// <remarks/>
-        public string x480
-        {
-            get
-            {
-                return CollectionSequenceTypeName;
-            }
-            set
-            {
-                CollectionSequenceTypeName = value;
-            }
-        }
-
-        /// <remarks/>
-        public string x481
-        {
-            get
-            {
-                return CollectionSequenceNumber;
-            }
-            set
-            {
-                CollectionSequenceNumber = value;
-            }
+            get { return SerializationSettings.UseShortTags ? CollectionSequenceNumberEnum.x481 : CollectionSequenceNumberEnum.CollectionSequenceNumber; }
+            set { }
         }
 
         #endregion

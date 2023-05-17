@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Title
 {
@@ -15,6 +14,17 @@ namespace OnixData.Version3.Title
         /// Mandatory in each occurrence of the <see cref="OnixCollectionIdentifier"/> composite, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 13</remarks>
+        [XmlChoiceIdentifier("CollectionIDTypeChoice")]
+        [XmlElement("CollectionIDType")]
+        [XmlElement("x344")]
         public string CollectionIDType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CollectionIDTypeEnum { CollectionIDType, x344 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CollectionIDTypeEnum CollectionIDTypeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? CollectionIDTypeEnum.x344 : CollectionIDTypeEnum.CollectionIDType; }
+            set { }
+        }
     }
 }

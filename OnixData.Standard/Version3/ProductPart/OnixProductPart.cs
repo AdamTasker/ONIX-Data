@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.ProductPart
 {
@@ -15,7 +12,7 @@ namespace OnixData.Version3.ProductPart
     /// If the composite refers to a number of copies of a single item, the quantity must be sent as <see cref="NumberOfCopies"/>, normally accompanied by a <see cref="ProductIdentifier"/>.
     /// If the composite refers to a number of different items of the same form, without identifying them individually, the quantity must be sent as <see cref="NumberOfItemsOfThisForm"/>.</para>
     /// </summary>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixProductPart
     {
         #region CONSTANTS
@@ -24,15 +21,6 @@ namespace OnixData.Version3.ProductPart
 
         #endregion
 
-        public OnixProductPart()
-        {
-            PrimaryPart = ProductForm = NumberOfItemsOfThisForm = "";
-        }
-
-        private string primaryPartField;
-        private string productFormField;
-        private string numOfItemsOfThisFormField;
-
         #region Reference Tags
 
         /// <summary>
@@ -40,34 +28,59 @@ namespace OnixData.Version3.ProductPart
         /// For example, in a ‘book and toy’ or ‘book and DVD’ product, the book may be regarded as the primary part.
         /// Optional and non-repeating.
         /// </summary>
-        public string PrimaryPart
+        [XmlChoiceIdentifier("PrimaryPartChoice")]
+        [XmlElement("PrimaryPart")]
+        [XmlElement("x457")]
+        public string PrimaryPart { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PrimaryPartEnum { PrimaryPart, x457 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PrimaryPartEnum PrimaryPartChoice
         {
-            get { return this.primaryPartField; }
-
-            set
-            {
-                if (String.IsNullOrEmpty(value))
-                    value = CONST_MAIN_PRD_PART_INDICATOR;
-                else
-                    this.primaryPartField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? PrimaryPartEnum.x457 : PrimaryPartEnum.PrimaryPart; }
+            set { }
         }
 
         /// <summary>
         /// A group of data elements which together define an identifier of a product in accordance with a specified scheme, used here to carry the product identifier of a product part.
         /// Optional, but required when an occurrence of <see cref="OnixProductPart"/> specifies an individual item with its own identifier, and repeatable with different identifiers for the same item.
         /// </summary>
+        [XmlChoiceIdentifier("ProductIdentifierChoice")]
+        [XmlElement("ProductIdentifier")]
+        [XmlElement("productidentifier")]
         public OnixProductId[] ProductIdentifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductIdentifierEnum { ProductIdentifier, productidentifier }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductIdentifierEnum[] ProductIdentifierChoice
+        {
+            get
+            {
+                if (ProductIdentifier == null) return null;
+                ProductIdentifierEnum choice = SerializationSettings.UseShortTags ? ProductIdentifierEnum.productidentifier : ProductIdentifierEnum.ProductIdentifier;
+                ProductIdentifierEnum[] result = new ProductIdentifierEnum[ProductIdentifier.Length];
+                for (int i = 0; i < ProductIdentifier.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code which indicates the primary form of a product part.
         /// Mandatory in each occurrence of <see cref="OnixProductPart"/>, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 150</remarks>
-        public string ProductForm
+        [XmlChoiceIdentifier("ProductFormChoice")]
+        [XmlElement("ProductForm")]
+        [XmlElement("b012")]
+        public string ProductForm { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormEnum { ProductForm, b012 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormEnum ProductFormChoice
         {
-            get { return this.productFormField; }
-            set { this.productFormField = value; }
+            get { return SerializationSettings.UseShortTags ? ProductFormEnum.b012 : ProductFormEnum.ProductForm; }
+            set { }
         }
 
         /// <summary>
@@ -75,49 +88,157 @@ namespace OnixData.Version3.ProductPart
         /// Optional, and repeatable in order to provide multiple additional details.
         /// </summary>
         /// <remarks>Onix List 175</remarks>
+        [XmlChoiceIdentifier("ProductFormDetailChoice")]
+        [XmlElement("ProductFormDetail")]
+        [XmlElement("b333")]
         public string[] ProductFormDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormDetailEnum { ProductFormDetail, b333 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormDetailEnum[] ProductFormDetailChoice
+        {
+            get
+            {
+                if (ProductFormDetail == null) return null;
+                ProductFormDetailEnum choice = SerializationSettings.UseShortTags ? ProductFormDetailEnum.b333 : ProductFormDetailEnum.ProductFormDetail;
+                ProductFormDetailEnum[] result = new ProductFormDetailEnum[ProductFormDetail.Length];
+                for (int i = 0; i < ProductFormDetail.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An optional group of data elements which together describe an aspect of product form that is too specific to be covered in the <ProductForm> and <ProductFormDetail> elements.
         /// Repeatable in order to describe different aspects of the form of the product part.
         /// The composite is included here so that it can for example be used to carry consumer protection data related to a product part.
         /// </summary>
+        [XmlChoiceIdentifier("ProductFormFeatureChoice")]
+        [XmlElement("ProductFormFeature")]
+        [XmlElement("productformfeature")]
         public OnixProductFormFeature[] ProductFormFeature { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormFeatureEnum { ProductFormFeature, productformfeature }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormFeatureEnum[] ProductFormFeatureChoice
+        {
+            get
+            {
+                if (ProductFormFeature == null) return null;
+                ProductFormFeatureEnum choice = SerializationSettings.UseShortTags ? ProductFormFeatureEnum.productformfeature : ProductFormFeatureEnum.ProductFormFeature;
+                ProductFormFeatureEnum[] result = new ProductFormFeatureEnum[ProductFormFeature.Length];
+                for (int i = 0; i < ProductFormFeature.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code which indicates the type of packaging used for the product part.
         /// Optional, and not repeatable.
         /// </summary>
         /// <remarks>Onix List 80</remarks>
+        [XmlChoiceIdentifier("ProductPackagingChoice")]
+        [XmlElement("ProductPackaging")]
+        [XmlElement("b225")]
         public string ProductPackaging { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductPackagingEnum { ProductPackaging, b225 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductPackagingEnum ProductPackagingChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ProductPackagingEnum.b225 : ProductPackagingEnum.ProductPackaging; }
+            set { }
+        }
 
         /// <summary>
         /// If product form codes do not adequately describe the contained item, a short text description may be added.
         /// Optional and repeatable.
         /// The language attribute is optional for a single instance of <see cref="ProductFormDescription"/>, but must be included in each instance if <see cref="ProductFormDescription"/> is repeated.
         /// </summary>
+        [XmlChoiceIdentifier("ProductFormDescriptionChoice")]
+        [XmlElement("ProductFormDescription")]
+        [XmlElement("b014")]
         public string[] ProductFormDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormDescriptionEnum { ProductFormDescription, b014 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormDescriptionEnum[] ProductFormDescriptionChoice
+        {
+            get
+            {
+                if (ProductFormDescription != null) return null;
+                ProductFormDescriptionEnum choice = SerializationSettings.UseShortTags ? ProductFormDescriptionEnum.b014 : ProductFormDescriptionEnum.ProductFormDescription;
+                ProductFormDescriptionEnum[] result = new ProductFormDescriptionEnum[ProductFormDescription.Length];
+                for (int i = 0; i < ProductFormDescription.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code which indicates certain types of content which are closely related to but not strictly an attribute of product form, eg audiobook. Optional and repeatable.
         /// </summary>
         /// <remarks>Onix List 81</remarks>
+        [XmlChoiceIdentifier("ProductContentTypeChoice")]
+        [XmlElement("ProductContentType")]
+        [XmlElement("b385")]
         public string[] ProductContentType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductContentTypeEnum { ProductContentType, b385 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductContentTypeEnum[] ProductContentTypeChoice
+        {
+            get
+            {
+                if (ProductContentType != null) return null;
+                ProductContentTypeEnum choice = SerializationSettings.UseShortTags ? ProductContentTypeEnum.b385 : ProductContentTypeEnum.ProductContentType;
+                ProductContentTypeEnum[] result = new ProductContentTypeEnum[ProductContentType.Length];
+                for (int i = 0; i < ProductContentType.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An optional group of data elements which together identify a measurement and the units in which it is expressed; used to specify the overall dimensions of a physical product part including its inner packaging (if any).
         /// Repeatable to provide multiple combinations of dimension and unit.
         /// </summary>
+        [XmlChoiceIdentifier("MeasureChoice")]
+        [XmlElement("Measure")]
+        [XmlElement("measure")]
         public OnixMeasure[] Measure { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MeasureEnum { Measure, measure }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MeasureEnum[] MeasureChoice
+        {
+            get
+            {
+                if (Measure != null) return null;
+                MeasureEnum choice = SerializationSettings.UseShortTags ? MeasureEnum.measure : MeasureEnum.Measure;
+                MeasureEnum[] result = new MeasureEnum[Measure.Length];
+                for (int i = 0; i < Measure.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// When product parts are listed as a specified number of different items in a specified form, without identifying the individual items, <see cref="NumberOfItemsOfThisForm"/> must be used to carry the quantity, even if the number is ‘1’.
         /// Consequently the element is mandatory and non-repeating in an occurrence of the <see cref="OnixProductPart"/> composite if <see cref="NumberOfCopies"/> is not present; and it must not be used if <see cref="ProductIdentifier"/> is present.
         /// </summary>
-        public string NumberOfItemsOfThisForm
+        [XmlChoiceIdentifier("NumberOfItemsOfThisFormChoice")]
+        [XmlElement("NumberOfItemsOfThisForm")]
+        [XmlElement("x322")]
+        public int NumberOfItemsOfThisForm { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NumberOfItemsOfThisFormEnum { NumberOfItemsOfThisForm, x322 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NumberOfItemsOfThisFormEnum NumberOfItemsOfThisFormChoice
         {
-            get { return this.numOfItemsOfThisFormField; }
-            set { this.numOfItemsOfThisFormField = value; }
+            get { return SerializationSettings.UseShortTags ? NumberOfItemsOfThisFormEnum.x322 : NumberOfItemsOfThisFormEnum.NumberOfItemsOfThisForm; }
+            set { }
         }
 
         /// <summary>
@@ -126,7 +247,18 @@ namespace OnixData.Version3.ProductPart
         /// Consequently the element is mandatory, and non-repeating, in an occurrence of the <see cref="OnixProductPart"/> composite if <see cref="NumberOfItemsOfThisForm"/> is not present.
         /// It is normally accompanied by a <see cref="ProductIdentifier"/>; but in exceptional circumstances, if the sender’s system is unable to provide an identifier at this level, it may be sent with product form coding and without an ID.
         /// </summary>
+        [XmlChoiceIdentifier("NumberOfCopiesChoice")]
+        [XmlElement("NumberOfCopies")]
+        [XmlElement("x323")]
         public int NumberOfCopies { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NumberOfCopiesEnum { NumberOfCopies, x323 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NumberOfCopiesEnum NumberOfCopiesChoice
+        {
+            get { return SerializationSettings.UseShortTags ? NumberOfCopiesEnum.x323 : NumberOfCopiesEnum.NumberOfCopies; }
+            set { }
+        }
 
         /// <summary>
         /// A code identifying the country in which a product part was manufactured, if different product parts were manufactured in different countries.
@@ -134,32 +266,17 @@ namespace OnixData.Version3.ProductPart
         /// Optional and non-repeating.
         /// </summary>
         /// <remarks>Onix List 91</remarks>
+        [XmlChoiceIdentifier("CountryOfManufactureChoice")]
+        [XmlElement("CountryOfManufacture")]
+        [XmlElement("x316")]
         public string CountryOfManufacture { get; set; }
-
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string x457
+        [XmlType(IncludeInSchema = false)]
+        public enum CountryOfManufactureEnum { CountryOfManufacture, x316 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CountryOfManufactureEnum CountryOfManufactureChoice
         {
-            get { return PrimaryPart; }
-            set { PrimaryPart = value; }
-        }
-
-        /// <remarks/>
-        public string b012
-        {
-            get { return ProductForm; }
-            set { ProductForm = value; }
-        }
-
-        /// <remarks/>
-        public string x322
-        {
-            get { return NumberOfItemsOfThisForm; }
-            set { NumberOfItemsOfThisForm = value; }
+            get { return SerializationSettings.UseShortTags ? CountryOfManufactureEnum.x316 : CountryOfManufactureEnum.CountryOfManufacture; }
+            set { }
         }
 
         #endregion

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Epub
 {
@@ -31,40 +28,6 @@ namespace OnixData.Version3.Epub
 
         #endregion
 
-        public OnixEpubUsageConstraint()
-        {
-            EpubUsageType = EpubUsageStatus = "";
-
-            usageLimitField = shortUsageLimitField = new OnixEpubUsageLimit[0];
-        }
-
-        private string epubUsageTypeField;
-        private string epubUsageStatusField;
-
-        private OnixEpubUsageLimit[] usageLimitField;
-        private OnixEpubUsageLimit[] shortUsageLimitField;
-
-        #region ONIX Lists
-
-        public OnixEpubUsageLimit[] OnixEpubUsageLimitList
-        {
-            get
-            {
-                OnixEpubUsageLimit[] Limits = new OnixEpubUsageLimit[0];
-
-                if (this.usageLimitField != null)
-                    Limits = this.usageLimitField;
-                else if (this.shortUsageLimitField != null)
-                    Limits = this.shortUsageLimitField;
-                else
-                    Limits = new OnixEpubUsageLimit[0];
-
-                return Limits;
-            }
-        }
-
-        #endregion
-
         #region Reference Tags
 
         /// <summary>
@@ -72,10 +35,17 @@ namespace OnixData.Version3.Epub
         /// Mandatory in each occurrence of the <see cref="OnixEpubUsageConstraint"/> composite, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 145</remarks>
-        public string EpubUsageType
+        [XmlChoiceIdentifier("EpubUsageTypeChoice")]
+        [XmlElement("EpubUsageType")]
+        [XmlElement("x318")]
+        public string EpubUsageType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EpubUsageTypeEnum { EpubUsageType, x318 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EpubUsageTypeEnum EpubUsageTypeChoice
         {
-            get { return this.epubUsageTypeField; }
-            set { this.epubUsageTypeField = value; }
+            get { return SerializationSettings.UseShortTags ? EpubUsageTypeEnum.x318 : EpubUsageTypeEnum.EpubUsageType; }
+            set { }
         }
 
         /// <summary>
@@ -83,47 +53,42 @@ namespace OnixData.Version3.Epub
         /// Mandatory in each occurrence of the <see cref="OnixEpubUsageConstraint"/> composite, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 146</remarks>
-        public string EpubUsageStatus
+        [XmlChoiceIdentifier("EpubUsageStatusChoice")]
+        [XmlElement("EpubUsageStatus")]
+        [XmlElement("x319")]
+        public string EpubUsageStatus { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EpubUsageStatusEnum { EpubUsageStatus, x319 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EpubUsageStatusEnum EpubUsageStatusChoice
         {
-            get { return this.epubUsageStatusField; }
-            set { this.epubUsageStatusField = value; }
+            get { return SerializationSettings.UseShortTags ? EpubUsageStatusEnum.x319 : EpubUsageStatusEnum.EpubUsageStatus; }
+            set { }
         }
 
         /// <summary>
         /// An optional group of data elements which together specify a quantitative limit on a particular type of usage of a digital product.
         /// Repeatable in order to specify two or more limits on the usage type.
         /// </summary>
-        [System.Xml.Serialization.XmlElementAttribute("EpubUsageLimit")]
-        public OnixEpubUsageLimit[] EpubUsageLimit
+        [XmlChoiceIdentifier("EpubUsageLimitChoice")]
+        [XmlElement("EpubUsageLimit")]
+        [XmlElement("epubusagelimit")]
+        public OnixEpubUsageLimit[] EpubUsageLimit { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EpubUsageLimitEnum { EpubUsageLimit, epubusagelimit }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EpubUsageLimitEnum[] EpubUsageLimitChoice
         {
-            get { return this.usageLimitField; }
-            set { this.usageLimitField = value; }
+            get
+            {
+                if (EpubUsageLimit == null) return null;
+                EpubUsageLimitEnum choice = SerializationSettings.UseShortTags ? EpubUsageLimitEnum.epubusagelimit : EpubUsageLimitEnum.EpubUsageLimit;
+                EpubUsageLimitEnum[] result = new EpubUsageLimitEnum[EpubUsageLimit.Length];
+                for (int i = 0; i < EpubUsageLimit.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
-
-        #endregion
-
-        #region Short Tags
-
-        public string x318
-        {
-            get { return EpubUsageType; }
-            set { EpubUsageType = value; }
-        }
-
-        public string x319
-        {
-            get { return EpubUsageStatus; }
-            set { EpubUsageStatus = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("epubusagelimit")]
-        public OnixEpubUsageLimit[] epubusagelimit
-        {
-            get { return this.shortUsageLimitField; }
-            set { this.shortUsageLimitField = value; }
-        }
-
         #endregion
     }
 }

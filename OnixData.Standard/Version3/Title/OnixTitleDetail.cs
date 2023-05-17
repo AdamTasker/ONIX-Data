@@ -1,50 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Title
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixTitleDetail
     {
         #region CONSTANTS
 
         public const int CONST_TITLE_TYPE_UN_TITLE   = 0;
         public const int CONST_TITLE_TYPE_DIST_TITLE = 1;
-
-        #endregion
-
-        public OnixTitleDetail()
-        {
-            TitleType         = "";
-            titleElementField = shortTitleElementField = new OnixTitleElement[0];
-        }
-
-        private string             titleTypeField;
-        private OnixTitleElement[] titleElementField;
-        private OnixTitleElement[] shortTitleElementField;
-
-        #region ONIX Lists
-
-        public OnixTitleElement[] OnixTitleElementList
-        {
-            get
-            {
-                OnixTitleElement[] TitleElemList = null;
-
-                if (this.titleElementField != null)
-                    TitleElemList = this.titleElementField;
-                else if (this.shortTitleElementField != null)
-                    TitleElemList = this.shortTitleElementField;
-                else
-                    TitleElemList = new OnixTitleElement[0];
-
-                return TitleElemList;
-            }
-        }
 
         #endregion
 
@@ -57,7 +25,7 @@ namespace OnixData.Version3.Title
                 StringBuilder SeriesNameBuilder = new StringBuilder();
 
                 var SeriesNameParts =
-                    this.OnixTitleElementList.Where(x => x.IsQualifiedSeriesType()).OrderBy(x => x.TitleElementLevel);
+                    this.TitleElement.Where(x => x.IsQualifiedSeriesType()).OrderBy(x => x.TitleElementLevel);
 
                 if (SeriesNameParts != null)
                 {
@@ -73,9 +41,9 @@ namespace OnixData.Version3.Title
                 if (SeriesNameBuilder.Length <= 0)
                 {
                     var MasterBrandTitle =
-                        this.OnixTitleElementList.Where(x => x.IsMasterBrandType()).FirstOrDefault();
+                        this.TitleElement.Where(x => x.IsMasterBrandType()).FirstOrDefault();
 
-                    if ((MasterBrandTitle != null) && !String.IsNullOrEmpty(MasterBrandTitle.Title))
+                    if ((MasterBrandTitle != null) && !string.IsNullOrEmpty(MasterBrandTitle.Title))
                     {
                         SeriesNameBuilder.Append(MasterBrandTitle.Title);
                     }
@@ -91,10 +59,10 @@ namespace OnixData.Version3.Title
             {
                 OnixTitleElement CollTitleElement = null;
 
-                if ((OnixTitleElementList != null) && (OnixTitleElementList.Length > 0))
+                if ((TitleElement != null) && (TitleElement.Length > 0))
                 {
                     var FoundElement =
-                        OnixTitleElementList.Where(x => x.IsElementLevelCollection()).FirstOrDefault();
+                        TitleElement.Where(x => x.IsElementLevelCollection()).FirstOrDefault();
 
                     if (FoundElement != null)
                         CollTitleElement = FoundElement;
@@ -110,10 +78,10 @@ namespace OnixData.Version3.Title
             {
                 OnixTitleElement PrdTitleElement = null;
 
-                if ((OnixTitleElementList != null) && (OnixTitleElementList.Length > 0))
+                if ((TitleElement != null) && (TitleElement.Length > 0))
                 {
                     var FoundElement =
-                        OnixTitleElementList.Where(x => x.IsElementLevelProduct()).FirstOrDefault();
+                        TitleElement.Where(x => x.IsElementLevelProduct()).FirstOrDefault();
 
                     if (FoundElement != null)
                         PrdTitleElement = FoundElement;
@@ -129,8 +97,8 @@ namespace OnixData.Version3.Title
             {
                 OnixTitleElement FirstElement = null;
 
-                if ((OnixTitleElementList != null) && (OnixTitleElementList.Length > 0))
-                    FirstElement = OnixTitleElementList[0];
+                if ((TitleElement != null) && (TitleElement.Length > 0))
+                    FirstElement = TitleElement[0];
 
                 return FirstElement;
             }
@@ -142,7 +110,7 @@ namespace OnixData.Version3.Title
             {
                 string sFullName = "";
 
-                if ((FirstTitleElement != null) && !String.IsNullOrEmpty(FirstTitleElement.Title))
+                if ((FirstTitleElement != null) && !string.IsNullOrEmpty(FirstTitleElement.Title))
                     sFullName = FirstTitleElement.Title;
 
                 return sFullName;
@@ -221,7 +189,7 @@ namespace OnixData.Version3.Title
             {
                 string sPrefix = "";
 
-                if ((FirstTitleElement != null) && !String.IsNullOrEmpty(FirstTitleElement.TitlePrefix))
+                if ((FirstTitleElement != null) && !string.IsNullOrEmpty(FirstTitleElement.TitlePrefix))
                     sPrefix = FirstTitleElement.TitlePrefix;
 
                 return sPrefix;
@@ -234,7 +202,7 @@ namespace OnixData.Version3.Title
             {
                 string sTitleWithoutPrefix = "";
 
-                if ((FirstTitleElement != null) && !String.IsNullOrEmpty(FirstTitleElement.TitleWithoutPrefix))
+                if ((FirstTitleElement != null) && !string.IsNullOrEmpty(FirstTitleElement.TitleWithoutPrefix))
                     sTitleWithoutPrefix = FirstTitleElement.TitleWithoutPrefix;
 
                 return sTitleWithoutPrefix;
@@ -247,8 +215,8 @@ namespace OnixData.Version3.Title
             {
                 int nTypeNum = -1;
 
-                if (!String.IsNullOrEmpty(TitleType))
-                    Int32.TryParse(TitleType, out nTypeNum);
+                if (!string.IsNullOrEmpty(TitleType))
+                    int.TryParse(TitleType, out nTypeNum);
 
                 return nTypeNum;
             }
@@ -263,10 +231,17 @@ namespace OnixData.Version3.Title
         /// Mandatory in each occurrence of the <see cref="OnixTitleDetail"/> composite, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 15</remarks>
-        public string TitleType
+        [XmlChoiceIdentifier("TitleTypeChoice")]
+        [XmlElement("TitleType")]
+        [XmlElement("b202")]
+        public string TitleType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TitleTypeEnum { TitleType, b202 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitleTypeEnum TitleTypeChoice
         {
-            get { return this.titleTypeField; }
-            set { this.titleTypeField = value; }
+            get { return SerializationSettings.UseShortTags ? TitleTypeEnum.b202 : TitleTypeEnum.TitleType; }
+            set { }
         }
 
         /// <summary>
@@ -274,11 +249,24 @@ namespace OnixData.Version3.Title
         /// At least one title element is mandatory in each occurrence of the <see cref="OnixTitleDetail"/> composite.
         /// The composite is repeatable with different sequence numbers and/or title element levels.
         /// </summary>
-        [System.Xml.Serialization.XmlElementAttribute("TitleElement")]
-        public OnixTitleElement[] TitleElement
+        [XmlChoiceIdentifier("TitleElementChoice")]
+        [XmlElement("TitleElement")]
+        [XmlElement("titleelement")]
+        public OnixTitleElement[] TitleElement { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TitleElementEnum { TitleElement, titleelement }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitleElementEnum[] TitleElementChoice
         {
-            get { return this.titleElementField; }
-            set { this.titleElementField = value; }
+            get
+            {
+                if (TitleElement == null) return null;
+                TitleElementEnum choice = SerializationSettings.UseShortTags ? TitleElementEnum.titleelement : TitleElementEnum.TitleElement;
+                TitleElementEnum[] result = new TitleElementEnum[TitleElement.Length];
+                for (int i = 0; i < TitleElement.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         /// <summary>
@@ -287,25 +275,17 @@ namespace OnixData.Version3.Title
         /// When this field is sent, the recipient should use it to replace all collection title detail sent in <see cref="OnixCollection"/> for display purposes only.
         /// The individual collection title element detail must also be sent, for indexing and retrieval purposes.
         /// </summary>
+        [XmlChoiceIdentifier("TitleStatementChoice")]
+        [XmlElement("TitleStatement")]
+        [XmlElement("x478")]
         public string TitleStatement { get; set; }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string b202
+        [XmlType(IncludeInSchema = false)]
+        public enum TitleStatementEnum { TitleStatement, x478 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitleStatementEnum TitleStatementChoice
         {
-            get { return TitleType; }
-            set { TitleType = value; }
-        }
-
-        [System.Xml.Serialization.XmlElementAttribute("titleelement")]
-        /// <remarks/>
-        public OnixTitleElement[] titleelement
-        {
-            get { return this.shortTitleElementField; }
-            set { shortTitleElementField = value; }
+            get { return SerializationSettings.UseShortTags ? TitleStatementEnum.x478 : TitleStatementEnum.TitleStatement; }
+            set { }
         }
 
         #endregion

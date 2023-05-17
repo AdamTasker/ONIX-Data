@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3
 {
@@ -13,7 +12,19 @@ namespace OnixData.Version3
         /// An ONIX code which specifies the feature described by an instance of the <see cref="OnixProductFormFeature"/> composite, eg binding color.
         /// Mandatory in each occurrence of the composite, and non-repeating.
         /// </summary>
+        /// <remarks>Onix List 79</remarks>
+        [XmlChoiceIdentifier("ProductFormFeatureTypeChoice")]
+        [XmlElement("ProductFormFeatureType")]
+        [XmlElement("b334")]
         public string ProductFormFeatureType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormFeatureTypeEnum { ProductFormFeatureType, b334 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormFeatureTypeEnum ProductFormFeatureTypeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ProductFormFeatureTypeEnum.b334 : ProductFormFeatureTypeEnum.ProductFormFeatureType; }
+            set { }
+        }
 
         /// <summary>
         /// A controlled value that describes a product form feature.
@@ -35,13 +46,42 @@ namespace OnixData.Version3
         /// <para>For e-publication accessibility features for print-impaired readers, see Onix List 196</para>
         /// <para>Further features with corresponding code lists may be added from time to time without a re-issue of this document – see the latest release of Onix List 79</para>
         /// </remarks>
+        [XmlChoiceIdentifier("ProductFormFeatureValueChoice")]
+        [XmlElement("ProductFormFeatureValue")]
+        [XmlElement("b335")]
         public string ProductFormFeatureValue { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormFeatureValueEnum {  ProductFormFeatureValue, b335 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormFeatureValueEnum ProductFormFeatureValueChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ProductFormFeatureValueEnum.b335 : ProductFormFeatureValueEnum.ProductFormFeatureValue; }
+            set { }
+        }
 
         /// <summary>
         /// If the <see cref="ProductFormFeatureType"/> requires free text rather than a code value, or if the code in <see cref="ProductFormFeatureValue"/> does not adequately describe the feature, a short text description may be added.
         /// Optional, and repeatable to provide parallel descriptive text in multiple languages.
         /// The language attribute is optional for a single instance of <see cref="ProductFormFeatureDescription"/>, but must be included in each instance if <see cref="ProductFormFeatureDescription"/> is repeated.
         /// </summary>
+        [XmlChoiceIdentifier("ProductFormFeatureDescriptionChoice")]
+        [XmlElement("ProductFormFeatureDescription")]
+        [XmlElement("b336")]
         public string[] ProductFormFeatureDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductFormFeatureDescriptionEnum { ProductFormFeatureDescription, b336 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductFormFeatureDescriptionEnum[] ProductFormFeatureDescriptionChoice
+        {
+            get
+            {
+                if (ProductFormFeatureDescription != null) return null;
+                ProductFormFeatureDescriptionEnum choice = SerializationSettings.UseShortTags ? ProductFormFeatureDescriptionEnum.b336 : ProductFormFeatureDescriptionEnum.ProductFormFeatureDescription;
+                ProductFormFeatureDescriptionEnum[] result = new ProductFormFeatureDescriptionEnum[ProductFormFeatureDescription.Length];
+                for (int i = 0; i < ProductFormFeatureDescription.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
     }
 }

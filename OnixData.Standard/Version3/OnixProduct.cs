@@ -677,6 +677,31 @@ namespace OnixData.Version3
             }
         }
 
+        public string Title
+        {
+            get
+            {
+                string ProductTitle = "";
+
+                if ((DescriptiveDetail != null) &&
+                    (DescriptiveDetail.TitleDetail != null) &&
+                    (DescriptiveDetail.TitleDetail.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT))
+                {
+                    OnixTitleDetail ProductTitleDetail = DescriptiveDetail.TitleDetail;
+
+                    if (ProductTitleDetail.FirstTitleElement != null)
+                    {
+                        ProductTitle = ProductTitleDetail.FirstTitleElement.Title;
+
+                        if (!String.IsNullOrEmpty(ProductTitleDetail.FirstTitleElement.Subtitle))
+                            ProductTitle += ": " + ProductTitleDetail.FirstTitleElement.Subtitle;
+                    }
+                }
+
+                return ProductTitle;
+            }
+        }
+
         #endregion
 
         #region Reference Tags
@@ -910,31 +935,6 @@ namespace OnixData.Version3
         {
             get { return SerializationSettings.UseShortTags ? ContentDetailEnum.contentdetail : ContentDetailEnum.ContentDetail; }
             set { }
-        }
-
-        public string Title
-        {
-            get
-            {
-                string ProductTitle = "";
-
-                if ((DescriptiveDetail != null) &&
-                    (DescriptiveDetail.TitleDetail != null) &&
-                    (DescriptiveDetail.TitleDetail.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT))
-                {
-                    OnixTitleDetail ProductTitleDetail = DescriptiveDetail.TitleDetail;
-
-                    if (ProductTitleDetail.FirstTitleElement != null)
-                    {
-                        ProductTitle = ProductTitleDetail.FirstTitleElement.Title;
-
-                        if (!String.IsNullOrEmpty(ProductTitleDetail.FirstTitleElement.Subtitle))
-                            ProductTitle += ": " + ProductTitleDetail.FirstTitleElement.Subtitle;
-                    }
-                }
-
-                return ProductTitle;
-            }
         }
 
         /// <remarks/>
