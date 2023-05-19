@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixExtent
     {
         #region CONSTANTS
@@ -49,16 +47,6 @@ namespace OnixData.Version3
 
         #endregion
 
-        public OnixExtent()
-        {
-            ExtentType  = ExtentUnit = -1;
-            ExtentValue = "";
-        }
-
-        private int    extentTypeField;
-        private string extentValueField;
-        private int    extentUnitField;
-
         #region Helper Methods
 
         public bool HasSoughtPageCountType()
@@ -71,18 +59,13 @@ namespace OnixData.Version3
             return CONST_SOUGHT_EXTENT_TYPES.Contains(this.ExtentType);
         }
 
-        #endregion
-
-        #region Helper Methods
-
         public int ExtentValueNum
         {
             get
             {
                 int nExtValue = -1;
 
-                if (!String.IsNullOrEmpty(ExtentValue))
-                    Int32.TryParse(ExtentValue, out nExtValue);
+                int.TryParse(ExtentValue.ToString(), out nExtValue);
 
                 return nExtValue;
             }
@@ -92,68 +75,77 @@ namespace OnixData.Version3
 
         #region Reference Tags
 
-        /// <remarks/>
-        public int ExtentType
+        /// <summary>
+        /// An ONIX code which identifies the type of extent carried in the composite, eg running time for an audio or video product.
+        /// Mandatory in each occurrence of the <see cref="OnixExtent"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 23</remarks>
+        [XmlChoiceIdentifier("ExtentTypeChoice")]
+        [XmlElement("ExtentType")]
+        [XmlElement("b218")]
+        public int ExtentType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ExtentTypeEnum { ExtentType, b218 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ExtentTypeEnum ExtentTypeChoice
         {
-            get
-            {
-                return this.extentTypeField;
-            }
-            set
-            {
-                this.extentTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? ExtentTypeEnum.b218 : ExtentTypeEnum.ExtentType; }
+            set { }
         }
 
-        /// <remarks/>
-        public string ExtentValue
+        /// <summary>
+        /// The numeric value of the extent specified in <see cref="ExtentType"/>.
+        /// Optional, and non-repeating.
+        /// However, either <see cref="ExtentValue"/> or <see cref="ExtentValueRoman"/>, or both, must be present in each occurrence of the <see cref="OnixExtent"/> composite;
+        /// and it is very strongly recommended that <see cref="ExtentValue"/> should always be included, even when the original product uses Roman numerals.
+        /// </summary>
+        [XmlChoiceIdentifier("ExtentValueChoice")]
+        [XmlElement("ExtentValue")]
+        [XmlElement("b219")]
+        public decimal ExtentValue { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ExtentValueEnum { ExtentValue, b219 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ExtentValueEnum ExtentValueChoice
         {
-            get
-            {
-                return this.extentValueField;
-            }
-            set
-            {
-                this.extentValueField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? ExtentValueEnum.b219 : ExtentValueEnum.ExtentValue; }
+            set { }
         }
 
-        /// <remarks/>
-        public int ExtentUnit
+        /// <summary>
+        /// The value of the extent expressed in Roman numerals.
+        /// Optional, and non-repeating.
+        /// Used only for page runs which are numbered in Roman.
+        /// </summary>
+        [XmlChoiceIdentifier("ExtentValueRomanChoice")]
+        [XmlElement("ExtentValueRoman")]
+        [XmlElement("x421")]
+        public string ExtentValueRoman { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ExtentValueRomanEnum { ExtentValueRoman, x421 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ExtentValueRomanEnum ExtentValueRomanChoice
         {
-            get
-            {
-                return this.extentUnitField;
-            }
-            set
-            {
-                this.extentUnitField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? ExtentValueRomanEnum.x421 : ExtentValueRomanEnum.ExtentValueRoman; }
+            set { }
         }
 
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public int b218
+        /// <summary>
+        /// An ONIX code indicating the unit used for the <see cref="ExtentValue"/> and the format in which the value is presented.
+        /// Mandatory in each occurrence of the <see cref="OnixExtent"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 24</remarks>
+        [XmlChoiceIdentifier("ExtentUnitChoice")]
+        [XmlElement("ExtentUnit")]
+        [XmlElement("b220")]
+        public int ExtentUnit { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ExtentUnitEnum {  ExtentUnit, b220 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ExtentUnitEnum ExtentUnitChoice
         {
-            get { return ExtentType; }
-            set { ExtentType = value; }
-        }
-
-        /// <remarks/>
-        public string b219
-        {
-            get { return ExtentValue; }
-            set { ExtentValue = value; }
-        }
-
-        /// <remarks/>
-        public int b220
-        {
-            get { return ExtentUnit; }
-            set { ExtentUnit = value; }
+            get { return SerializationSettings.UseShortTags ? ExtentUnitEnum.b220 : ExtentUnitEnum.ExtentUnit; }
+            set { }
         }
 
         #endregion

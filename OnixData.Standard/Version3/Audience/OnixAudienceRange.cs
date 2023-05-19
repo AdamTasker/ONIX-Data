@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Audience
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixAudienceRange
     {
         #region CONSTANTS
@@ -30,20 +28,6 @@ namespace OnixData.Version3.Audience
 
         #endregion
 
-        public OnixAudienceRange()
-        {
-            AudienceRangeQualifier = -1;
-
-            audienceRangePrecisionField = shortAudienceRangePrecisionField = new int[0];
-            audienceRangeValueField     = shortAudienceRangeValueField     = new string[0];
-        }
-
-        private int      audienceRangeQualifierField;
-        private int[]    audienceRangePrecisionField;
-        private int[]    shortAudienceRangePrecisionField;
-        private string[] audienceRangeValueField;
-        private string[] shortAudienceRangeValueField;
-
         #region ONIX Helper Methods
 
         public string USAgeFrom
@@ -51,7 +35,7 @@ namespace OnixData.Version3.Audience
             get
             {
                 string FoundAgeFrom = FindAudRangeValue(CONST_AUD_RANGE_TYPE_INTEREST_AGE, CONST_AUD_RANGE_PRCN_FROM);
-                if (String.IsNullOrEmpty(FoundAgeFrom))
+                if (string.IsNullOrEmpty(FoundAgeFrom))
                     FoundAgeFrom = FindAudRangeValue(CONST_AUD_RANGE_TYPE_READING_AGE, CONST_AUD_RANGE_PRCN_FROM);
 
                 return FoundAgeFrom;
@@ -63,7 +47,7 @@ namespace OnixData.Version3.Audience
             get
             {
                 string FoundAgeTo = FindAudRangeValue(CONST_AUD_RANGE_TYPE_INTEREST_AGE, CONST_AUD_RANGE_PRCN_TO);
-                if (String.IsNullOrEmpty(FoundAgeTo))
+                if (string.IsNullOrEmpty(FoundAgeTo))
                     FoundAgeTo = FindAudRangeValue(CONST_AUD_RANGE_TYPE_READING_AGE, CONST_AUD_RANGE_PRCN_TO);
 
                 return FoundAgeTo;
@@ -96,112 +80,73 @@ namespace OnixData.Version3.Audience
 
         #endregion
 
-        #region ONIX Lists
-
-        public int[] OnixAudRangePrecisionList
-        {
-            get
-            {
-                int[] PrecisionList = null;
-
-                if (this.audienceRangePrecisionField != null)
-                    PrecisionList = this.audienceRangePrecisionField;
-                else if (this.shortAudienceRangePrecisionField != null)
-                    PrecisionList = this.shortAudienceRangePrecisionField;
-                else
-                    PrecisionList = new int[0];
-
-                return PrecisionList;
-            }
-        }
-
-        public string[] OnixAudRangeValueList
-        {
-            get
-            {
-                string[] ValueList = null;
-
-                if (this.audienceRangeValueField != null)
-                    ValueList = this.audienceRangeValueField;
-                else if (this.shortAudienceRangeValueField != null)
-                    ValueList = this.shortAudienceRangeValueField;
-                else
-                    ValueList = new string[0];
-
-                return ValueList;
-            }
-        }
-
-        #endregion
-
         #region Reference Tags
 
-        /// <remarks/>
-        public int AudienceRangeQualifier
+        /// <summary>
+        /// An ONIX code specifying the attribute (age, school grade etc) which is measured by the value in the <see cref="AudienceRangeValue"/> element.
+        /// Mandatory in each occurrence of the <see cref="OnixAudienceRange"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 30</remarks>
+        [XmlChoiceIdentifier("AudienceRangeQualifierChoice")]
+        [XmlElement("AudienceRangeQualifier")]
+        [XmlElement("b074")]
+        public int AudienceRangeQualifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceRangeQualifierEnum { AudienceRangeQualifier, b074 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceRangeQualifierEnum AudienceRangeQualifierChoice
+        {
+            get { return SerializationSettings.UseShortTags ? AudienceRangeQualifierEnum.b074 : AudienceRangeQualifierEnum.AudienceRangeQualifier; }
+            set { }
+        }
+
+        /// <summary>
+        /// An ONIX code specifying the ‘precision’ of the value in the <see cref="AudienceRangeValue"/> element which follows (from, to, exact).
+        /// Mandatory in each occurrence of the <see cref="OnixAudienceRange"/> composite, and repeated when a 'from ... to '...' range is specified.
+        /// </summary>
+        /// <remarks>Onix List 31</remarks>
+        [XmlChoiceIdentifier("AudienceRangePrecisionChoice")]
+        [XmlElement("AudienceRangePrecision")]
+        [XmlElement("b075")]
+        public int[] AudienceRangePrecision { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceRangePrecisionEnum { AudienceRangePrecision, b075 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceRangePrecisionEnum[] AudienceRangePrecisionChoice
         {
             get
             {
-                return this.audienceRangeQualifierField;
+                if (AudienceRangePrecision == null) return null;
+                AudienceRangePrecisionEnum choice = SerializationSettings.UseShortTags ? AudienceRangePrecisionEnum.b075 : AudienceRangePrecisionEnum.AudienceRangePrecision;
+                AudienceRangePrecisionEnum[] result = new AudienceRangePrecisionEnum[AudienceRangePrecision.Length];
+                for (int i = 0; i < AudienceRangePrecision.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.audienceRangeQualifierField = value;
-            }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AudienceRangePrecision")]
-        public int[] AudienceRangePrecision
+        /// <summary>
+        /// A value indicating an exact position within a range, or the upper or lower end of a range.
+        /// </summary>
+        [XmlChoiceIdentifier("AudienceRangeValueChoice")]
+        [XmlElement("AudienceRangeValue")]
+        [XmlElement("b076")]
+        public string[] AudienceRangeValue { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceRangeValueEnum { AudienceRangeValue, b076 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceRangeValueEnum[] AudienceRangeValueChoice
         {
             get
             {
-                return this.audienceRangePrecisionField;
+                if (AudienceRangeValue == null) return null;
+                AudienceRangeValueEnum choice = SerializationSettings.UseShortTags ? AudienceRangeValueEnum.b076 : AudienceRangeValueEnum.AudienceRangeValue;
+                AudienceRangeValueEnum[] result = new AudienceRangeValueEnum[AudienceRangeValue.Length];
+                for (int i = 0; i < AudienceRangeValue.Length; i++) result[i] = choice;
+                return result;
+
             }
-            set
-            {
-                this.audienceRangePrecisionField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AudienceRangeValue")]
-        public string[] AudienceRangeValue
-        {
-            get
-            {
-                return this.audienceRangeValueField;
-            }
-            set
-            {
-                this.audienceRangeValueField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public int b074
-        {
-            get { return AudienceRangeQualifier; }
-            set { AudienceRangeQualifier = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("b075")]
-        public int[] b075
-        {
-            get { return shortAudienceRangePrecisionField; }
-            set { shortAudienceRangePrecisionField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("b076")]
-        public string[] b076
-        {
-            get { return shortAudienceRangeValueField; }
-            set { shortAudienceRangeValueField = value; }
+            set { }
         }
 
         #endregion
@@ -212,12 +157,12 @@ namespace OnixData.Version3.Audience
         {
             string FoundRangeValue = "";
 
-            if ((AudienceRangeQualifier == pnRangeType) && (OnixAudRangePrecisionList != null))
+            if ((AudienceRangeQualifier == pnRangeType) && (AudienceRangePrecision != null))
             {
-                int nFoundIndex = Array.IndexOf(OnixAudRangePrecisionList, pnPrecisionType);
+                int nFoundIndex = Array.IndexOf(AudienceRangePrecision, pnPrecisionType);
 
-                if ((nFoundIndex >= 0) && (OnixAudRangeValueList != null) && (OnixAudRangeValueList.Length >= nFoundIndex))
-                    FoundRangeValue = OnixAudRangeValueList[nFoundIndex];
+                if ((nFoundIndex >= 0) && (AudienceRangeValue != null) && (AudienceRangeValue.Length >= nFoundIndex))
+                    FoundRangeValue = AudienceRangeValue[nFoundIndex];
             }
 
             return FoundRangeValue;

@@ -4,9 +4,12 @@ using System.Linq;
 using System.Xml.Serialization;
 
 using OnixData.Version3.Audience;
+using OnixData.Version3.Content;
 using OnixData.Version3.Epub;
+using OnixData.Version3.Event;
 using OnixData.Version3.Language;
 using OnixData.Version3.ProductPart;
+using OnixData.Version3.Text;
 using OnixData.Version3.Title;
 
 namespace OnixData.Version3
@@ -266,16 +269,16 @@ namespace OnixData.Version3
 
                     if (string.IsNullOrEmpty(sSeriesNum) &&
                         (SeriesCollection != null) &&
-                        (SeriesCollection.OnixTitleDetailList != null) &&
-                        (SeriesCollection.OnixTitleDetailList.Length > 0))
+                        (SeriesCollection.TitleDetail != null) &&
+                        (SeriesCollection.TitleDetail.Length > 0))
                     {
                         var TitleDetailFound =
-                            SeriesCollection.OnixTitleDetailList.Where(x => x.HasDistinctiveTitle()).FirstOrDefault();
+                            SeriesCollection.TitleDetail.Where(x => x.HasDistinctiveTitle()).FirstOrDefault();
 
                         if (TitleDetailFound != null)
                         {
                             var TitleElement =
-                                TitleDetailFound.OnixTitleElementList.Where(x => !string.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
+                                TitleDetailFound.TitleElement.Where(x => !string.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
 
                             if (TitleElement != null)
                                 sSeriesNum = TitleElement.PartNumber;
@@ -286,14 +289,14 @@ namespace OnixData.Version3
                 if (string.IsNullOrEmpty(sSeriesNum))
                 {
                     if ((this.TitleDetail != null) &&
-                        (this.TitleDetail.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT))
+                        (this.TitleDetail[0].TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT))
                     {
-                        var MainTitleDetail = this.TitleDetail;
+                        var MainTitleDetail = this.TitleDetail[0];
 
                         if (MainTitleDetail != null)
                         {
                             var TitleElement =
-                                MainTitleDetail.OnixTitleElementList.Where(x => !string.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
+                                MainTitleDetail.TitleElement.Where(x => !string.IsNullOrEmpty(x.PartNumber)).FirstOrDefault();
 
                             if (TitleElement != null)
                                 sSeriesNum = TitleElement.PartNumber;
@@ -324,7 +327,7 @@ namespace OnixData.Version3
                     if (SeriesCollection != null)
                     {
                         var SeriesTitleDetail =
-                            SeriesCollection.OnixTitleDetailList
+                            SeriesCollection.TitleDetail
                                             .Where(x => x.HasDistinctiveTitle())
                                             .Where(x => !string.IsNullOrEmpty(x.AssembledSeriesName))
                                             .FirstOrDefault();
@@ -723,124 +726,628 @@ namespace OnixData.Version3
             set { }
         }
 
-        /// <remarks/>
-        public string AudienceCode
+        /// <summary>
+        /// An empty element that provides a positive indication that a product does not belong to a collection (a ‘set’ or ‘series’).
+        /// This element is intended to be used in an ONIX accreditation scheme to confirm that collection information is being consistently supplied in publisher ONIX feeds.
+        /// Optional and non-repeating.
+        /// Must only be sent in a record that has no instances of the <see cref="Collection"/> composite and has no collection level title elements in <see cref="OnixTitleDetail.TitleElement"/>.
+        /// </summary>
+        [XmlChoiceIdentifier("NoCollectionChoice")]
+        [XmlElement("NoCollection")]
+        [XmlElement("x411")]
+        public string NoCollection { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NoCollectionEnum { NoCollection, x411 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NoCollectionEnum NoCollectionChoice
         {
-            get { return this.audienceCodeField; }
-            set { this.audienceCodeField = value; }
+            get { return SerializationSettings.UseShortTags ? NoCollectionEnum.x411 : NoCollectionEnum.NoCollection; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Audience")]
-        public OnixAudience[] Audience
+        /// <summary>
+        /// A group of data elements which together give the text of a title and specify its type.
+        /// At least one title detail element is mandatory in each occurrence of the <see cref="OnixDescriptiveDetail"/> composite, to give the primary form of the product title.
+        /// The composite is repeatable with different title types.
+        /// </summary>
+        [XmlChoiceIdentifier("TitleDetailChoice")]
+        [XmlElement("TitleDetail")]
+        [XmlElement("titledetail")]
+        public OnixTitleDetail[] TitleDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TitleDetailEnum { TitleDetail, titledetail }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitleDetailEnum[] TitleDetailChoice
         {
-            get { return this.audienceField; }
-            set { this.audienceField = value; }
+            get
+            {
+                if (TitleDetail == null) return null;
+                TitleDetailEnum choice = SerializationSettings.UseShortTags ? TitleDetailEnum.titledetail : TitleDetailEnum.TitleDetail;
+                TitleDetailEnum[] result = new TitleDetailEnum[TitleDetail.Length];
+                for (int i = 0; i < TitleDetail.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AudienceRange")]
-        public OnixAudienceRange[] AudienceRange
+        /// <summary>
+        /// An ONIX code identifying a thesis type, when the ONIX record describes an item which was originally presented as an academic thesis or dissertation.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 72</remarks>
+        [XmlChoiceIdentifier("ThesisTypeChoice")]
+        [XmlElement("ThesisType")]
+        [XmlElement("b368")]
+        public string ThesisType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ThesisTypeEnum { ThesisType, b368 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ThesisTypeEnum ThesisTypeChoice
         {
-            get { return this.audienceRangeField; }
-            set { this.audienceRangeField = value; }
+            get { return SerializationSettings.UseShortTags ? ThesisTypeEnum.b368 : ThesisTypeEnum.ThesisType; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("EditionType")]
-        public string[] EditionType
+        /// <summary>
+        /// The name of an academic institution to which a thesis was presented.
+        /// Optional and non-repeating, but if this element is present, <see cref="ThesisType"/> must also be present.
+        /// </summary>
+        [XmlChoiceIdentifier("ThesisPresentedToChoice")]
+        [XmlElement("ThesisPresentedTo")]
+        [XmlElement("b369")]
+        public string ThesisPresentedTo { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ThesisPresentedToEnum { ThesisPresentedTo, b369 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ThesisPresentedToEnum ThesisPresentedToChoice
         {
-            get { return this.editionTypeField; }
-            set { this.editionTypeField = value; }
+            get { return SerializationSettings.UseShortTags ? ThesisPresentedToEnum.b369 : ThesisPresentedToEnum.ThesisPresentedTo; }
+            set { }
         }
 
-        /// <remarks/>
-        public int EditionNumber
+        /// <summary>
+        /// The year in which a thesis was presented.
+        /// Optional and non-repeating, but if this element is present, <see cref="ThesisType"/> must also be present.
+        /// </summary>
+        [XmlChoiceIdentifier("ThesisYearChoice")]
+        [XmlElement("ThesisYear")]
+        [XmlElement("b370")]
+        public string ThesisYear { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ThesisYearEnum { ThesisYear, b370 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ThesisYearEnum ThesisYearChoice
         {
-            get { return this.editionNumberField; }
-            set { this.editionNumberField = value; }
+            get { return SerializationSettings.UseShortTags ? ThesisYearEnum.b370 : ThesisYearEnum.ThesisYear; }
+            set { }
         }
 
-        /// <remarks/>
-        public string EditionStatement
+        /// <summary>
+        /// A group of data elements which together describe a personal or corporate contributor to the product.
+        /// Optional, and repeatable to describe multiple contributors.
+        /// </summary>
+        [XmlElement("ContributorChoice")]
+        [XmlElement("Contributor")]
+        [XmlElement("contributor")]
+        public OnixContributor[] Contributor { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContributorEnum { Contributor, contributor }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContributorEnum[] ContributorChoice
         {
-            get { return this.editionStatementField; }
-            set { this.editionStatementField = value; }
+            get
+            {
+                if (Contributor == null) return null;
+                ContributorEnum choice = SerializationSettings.UseShortTags ? ContributorEnum.contributor : ContributorEnum.Contributor;
+                ContributorEnum[] result = new ContributorEnum[Contributor.Length];
+                for (int i = 0; i < Contributor.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        public string EpubType
+        /// <summary>
+        /// Free text showing how the authorship should be described in an online display, when a standard concatenation of individual contributor elements would not give a satisfactory presentation.
+        /// Optional, and repeatable if parallel text is provided in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="ContributorStatement"/>, but must be included in each instance if <see cref="ContributorStatement"/> is repeated.
+        /// When the <see cref="ContributorStatement"/> field is sent, the receiver should use it to replace all name detail sent in the <see cref="Contributor"/> composite for display purposes only.
+        /// It does not replace the <see cref="OnixContributor.BiographicalNote"/> element.
+        /// The individual name detail must also be sent in the <see cref="Contributor"/> composite for indexing and retrieval purposes.
+        /// </summary>
+        [XmlChoiceIdentifier("ContributorStatementChoice")]
+        [XmlElement("ContributorStatement")]
+        [XmlElement("b049")]
+        public string[] ContributorStatement { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContributorStatementEnum { ContributorStatement, b049 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContributorStatementEnum[] ContributorStatementChoice
         {
-            get { return this.epubTypeField; }
-            set { this.epubTypeField = value; }
+            get
+            {
+                if (ContributorStatement == null) return null;
+                ContributorStatementEnum choice = SerializationSettings.UseShortTags ? ContributorStatementEnum.b049 : ContributorStatementEnum.ContributorStatement;
+                ContributorStatementEnum[] result = new ContributorStatementEnum[ContributorStatement.Length];
+                for (int i = 0; i < ContributorStatement.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        public string EpubTypeVersion
+        /// <summary>
+        /// An empty element that provides a positive indication that a product has no stated authorship.
+        /// Intended to be used in an ONIX accreditation scheme to confirm that author information is being consistently supplied in publisher ONIX feeds.
+        /// Optional and non-repeating.
+        /// Must only be sent in a record that has no other elements from <see cref="Contributor"/>.
+        /// </summary>
+        [XmlChoiceIdentifier("NoContributorChoice")]
+        [XmlElement("NoContributor")]
+        [XmlElement("n339")]
+        public string NoContributor { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NoContributorEnum { NoContributor, n339 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NoContributorEnum NoContributorChoice
         {
-            get { return this.epubTypeVersionField; }
-            set { this.epubTypeVersionField = value; }
+            get { return SerializationSettings.UseShortTags ? NoContributorEnum.n339 : NoContributorEnum.NoContributor; }
+            set { }
         }
 
-        public string EpubFormatDescription
+        /// <summary>
+        /// A group of data elements which together describe an event to which the product is related.
+        /// Optional, and repeatable if the product contains material from or is related to two or more events.
+        /// </summary>
+        [XmlChoiceIdentifier("EventChoice")]
+        [XmlElement("Event")]
+        [XmlElement("event")]
+        public OnixEvent[] Event { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EventEnum { Event, @event }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EventEnum[] EventChoice
         {
-            get { return this.epubFormatDescriptionField; }
-            set { this.epubFormatDescriptionField = value; }
+            get
+            {
+                if (Event == null) return null;
+                EventEnum choice = SerializationSettings.UseShortTags ? EventEnum.@event : EventEnum.Event;
+                EventEnum[] result = new EventEnum[Event.Length];
+                for (int i = 0; i < Event.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        public string EpubTypeNote
+        /// <summary>
+        /// An ONIX code, indicating the type of a version or edition.
+        /// Optional, and repeatable if the product has characteristics of two or more types (eg ‘revised’ and ‘annotated’).
+        /// </summary>
+        /// <remarks>Onix List 21</remarks>
+        [XmlChoiceIdentifier("EditionTypeChoice")]
+        [XmlElement("EditionType")]
+        [XmlElement("x419")]
+        public string[] EditionType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EditionTypeEnum { EditionType, x419 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EditionTypeEnum[] EditionTypeChoice
         {
-            get { return this.epubTypeNoteField; }
-            set { this.epubTypeNoteField = value; }
+            get
+            {
+                if (EditionType == null) return null;
+                EditionTypeEnum choice = SerializationSettings.UseShortTags ? EditionTypeEnum.x419 : EditionTypeEnum.EditionType;
+                EditionTypeEnum[] result = new EditionTypeEnum[EditionType.Length];
+                for (int i = 0; i < EditionType.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        public string IllustrationsNote
+        /// <summary>
+        /// The number of a numbered edition.
+        /// Optional and non-repeating.
+        /// Normally sent only for the second and subsequent editions of a work, but by agreement between parties to an ONIX exchange a first edition may be explicitly numbered.
+        /// </summary>
+        [XmlChoiceIdentifier("EditionNumberChoice")]
+        [XmlElement("EditionNumber")]
+        [XmlElement("b057")]
+        public int EditionNumber { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EditionNumberEnum { EditionNumber, b057 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EditionNumberEnum EditionNumberChoice
         {
-            get { return this.illustrationsNoteField; }
-            set { this.illustrationsNoteField = value; }
+            get { return SerializationSettings.UseShortTags ? EditionNumberEnum.b057 : EditionNumberEnum.EditionNumber; }
+            set { }
         }
 
-        public string NumberOfIllustrations
+        /// <summary>
+        /// The number of a numbered revision within an edition number.
+        /// To be used only where a publisher uses such two-level numbering to indicate revisions which do not constitute a new edition under a new ISBN or other distinctive product identifier.
+        /// Optional and non-repeating. If this field is used, an <see cref="EditionNumber"/> must also be present.
+        /// </summary>
+        [XmlChoiceIdentifier("EditionVersionNumberChoice")]
+        [XmlElement("EditionVersionNumber")]
+        [XmlElement("b217")]
+        public string EditionVersionNumber { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EditionVersionNumberEnum { EditionVersionNumber, b217 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EditionVersionNumberEnum EditionVersionNumberChoice
         {
-            get { return this.numOfIllustrationsField; }
-            set { this.numOfIllustrationsField = value; }
+            get { return SerializationSettings.UseShortTags ? EditionVersionNumberEnum.b217 : EditionVersionNumberEnum.EditionVersionNumber; }
+            set { }
         }
 
-        /// <remarks/>
-        public OnixTitleDetail TitleDetail
+        /// <summary>
+        /// A short free-text description of a version or edition.
+        /// Optional, and repeatable if parallel text is provided in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="EditionStatement"/>, but must be included in each instance if <see cref="EditionStatement"/> is repeated.
+        /// When used, an <see cref="EditionStatement"/> must be complete in itself, ie it should not be treated as merely supplementary to an <see cref="EditionType"/> or an <see cref="EditionNumber"/>, nor as a replacement for them.
+        /// Appropriate edition type and number must also be sent, for indexing and retrieval.
+        /// An <see cref="EditionStatement"/> should be strictly limited to describing features of the content of the edition, and should not include aspects such as rights or market restrictions which are properly covered elsewhere in the ONIX record.
+        /// </summary>
+        [XmlChoiceIdentifier("EditionStatementChoice")]
+        [XmlElement("EditionStatement")]
+        [XmlElement("b058")]
+        public string[] EditionStatement { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum EditionStatementEnum { EditionStatement, b058 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EditionStatementEnum[] EditionStatementChoice
         {
-            get { return this.titleDetailField; }
-            set { this.titleDetailField = value; }
+            get
+            {
+                if (EditionStatement == null) return null;
+                EditionStatementEnum choice = SerializationSettings.UseShortTags ? EditionStatementEnum.b058 : EditionStatementEnum.EditionStatement;
+                EditionStatementEnum[] result = new EditionStatementEnum[EditionStatement.Length];
+                for (int i = 0; i < EditionStatement.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Contributor")]
-        public OnixContributor[] Contributor
+        /// <summary>
+        /// An empty element that provides a positive indication that a product does not carry any edition information.
+        /// Intended to be used an ONIX accreditation scheme to confirm that edition information is being consistently supplied in publisher ONIX feeds.
+        /// Optional and non-repeating.
+        /// Must only be sent in a record that has no instances of <see cref="EditionType"/>, <see cref="EditionNumber"/>, <see cref="EditionVersionNumber"/>, or <see cref="EditionStatement"/>.
+        /// </summary>
+        [XmlChoiceIdentifier("NoEditionChoice")]
+        [XmlElement("NoEdition")]
+        [XmlElement("n386")]
+        public string NoEdition { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NoEditionEnum { NoEdition, n386 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NoEditionEnum NoEditionChoice
         {
-            get { return this.contributorField; }
-            set { this.contributorField = value; }
+            get { return SerializationSettings.UseShortTags ? NoEditionEnum.n386 : NoEditionEnum.NoEdition; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Extent")]
-        public OnixExtent[] Extent
+        /// <summary>
+        /// A group of data elements which together describe features of the content of an edition of a religious text, and intended to meet the special needs of religious publishers and booksellers.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("ReligiousTextChoice")]
+        [XmlElement("ReligiousText")]
+        [XmlElement("religioustext")]
+        public OnixReligiousText ReligiousText { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ReligiousTextEnum { ReligiousText, religioustext }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ReligiousTextEnum ReligiousTextChoice
         {
-            get { return this.extentField; }
-            set { this.extentField = value; }
+            get { return SerializationSettings.UseShortTags ? ReligiousTextEnum.religioustext : ReligiousTextEnum.ReligiousText; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Language")]
-        public OnixLanguage[] Language
+        /// <summary>
+        /// A group of data elements which together represent a language, and specify its role and, where required, whether it is a country variant.
+        /// Optional, and repeatable to specify multiple languages and their various roles.
+        /// </summary>
+        [XmlChoiceIdentifier("LanguageChoice")]
+        [XmlElement("Language")]
+        [XmlElement("language")]
+        public OnixLanguage[] Language { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum LanguageEnum { Language, langauge }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public LanguageEnum[] LanguageChoice
         {
-            get { return this.languageField; }
-            set { this.languageField = value; }
+            get
+            {
+                if (Language == null) return null;
+                LanguageEnum choice = SerializationSettings.UseShortTags ? LanguageEnum.langauge : LanguageEnum.Language;
+                LanguageEnum[] result = new LanguageEnum[Language.Length];
+                for (int i = 0; i < Language.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Subject")]
-        public OnixSubject[] Subject
+        /// <summary>
+        /// A group of data elements which together describe an extent pertaining to the product.
+        /// Optional, but in practice required for most products, eg to give the number of pages in a printed book or paginated e-book, or to give the running time of an audiobook.
+        /// Repeatable to specify different extent types or units
+        /// </summary>
+        [XmlChoiceIdentifier("ExtentChoice")]
+        [XmlElement("Extent")]
+        [XmlElement("extent")]
+        public OnixExtent[] Extent { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ExtentEnum { Extent, extent }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ExtentEnum[] ExtentChoice
         {
-            get { return this.subjectField; }
-            set { this.subjectField = value; }
+            get
+            {
+                if (Extent == null) return null;
+                ExtentEnum choice = SerializationSettings.UseShortTags ? ExtentEnum.extent : ExtentEnum.Extent;
+                ExtentEnum[] result = new ExtentEnum[Extent.Length];
+                for (int i = 0; i < Extent.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An ONIX code indicating whether a book or other textual (usually printed) product has illustrations.
+        /// The more informative free text field <see cref="IllustrationsNote"/> and/or the <see cref="AncillaryContent"/> composite are strongly preferred.
+        /// This element has been added specifically to cater for a situation where a sender of product information maintains only a yes/no flag, and it should not otherwise be used.
+        /// Optional and non-repeating.        
+        /// </summary>
+        /// <remarks>Onix List 152</remarks>
+        [XmlChoiceIdentifier("IllustratedChoice")]
+        [XmlElement("Illustrated")]
+        [XmlElement("x422")]
+        public int Illustrated { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum IllustratedEnum { Illustrated, x422 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IllustratedEnum IllustratedChoice
+        {
+            get { return SerializationSettings.UseShortTags ? IllustratedEnum.x422 : IllustratedEnum.Illustrated; }
+            set { }
+        }
+
+        /// <summary>
+        /// The total number of illustrations in a book or other printed product.
+        /// The more informative free text field <see cref="IllustrationsNote"/> and/or the <see cref="AncillaryContent"/> composite are strongly preferred, but where a sender of product information maintains only a simple numeric field, the <see cref="NumberOfIllustrations"/> element may be used.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("NumberOfIllustrationsChoice")]
+        [XmlElement("NumberOfIllustrations")]
+        [XmlElement("b125")]
+        public int NumberOfIllustrations { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NumberOfIllustrationsEnum { NumberOfIllustrations, b125 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NumberOfIllustrationsEnum NumberOfIllustrationsChoice
+        {
+            get { return SerializationSettings.UseShortTags ? NumberOfIllustrationsEnum.b125 : NumberOfIllustrationsEnum.NumberOfIllustrations; }
+            set { }
+        }
+
+        /// <summary>
+        /// For books or other text media only, this data element carries text stating the number and type of illustrations.
+        /// The text may also include other content items, eg maps, bibliography, tables, index etc.
+        /// Optional, and repeatable if parallel notes are provided in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="IllustrationsNote"/>, but must be included in each instance if <see cref="IllustrationsNote"/> is repeated.
+        /// </summary>
+        [XmlChoiceIdentifier("IllustrationsNoteChoice")]
+        [XmlElement("IllustrationsNote")]
+        [XmlElement("b062")]
+        public string[] IllustrationsNote { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum IllustrationsNoteEnum { IllustrationsNote, b062 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IllustrationsNoteEnum[] IllustrationsNoteChoice
+        {
+            get
+            {
+                if (IllustrationsNote == null) return null;
+                IllustrationsNoteEnum choice = SerializationSettings.UseShortTags ? IllustrationsNoteEnum.b062 : IllustrationsNoteEnum.IllustrationsNote;
+                IllustrationsNoteEnum[] result = new IllustrationsNoteEnum[IllustrationsNote.Length];
+                for (int i = 0; i < IllustrationsNote.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// A group of data elements which together specify the number of illustrations or other content items of a stated type which the product carries.
+        /// Use of the <see cref="AncillaryContent"/> composite is optional, but is repeatable if necessary to specify different types of content items.
+        /// </summary>
+        [XmlChoiceIdentifier("AncillaryContentChoice")]
+        [XmlElement("AncillaryContent")]
+        [XmlElement("ancillarycontent")]
+        public OnixAncillaryContent[] AncillaryContent { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AncillaryContentEnum { AncillaryContent, ancillarycontent }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AncillaryContentEnum[] AncillaryContentChoice
+        {
+            get
+            {
+                if (AncillaryContent == null) return null;
+                AncillaryContentEnum choice = SerializationSettings.UseShortTags ? AncillaryContentEnum.ancillarycontent : AncillaryContentEnum.AncillaryContent;
+                AncillaryContentEnum[] result = new AncillaryContentEnum[AncillaryContent.Length];
+                for (int i = 0; i < AncillaryContent.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional and repeatable group of data elements which together specify a subject classification or subject heading.
+        /// </summary>
+        [XmlChoiceIdentifier("SubjectChoice")]
+        [XmlElement("Subject")]
+        [XmlElement("subject")]
+        public OnixSubject[] Subject { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SubjectEnum { Subject, subject }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SubjectEnum[] SubjectChoice
+        {
+            get
+            {
+                if (Subject == null) return null;
+                SubjectEnum choice = SerializationSettings.UseShortTags ? SubjectEnum.subject : SubjectEnum.Subject;
+                SubjectEnum[] result = new SubjectEnum[Subject.Length];
+                for (int i = 0; i < Subject.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together represent the name of a person or organization – real or fictional – that is part of the subject of a product.
+        /// Repeatable in order to name multiple persons or organizations.
+        /// </summary>
+        [XmlChoiceIdentifier("NameAsSubjectChoice")]
+        [XmlElement("NameAsSubject")]
+        [XmlElement("nameassubject")]
+        public OnixNameAsSubject[] NameAsSubject { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NameAsSubjectEnum { NameAsSubject, nameassubject }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NameAsSubjectEnum[] NameAsSubjectChoice
+        {
+            get
+            {
+                if (NameAsSubject == null) return null;
+                NameAsSubjectEnum choice = SerializationSettings.UseShortTags ? NameAsSubjectEnum.nameassubject : NameAsSubjectEnum.NameAsSubject;
+                NameAsSubjectEnum[] result = new NameAsSubjectEnum[NameAsSubject.Length];
+                for (int i = 0; i < NameAsSubject.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// <para>An ONIX code, originally derived from BISAC and BIC lists, which identifies the broad audience or readership for which a product is intended. 
+        /// Optional, and repeatable if the product is intended for two or more groups.</para>
+        /// <para>Deprecated, in favor of providing the same information within the <see cref="Audience"/> composite using code 01 from List 29.</para>
+        /// </summary>
+        /// <remarks>Onix List 28</remarks>
+        [XmlChoiceIdentifier("AudienceCodeChoice")]
+        [XmlElement("AudienceCode")]
+        [XmlElement("b073")]
+        public string[] AudienceCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceCodeEnum { AudienceCode, b073 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceCodeEnum[] AudienceCodeChoice
+        {
+            get
+            {
+                if (AudienceCode == null) return null;
+                AudienceCodeEnum choice = SerializationSettings.UseShortTags ? AudienceCodeEnum.b073 : AudienceCodeEnum.AudienceCode;
+                AudienceCodeEnum[] result = new AudienceCodeEnum[AudienceCode.Length];
+                for (int i = 0; i < AudienceCode.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together describe an audience to which the product is directed.
+        /// Repeatable to specify multiple distinct audiences.
+        /// </summary>
+        [XmlChoiceIdentifier("AudienceChoice")]
+        [XmlElement("Audience")]
+        [XmlElement("audience")]
+        public OnixAudience[] Audience { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceEnum { Audience, audience }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceEnum[] AudienceChoice
+        {
+            get
+            {
+                if (Audience == null) return null;
+                AudienceEnum choice = SerializationSettings.UseShortTags ? AudienceEnum.audience : AudienceEnum.Audience;
+                AudienceEnum[] result = new AudienceEnum[Audience.Length];
+                for (int i = 0; i < Audience.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together describe an audience or readership range for which a product is intended.
+        /// The composite can carry a single value from, to, or exact, or a pair of values with an explicit from and to.
+        /// Repeatable to specify the audience range with different qualifiers.
+        /// </summary>
+        [XmlChoiceIdentifier("AudienceRangeChoice")]
+        [XmlElement("AudienceRange")]
+        [XmlElement("audiencerange")]
+        public OnixAudienceRange[] AudienceRange { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceRangeEnum { AudienceRange, audiencerange }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceRangeEnum[] AudienceRangeChoice
+        {
+            get
+            {
+                if (AudienceRange == null) return null;
+                AudienceRangeEnum choice = SerializationSettings.UseShortTags ? AudienceRangeEnum.audiencerange : AudienceRangeEnum.AudienceRange;
+                AudienceRangeEnum[] result = new AudienceRangeEnum[AudienceRange.Length];
+                for (int i = 0; i < AudienceRange.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// Free text describing the audience for which a product is intended.
+        /// Optional, and repeatable if parallel descriptive text is provided in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="AudienceDescription"/>, but must be included in each instance if <see cref="AudienceDescription"/> is repeated.
+        /// </summary>
+        [XmlChoiceIdentifier("AudienceDescriptionChoice")]
+        [XmlElement("AudienceDescription")]
+        [XmlElement("b207")]
+        public string[] AudienceDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceDescriptionEnum { AudienceDescription, b207 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceDescriptionEnum[] AudienceDescriptionChoice
+        {
+            get
+            {
+                if (AudienceDescription == null) return null;
+                AudienceDescriptionEnum choice = SerializationSettings.UseShortTags ? AudienceDescriptionEnum.b207 : AudienceDescriptionEnum.AudienceDescription;
+                AudienceDescriptionEnum[] result = new AudienceDescriptionEnum[AudienceDescription.Length];
+                for (int i = 0; i < AudienceDescription.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together describe the level of complexity of a text.
+        /// Repeatable to specify the complexity using different schemes.
+        /// </summary>
+        [XmlChoiceIdentifier("ComplexityChoice")]
+        [XmlElement("Complexity")]
+        [XmlElement("complexity")]
+        public OnixComplexity[] Complexity { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ComplexityEnum { Complexity, complexity }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ComplexityEnum[] ComplexityChoice
+        {
+            get
+            {
+                if (Complexity == null) return null;
+                ComplexityEnum choice = SerializationSettings.UseShortTags ? ComplexityEnum.complexity : ComplexityEnum.Complexity;
+                ComplexityEnum[] result = new ComplexityEnum[Complexity.Length];
+                for (int i = 0; i < Complexity.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         #endregion

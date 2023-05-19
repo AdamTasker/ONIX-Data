@@ -137,9 +137,9 @@ namespace OnixData.Extensions
 
                 if (!String.IsNullOrEmpty(pOnixHeader.DefaultLanguageOfText))
                 {
-                    if ((pOnixProduct.DescriptiveDetail != null) && (pOnixProduct.DescriptiveDetail.OnixLanguageList != null))
+                    if ((pOnixProduct.DescriptiveDetail != null) && (pOnixProduct.DescriptiveDetail.Language != null))
                     {
-                        pOnixProduct.DescriptiveDetail.OnixLanguageList
+                        pOnixProduct.DescriptiveDetail.Language
                                                       .Where(x => String.IsNullOrEmpty(x.LanguageCode))
                                                       .ToList()
                                                       .ForEach(x => x.LanguageCode = pOnixHeader.DefaultLanguageOfText);

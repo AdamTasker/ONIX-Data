@@ -1,8 +1,9 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Names
 {
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixNameIdentifier : OnixIdentifier
     {
         #region CONSTANTS
@@ -43,14 +44,6 @@ namespace OnixData.Version3.Names
 
         #endregion
 
-        public OnixNameIdentifier()
-        {
-            nameIDType = String.Empty;
-
-        }
-
-        private string nameIDType;
-
         #region ONIX Helpers
 
         public int NameIDTypeNum
@@ -59,8 +52,8 @@ namespace OnixData.Version3.Names
             {
                 int nNameIdTypeNum = 0;
 
-                if (!String.IsNullOrEmpty(NameIDType))
-                    Int32.TryParse(NameIDType, out nNameIdTypeNum);
+                if (!string.IsNullOrEmpty(NameIDType))
+                    int.TryParse(NameIDType, out nNameIdTypeNum);
 
                 return nNameIdTypeNum;
             }
@@ -70,20 +63,22 @@ namespace OnixData.Version3.Names
 
         #region Reference Tags
 
-        public string NameIDType
+        /// <summary>
+        /// An ONIX code which identifies the scheme from which the value in the <see cref="IDValue"/> element is taken.
+        /// Mandatory in each occurrence of the <see cref="OnixNameIdentifier"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 44</remarks>
+        [XmlChoiceIdentifier("NameIDTypeChoice")]
+        [XmlElement("NameIDType")]
+        [XmlElement("x415")]
+        public string NameIDType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NameIDTypeEnum { NameIDType, x415 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NameIDTypeEnum NameIDTypeChoice
         {
-            get { return this.nameIDType; }
-            set { this.nameIDType = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        public string x415
-        {
-            get { return NameIDType; }
-            set { NameIDType = value; }
+            get { return SerializationSettings.UseShortTags ? NameIDTypeEnum.x415 : NameIDTypeEnum.NameIDType; }
+            set { }
         }
 
         #endregion

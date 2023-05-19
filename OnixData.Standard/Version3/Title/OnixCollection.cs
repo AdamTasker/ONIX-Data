@@ -280,6 +280,58 @@ namespace OnixData.Version3.Title
             set { }
         }
 
+        /// <summary>
+        /// <para>Free text showing how the collection authorship should be described in an online display, when a standard concatenation of individual collection contributor elements would not give a satisfactory presentation.
+        /// Optional, and repeatable where parallel text is provided in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="ContributorStatement"/>, but must be included in each instance if <see cref="ContributorStatement"/> is repeated.
+        /// When the <see cref="ContributorStatement"/> element is sent, the recipient should use it to replace all name detail sent in <see cref="Contributor"/> for display purposes only.
+        /// It does not replace the <see cref="OnixContributor.BiographicalNote"/> element (or any other element) for individual contributors.
+        /// The individual name detail must also be sent in one or more Contributor composites for indexing and retrieval purposes.</para>
+        /// 
+        /// <para>The <see cref="ContributorStatement"/> element is provided here for use only by those ONIX communities whose national practice requires contributors to be identified at collection level.
+        /// It should not be sent in a context where collection contributors are normally identified in <see cref="OnixDescriptiveDetail.Contributor"/></para>
+        /// </summary>
+        [XmlChoiceIdentifier("ContributorStatementChoice")]
+        [XmlElement("ContributorStatement")]
+        [XmlElement("b049")]
+        public string[] ContributorStatement { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContributorStatementEnum { ContributorStatement, b049 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContributorStatementEnum[] ContributorStatementChoice
+        {
+            get
+            {
+                if (ContributorStatement == null) return null;
+                ContributorStatementEnum choice = SerializationSettings.UseShortTags ? ContributorStatementEnum.b049 : ContributorStatementEnum.ContributorStatement;
+                ContributorStatementEnum[] result = new ContributorStatementEnum[ContributorStatement.Length];
+                for (int i = 0; i < ContributorStatement.Length;i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// <para>An empty element that provides a positive indication that a collection has no stated authorship.
+        /// Optional and non-repeating.
+        /// Must only be sent in a record that has no <see cref="Contributor"/> data.</para>
+        /// 
+        /// <para>The <see cref="NoContributor"/> element is provided here for use only by those ONIX communities whose national practice requires contributors to be identified at collection level.
+        /// It should not be sent in a context where collection contributors are normally identified in <see cref="OnixDescriptiveDetail.Contributor"/>.</para>
+        /// </summary>
+        [XmlChoiceIdentifier("NoContributorChoice")]
+        [XmlElement("NoContributor")]
+        [XmlElement("n339")]
+        public string NoContributor { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NoContributorEnum { NoContributor, n339 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NoContributorEnum NoContributorChoice
+        {
+            get { return SerializationSettings.UseShortTags ? NoContributorEnum.n339 : NoContributorEnum.NoContributor; }
+            set { }
+        }
+
         #endregion
     }
 }

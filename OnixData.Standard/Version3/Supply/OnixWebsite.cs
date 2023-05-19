@@ -1,151 +1,83 @@
+using System.ComponentModel;
+using System.Xml.Serialization;
+
 namespace OnixData.Version3.Supply
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    /// <summary>
+    /// A group of data elements which together identify and provide a pointer to a website
+    /// </summary>
+    [XmlType(AnonymousType = true)]
     public class OnixWebsite
     {
-        public OnixWebsite()
-        {
-            WebsiteRole = string.Empty;
-
-            websiteDescriptionField      = null;
-            shortWebsiteDescriptionField = null;
-
-            websiteLinkField = null;
-            shortWebsiteLinkField = null;
-        }
-
-        private string websiteRoleField;
-        
-        private string[] websiteDescriptionField;
-        private string[] shortWebsiteDescriptionField;
-        
-        private string[] websiteLinkField;
-        private string[] shortWebsiteLinkField;
-
-        #region ONIX Lists
-        
-        public string[] WebsiteDescriptionList
-        {
-            get
-            {
-                string[] websiteDescriptionList = null;
-
-                if (this.websiteDescriptionField != null)
-                    websiteDescriptionList = this.websiteDescriptionField;
-                else if (this.shortWebsiteDescriptionField != null)
-                    websiteDescriptionList = this.shortWebsiteDescriptionField;
-                else
-                    websiteDescriptionList = new string[0];
-
-                return websiteDescriptionList;
-            }
-        }
-
-        public string[] OnixWebsiteDescriptionList
-        {
-            get { return WebsiteDescriptionList; }
-        }
-
-        public string[] WebsiteLinkList
-        {
-            get
-            {
-                string[] websiteLinkList = null;
-
-                if (this.websiteLinkField != null)
-                    websiteLinkList = this.websiteLinkField;
-                else if (this.shortWebsiteLinkField != null)
-                    websiteLinkList = this.shortWebsiteLinkField;
-                else
-                    websiteLinkList = new string[0];
-
-                return websiteLinkList;
-            }
-        }
-
-        public string[] OnixWebsiteLinkList
-        {
-            get { return WebsiteLinkList; }
-        }
-
-        #endregion
-
-        #region Helper Methods
-
-
-
-        #endregion
 
         #region Reference Tags
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("WebsiteRole", IsNullable = true)]
-        public string WebsiteRole
+        /// <summary>
+        /// An ONIX code which identifies the role or purpose of the website which is linked through the <see cref="WebsiteLink"/> element.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 73</remarks>
+        [XmlChoiceIdentifier("WebsiteRoleChoice")]
+        [XmlElement("WebsiteRole")]
+        [XmlElement("b367")]
+        public string WebsiteRole { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum WebsiteRoleEnum { WebsiteRole, b367 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public WebsiteRoleEnum WebsiteRoleChoice
+        {
+            get { return SerializationSettings.UseShortTags ? WebsiteRoleEnum.b367 : WebsiteRoleEnum.WebsiteRole; }
+            set { }
+        }
+
+        /// <summary>
+        /// Free text describing the nature of the website which is linked through the <see cref="WebsiteLink"/> element.
+        /// Optional, and repeatable to provide parallel descriptive text in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="WebsiteDescription"/>, but must be included in each instance if <see cref="WebsiteDescription"/> is repeated.
+        /// </summary>
+        [XmlChoiceIdentifier("WebsiteDescriptionChoice")]
+        [XmlElement("WebsiteDescription")]
+        [XmlElement("b294")]
+        public string[] WebsiteDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum WebsiteDescriptionEnum { WebsiteDescription, b294 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public WebsiteDescriptionEnum[] WebsiteDescriptionChoice
         {
             get
             {
-                return this.websiteRoleField;
+                if (WebsiteDescription != null) return null;
+                WebsiteDescriptionEnum choice = SerializationSettings.UseShortTags ? WebsiteDescriptionEnum.b294 : WebsiteDescriptionEnum.WebsiteDescription;
+                WebsiteDescriptionEnum[] result = new WebsiteDescriptionEnum[WebsiteDescription.Length];
+                for (int i = 0; i < WebsiteDescription.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.websiteRoleField = value;
-            }
+            set { }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("WebsiteDescription", IsNullable = true)]
-        public string[] WebsiteDescription
+
+        /// <summary>
+        /// The URL for the website.
+        /// Mandatory in each occurrence of the <see cref="OnixWebsite"/> composite, and repeatable to provide multiple URLs where the website content is available in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="WebsiteLink"/>, but must be included in each instance if <see cref="WebsiteLink"/> is repeated.
+        /// </summary>
+        [XmlChoiceIdentifier("WebsiteLinkChoice")]
+        [XmlElement("WebsiteLink")]
+        [XmlElement("b295")]
+        public string[] WebsiteLink { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum WebsiteLinkEnum { WebsiteLink, b295 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public WebsiteLinkEnum[] WebsiteLinkChoice
         {
             get
             {
-                return this.websiteDescriptionField;
+                if (WebsiteLink != null) return null;
+                WebsiteLinkEnum choice = SerializationSettings.UseShortTags ? WebsiteLinkEnum.b295 : WebsiteLinkEnum.WebsiteLink;
+                WebsiteLinkEnum[] result = new WebsiteLinkEnum[WebsiteLink.Length];
+                for(int i = 0; i < WebsiteLink.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.websiteDescriptionField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("WebsiteLink", IsNullable = false)]
-        public string[] WebsiteLink
-        {
-            get
-            {
-                return this.websiteLinkField;
-            }
-            set
-            {
-                this.websiteLinkField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string b367
-        {
-            get { return WebsiteRole; }
-            set { WebsiteRole = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("b294", IsNullable = true)]
-        public string[] b294
-        {
-            get { return shortWebsiteDescriptionField; }
-            set { shortWebsiteDescriptionField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("b295", IsNullable = true)]
-        public string[] b295
-        {
-            get { return shortWebsiteLinkField; }
-            set { shortWebsiteLinkField = value; }
+            set { }
         }
 
         #endregion

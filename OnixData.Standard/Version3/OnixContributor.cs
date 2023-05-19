@@ -1,38 +1,368 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
+using OnixData.Version3.Contributor;
 using OnixData.Version3.Names;
+using OnixData.Version3.Subject;
+using OnixData.Version3.Supply;
+using OnixData.Version3.Text;
 
 namespace OnixData.Version3
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class OnixContributor
+    [XmlType(AnonymousType = true)]
+    public partial class OnixContributor : OnixNameBase
     {
         #region CONSTANTS
-
-        public const string CONST_CONTRIB_ROLE_AUTHOR        = "A01";
-        public const string CONST_CONTRIB_ROLE_GHOST_AUTHOR  = "A02";
+        public const string CONST_CONTRIB_ROLE_AUTHOR = "A01";
+        public const string CONST_CONTRIB_ROLE_GHOST_AUTHOR = "A02";
         public const string CONST_CONTRIB_ROLE_SRNPLY_AUTHOR = "A03";
         public const string CONST_CONTRIB_ROLE_LIBRTO_AUTHOR = "A04";
         public const string CONST_CONTRIB_ROLE_LYRICS_AUTHOR = "A05";
-        public const string CONST_CONTRIB_ROLE_EDITED_BY     = "B01";
-        public const string CONST_CONTRIB_ROLE_REVISED_BY    = "B02";
-        public const string CONST_CONTRIB_ROLE_RETOLD_BY     = "B03";
-        public const string CONST_CONTRIB_ROLE_COMPILED_BY   = "C01";
-        public const string CONST_CONTRIB_ROLE_SELECTED_BY   = "C02";
-        public const string CONST_CONTRIB_ROLE_PRODUCER      = "D01";
-        public const string CONST_CONTRIB_ROLE_DIRECTOR      = "D02";
-        public const string CONST_CONTRIB_ROLE_ACTOR         = "E01";
-        public const string CONST_CONTRIB_ROLE_DANCER        = "E02";
-        public const string CONST_CONTRIB_ROLE_NARRATOR      = "E03";
-        public const string CONST_CONTRIB_ROLE_COMMENTATOR   = "E04";
-        public const string CONST_CONTRIB_ROLE_VOCAL_SOLO    = "E05";
-        public const string CONST_CONTRIB_ROLE_FILMED_BY     = "F01";
-        public const string CONST_CONTRIB_ROLE_OTHER         = "Z99";
+        public const string CONST_CONTRIB_ROLE_EDITED_BY = "B01";
+        public const string CONST_CONTRIB_ROLE_REVISED_BY = "B02";
+        public const string CONST_CONTRIB_ROLE_RETOLD_BY = "B03";
+        public const string CONST_CONTRIB_ROLE_COMPILED_BY = "C01";
+        public const string CONST_CONTRIB_ROLE_SELECTED_BY = "C02";
+        public const string CONST_CONTRIB_ROLE_PRODUCER = "D01";
+        public const string CONST_CONTRIB_ROLE_DIRECTOR = "D02";
+        public const string CONST_CONTRIB_ROLE_ACTOR = "E01";
+        public const string CONST_CONTRIB_ROLE_DANCER = "E02";
+        public const string CONST_CONTRIB_ROLE_NARRATOR = "E03";
+        public const string CONST_CONTRIB_ROLE_COMMENTATOR = "E04";
+        public const string CONST_CONTRIB_ROLE_VOCAL_SOLO = "E05";
+        public const string CONST_CONTRIB_ROLE_FILMED_BY = "F01";
+        public const string CONST_CONTRIB_ROLE_OTHER = "Z99";
+        #endregion
+
+        #region Reference Tags
+
+        /// <summary>
+        /// A number which specifies a single overall sequence of contributor names.
+        /// Optional and non-repeating.
+        /// It is strongly recommended that each occurrence of the <see cref="OnixContributor"/> composite should carry a <see cref="SequenceNumber"/>.
+        /// </summary>
+        [XmlChoiceIdentifier("SequenceNumberChoice")]
+        [XmlElement("SequenceNumber")]
+        [XmlElement("b034")]
+        public int SequenceNumber { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SequenceNumberEnum { SequenceNumber, b034 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SequenceNumberEnum SequenceNumberChoice
+        {
+            get { return SerializationSettings.UseShortTags ? SequenceNumberEnum.b034 : SequenceNumberEnum.SequenceNumber; }
+            set { }
+        }
+
+        /// <summary>
+        /// An ONIX code indicating the role played by a person or corporate body in the creation of the product.
+        /// Mandatory in each occurrence of a <see cref="OnixContributor"/> composite, and may be repeated if the same person or corporate body has more than one role in relation to the product.
+        /// </summary>
+        /// <remarks>Onix List 17</remarks>
+        [XmlChoiceIdentifier("ContributorRoleChoice")]
+        [XmlElement("ContributorRole")]
+        [XmlElement("b035")]
+        public string[] ContributorRole { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContributorRoleEnum { ContributorRole, b035 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContributorRoleEnum ContributorRoleChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ContributorRoleEnum.b035 : ContributorRoleEnum.ContributorRole; }
+            set { }
+        }
+
+        /// <summary>
+        /// Used only when the <see cref="ContributorRole"/> code value is B06, B08 or B10 indicating a translator, to specify the source language from which the translation was made.
+        /// This element makes it possible to specify a translator’s exact responsibility when a work involves translation from two or more languages.
+        /// Optional, and repeatable in the event that a single person has been responsible for translation from two or more languages.
+        /// </summary>
+        /// <remarks>Onix List 74</remarks>
+        [XmlChoiceIdentifier("FromLanguageChoice")]
+        [XmlElement("FromLanguage")]
+        [XmlElement("x412")]
+        public string[] FromLanguage { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum FromLanguageEnum { FromLanguage, x412 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public FromLanguageEnum[] FromLanguageChoice
+        {
+            get
+            {
+                if (FromLanguage == null) return null;
+                FromLanguageEnum choice = SerializationSettings.UseShortTags ? FromLanguageEnum.x412 : FromLanguageEnum.FromLanguage;
+                FromLanguageEnum[] result = new FromLanguageEnum[FromLanguage.Length];
+                for (int i = 0; i < FromLanguage.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// Used only when the <see cref="ContributorRole"/> code value is B06, B08 or B10 indicating a translator, to specify the target language into which the translation was made.
+        /// This element makes it possible to specify a translator’s exact responsibility when a work involves translation into two or more languages.
+        /// Optional, and repeatable in the event that a single person has been responsible for translation to two or more languages.
+        /// </summary>
+        /// <remarks>Onix List 74</remarks>
+        [XmlChoiceIdentifier("ToLanguageChoice")]
+        [XmlElement("ToLanguage")]
+        [XmlElement("x413")]
+        public string[] ToLanguage { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ToLanguageEnum { ToLanguage, x413 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ToLanguageEnum[] ToLanguageChoice
+        {
+            get
+            {
+                if (ToLanguage == null) return null;
+                ToLanguageEnum choice = SerializationSettings.UseShortTags ? ToLanguageEnum.x413 : ToLanguageEnum.ToLanguage;
+                ToLanguageEnum[] result = new ToLanguageEnum[ToLanguage.Length];
+                for (int i = 0; i < ToLanguage.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// A group of data elements which together specify a date associated with the person or organization identified in an occurrence of the <see cref="OnixContributor"/> composite, eg birth or death.
+        /// Optional, and repeatable to allow multiple dates to be specified.
+        /// </summary>
+        [XmlChoiceIdentifier("ContributorDateChoice")]
+        [XmlElement("ContributorDate")]
+        [XmlElement("contributordate")]
+        public OnixContributorDate[] ContributorDate { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContributorDateEnum { ContributorDate, contributordate }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContributorDateEnum[] ContributorDateChoice
+        {
+            get
+            {
+                if (ContributorDate == null) return null;
+                ContributorDateEnum choice = SerializationSettings.UseShortTags ? ContributorDateEnum.contributordate : ContributorDateEnum.ContributorDate;
+                ContributorDateEnum[] result = new ContributorDateEnum[ContributorDate.Length];
+                for (int i = 0; i < ContributorDate.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together describe a prize or award won by the product or work, and repeatable where it has gained multiple prizes or awards.
+        /// </summary>
+        [XmlChoiceIdentifier("PrizeChoice")]
+        [XmlElement("Prize")]
+        [XmlElement("prize")]
+        public OnixPrize[] Prize { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PrizeEnum { Prize, prize }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PrizeEnum[] PrizeChoice
+        {
+            get
+            {
+                if (Prize == null) return null;
+                PrizeEnum choice = SerializationSettings.UseShortTags ? PrizeEnum.prize : PrizeEnum.Prize;
+                PrizeEnum[] result = new PrizeEnum[Prize.Length];
+                for (int i = 0; i < Prize.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// A biographical note about a contributor to the product.
+        /// Optional, and repeatable to provide parallel biographical notes in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="BiographicalNote"/>, but must be included in each instance if <see cref="BiographicalNote"/> is repeated.
+        /// May occur with a person name or with a corporate name.
+        /// A biographical note in ONIX should always contain the name of the person or body concerned, and it should always be presented as a piece of continuous text consisting of full sentences.
+        /// Some recipients of ONIX data feeds will not accept text which has embedded URLs.
+        /// A contributor website link can be sent using the <see cref="Website"/> composite below.
+        /// </summary>
+        [XmlChoiceIdentifier("BiographicalNoteChoice")]
+        [XmlElement("BiographicalNote")]
+        [XmlElement("b044")]
+        public string[] BiographicalNote { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum BiographicalNoteEnum { BiographicalNote, b044 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public BiographicalNoteEnum[] BiographicalNoteChoice
+        {
+            get
+            {
+                if (BiographicalNote == null) return null;
+                BiographicalNoteEnum choice = SerializationSettings.UseShortTags ? BiographicalNoteEnum.b044 : BiographicalNoteEnum.BiographicalNote;
+                BiographicalNoteEnum[] result = new BiographicalNoteEnum[BiographicalNote.Length];
+                for (int i = 0; i < BiographicalNote.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together identify and provide a pointer to a website which is related to the person or organization identified in an occurrence of the <see cref="OnixContributor"/> composite.
+        /// Repeatable to provide links to multiple websites.
+        /// </summary>
+        [XmlChoiceIdentifier("WebsiteChoice")]
+        [XmlElement("Website")]
+        [XmlElement("website")]
+        public OnixWebsite[] Website { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum WebsiteEnum { Website, website }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public WebsiteEnum[] WebsiteChoice
+        {
+            get
+            {
+                if (Website == null) return null;
+                WebsiteEnum choice = SerializationSettings.UseShortTags ? WebsiteEnum.website : WebsiteEnum.Website;
+                WebsiteEnum[] result = new WebsiteEnum[Website.Length];
+                for (int i = 0; i < Website.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// Brief text describing a contributor to the product, at the publisher’s discretion.
+        /// Optional, and repeatable to provide parallel descriptions in multiple languages.
+        /// The language attribute is optional for a single instance of <see cref="ContributorDescription"/>, but must be included in each instance if <see cref="ContributorDescription"/> is repeated.
+        /// It may be used with either a person or corporate name, to draw attention to any aspect of a contributor’s background which supports the promotion of the book.
+        /// </summary>
+        [XmlChoiceIdentifier("ContributorDescriptionChoice")]
+        [XmlElement("ContributorDescription")]
+        [XmlElement("b048")]
+        public string[] ContributorDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContributorDescriptionEnum { ContributorDescription, b048 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContributorDescriptionEnum[] ContributorDescriptionChoice
+        {
+            get
+            {
+                if (ContributorDescription == null) return null;
+                ContributorDescriptionEnum choice = SerializationSettings.UseShortTags ? ContributorDescriptionEnum.b048 : ContributorDescriptionEnum.ContributorDescription;
+                ContributorDescriptionEnum[] result = new ContributorDescriptionEnum[ContributorDescription.Length];
+                for (int i = 0; i < ContributorDescription.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// An optional group of data elements which together identify a geographical location with which a contributor is associated, used to support ‘local interest’ promotions.
+        /// Repeatable to identify multiple geographical locations, each usually with a different relationship to the contributor.
+        /// </summary>
+        [XmlChoiceIdentifier("ContributorPlaceChoice")]
+        [XmlElement("ContributorPlace")]
+        [XmlElement("contributorplace")]
+        public OnixContributorPlace[] ContributorPlace { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ContributorPlaceEnum { ContributorPlace, contributorplace }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContributorPlaceEnum[] ContributorPlaceChoice
+        {
+            get
+            {
+                if (ContributorPlace == null) return null;
+                ContributorPlaceEnum choice = SerializationSettings.UseShortTags ? ContributorPlaceEnum.contributorplace : ContributorPlaceEnum.ContributorPlace;
+                ContributorPlaceEnum[] result = new ContributorPlaceEnum[ContributorPlace.Length];
+                for (int i = 0; i < ContributorPlace.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        #endregion
+    }
+
+    public partial class OnixNameAsSubject : OnixNameBase
+    {
+        public OnixSubjectDate[] SubjectDate { get; set; }
+    }
+
+    /// <remarks/>
+    [XmlType(AnonymousType = true)]
+    public partial class OnixNameBase : OnixAlternateName
+    {
+
+        /// <summary>
+        /// An ONIX code indicating the type of a primary name.
+        /// Optional, and non-repeating.
+        /// If omitted, the default is ‘unspecified’.
+        /// </summary>
+        /// <remarks>Onix List 18</remarks>
+        [XmlChoiceIdentifier("NameTypeChoice")]
+        [XmlElement("NameType")]
+        [XmlElement("x414")]
+        public new string NameType { get; set; }
+
+        /// <remarks/>
+        [XmlChoiceIdentifier("AlternativeNameChoice")]
+        [XmlElement("AlternativeName")]
+        [XmlElement("alternativename")]
+        public OnixAlternateName[] AlternativeName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AlternativeNameEnum { AlternativeName, alternativename }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AlternativeNameEnum[] AlternativeNameChoice
+        {
+            get
+            {
+                if (AlternativeName == null) return null;
+                AlternativeNameEnum choice = SerializationSettings.UseShortTags ? AlternativeNameEnum.alternativename : AlternativeNameEnum.AlternativeName;
+                AlternativeNameEnum[] result = new AlternativeNameEnum[AlternativeName.Length];
+                for (int i = 0; i < AlternativeName.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+
+        /// <summary>
+        /// A group of data elements which together identify a contributor’s professional position and/or affiliation.
+        /// Optional and repeatable to allow multiple positions and affiliations to be specified.
+        /// </summary>
+        [XmlChoiceIdentifier("ProfessionalAffiliationChoice")]
+        [XmlElement("ProfessionalAffiliation")]
+        [XmlElement("professionalaffiliation")]
+        public OnixProfessionalAffiliation[] ProfessionalAffiliation { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProfessionalAffiliationEnum { ProfessionalAffiliation, professionalaffiliation }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProfessionalAffiliationEnum[] ProfessionalAffiliationChoice
+        {
+            get
+            {
+                if (ProfessionalAffiliation == null) return null;
+                ProfessionalAffiliationEnum choice = SerializationSettings.UseShortTags ? ProfessionalAffiliationEnum.professionalaffiliation : ProfessionalAffiliationEnum.ProfessionalAffiliation;
+                ProfessionalAffiliationEnum[] result = new ProfessionalAffiliationEnum[ProfessionalAffiliation.Length];
+                for (int i = 0; i < ProfessionalAffiliation.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
+    }
+
+    /// <remarks/>
+    [XmlType(AnonymousType = true)]
+    public partial class OnixAlternateName
+    {
+        #region CONSTANTS
+
+        public const int CONST_NAME_TYPE_UNKNOWN   = 0;
+        public const int CONST_NAME_TYPE_PSEUDONYM = 1;
+        public const int CONST_NAME_TYPE_AUTH_CNTL = 2;
+        public const int CONST_NAME_TYPE_EARLIER   = 3;
+        public const int CONST_NAME_TYPE_REAL      = 4;
+        public const int CONST_NAME_TYPE_TRANSLIT  = 6;
+        public const int CONST_NAME_TYPE_LATER     = 7;
+
+        public readonly int[] CONST_SOUGHT_NAME_TYPES = { CONST_NAME_TYPE_PSEUDONYM, CONST_NAME_TYPE_REAL };
 
         private static readonly HashSet<string> CONST_ALL_ALLOWED_SUFFIX_LIST =
             new HashSet<string>()
@@ -72,90 +402,14 @@ namespace OnixData.Version3
 
         #endregion
 
-        public OnixContributor()
-        {
-            SequenceNumber    = "";
-            ContributorRole   = PersonName = PersonNameInverted = "";
-            NamesBeforeKey    = PrefixToKey = KeyNames = "";
-            TitlesBeforeNames = SuffixToKey = TitlesAfterNames = LettersAfterNames = "";
-
-            CorporateName      = BiographicalNote = "";
-            onixNamesBeforeKey = onixKeyNames = onixLettersAndTitles = null;
-
-            altNameField = shortAltNameField = new OnixAlternateName[0];
-            nameIdField  = shortNameIdField = new OnixNameIdentifier[0];
-        }
-
-        private string sequenceNumberField;
-        private string contributorRoleField;
-        private string titlesBeforeNamesField;
-        private string personNameField;
-        private string personNameInvertedField;
-        private string namesBeforeKeyField;
-        private string prefixToKeyNameField;
-        private string keyNamesField;
-        private string suffixToKeyNameField;
-        private string lettersAfterNamesField;
-        private string titlesAfterNamesField;
-        private string corporateNameField;
-        private string biographicalNoteField;
-
-        private string onixNamesBeforeKey;
-        private string onixKeyNames;
-        private string onixLettersAndTitles;
-
-        private OnixAlternateName[] altNameField;
-        private OnixAlternateName[] shortAltNameField;
-
-        private OnixNameIdentifier[] nameIdField;
-        private OnixNameIdentifier[] shortNameIdField;
-
-        #region ONIX Lists
-
-        public OnixNameIdentifier[] OnixNameIdList
-        {
-            get
-            {
-                OnixNameIdentifier[] NameIdList = new OnixNameIdentifier[0];
-
-                if (this.nameIdField != null)
-                    NameIdList = this.nameIdField;
-                else if (this.shortNameIdField != null)
-                    NameIdList = this.shortNameIdField;
-                else
-                    NameIdList = new OnixNameIdentifier[0];
-
-                return NameIdList;
-            }
-        }
-
-        public OnixAlternateName[] OnixAltNameList
-        {
-            get
-            {
-                OnixAlternateName[] AltNameList = new OnixAlternateName[0];
-
-                if (this.altNameField != null)
-                    AltNameList = this.altNameField;
-                else if (this.shortAltNameField != null)
-                    AltNameList = this.shortAltNameField;
-                else
-                    AltNameList = new OnixAlternateName[0];
-
-                return AltNameList;
-            }
-        }
-
-        #endregion
-
         #region ONIX Helpers
 
         /// <remarks/>
         public OnixNameIdentifier GetFirstNameIdentifier(int pnNameIdTypeNum)
         {
             var firstNameID =
-                OnixNameIdList
-                .Where(x => (x.NameIDTypeNum == pnNameIdTypeNum) && (!String.IsNullOrEmpty(x.IDValue)))
+                NameIdentifier
+                .Where(x => (x.NameIDTypeNum == pnNameIdTypeNum) && (!string.IsNullOrEmpty(x.IDValue)))
                 .FirstOrDefault();
 
             return (firstNameID != null) ? firstNameID : new OnixNameIdentifier();
@@ -171,7 +425,7 @@ namespace OnixData.Version3
         {
             get
             {
-                if (String.IsNullOrEmpty(onixNamesBeforeKey))
+                if (string.IsNullOrEmpty(onixNamesBeforeKey))
                     DetermineContribFields();
 
                 return onixNamesBeforeKey;
@@ -183,7 +437,7 @@ namespace OnixData.Version3
         {
             get
             {
-                if (String.IsNullOrEmpty(onixKeyNames))
+                if (string.IsNullOrEmpty(onixKeyNames))
                     DetermineContribFields();
 
                 return onixKeyNames;
@@ -195,246 +449,331 @@ namespace OnixData.Version3
         {
             get
             {
-                if (String.IsNullOrEmpty(onixLettersAndTitles))
+                if (string.IsNullOrEmpty(onixLettersAndTitles))
                     DetermineContribFields();
 
                 return onixLettersAndTitles;
             }
         }
 
-        public int SeqNum
+        public bool IsSoughtNameType()
+        {
+            return CONST_SOUGHT_NAME_TYPES.Contains(NameTypeNum);
+        }
+
+        public int NameTypeNum
         {
             get
             {
-                int nSeqNum = 0;
+                int nTypeNum = -1;
 
-                if (!String.IsNullOrEmpty(SequenceNumber))
-                    Int32.TryParse(SequenceNumber, out nSeqNum);
+                if (!string.IsNullOrEmpty(NameType))
+                    int.TryParse(NameType, out nTypeNum);
 
-                return nSeqNum;
+                return nTypeNum;
             }
         }
 
         #endregion
 
+        private string onixNamesBeforeKey;
+        private string onixKeyNames;
+        private string onixLettersAndTitles;
+
         #region Reference Tags
 
-        /// <remarks/>
-        public string SequenceNumber
+        /// <summary>
+        /// An ONIX code indicating the type of the name sent in an occurrence of the <see cref="OnixAlternativeName"/> composite.
+        /// Mandatory in each occurrence of the composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 18</remarks>
+        [XmlChoiceIdentifier("NameTypeChoice")]
+        [XmlElement("NameType")]
+        [XmlElement("x414")]
+        public string NameType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NameTypeEnum { NameType, x414 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NameTypeEnum NameTypeChoice
         {
-            get { return this.sequenceNumberField; }
-            set { this.sequenceNumberField = value; }
+            get { return SerializationSettings.UseShortTags ? NameTypeEnum.x414 : NameTypeEnum.NameType; }
+            set { }
         }
 
-        /// <remarks/>
-        public string ContributorRole
-        {
-            get { return this.contributorRoleField; }
-            set { this.contributorRoleField = value; }
-        }
-
-        /// <remarks/>
-        public string TitlesBeforeNames
-        {
-            get { return this.titlesBeforeNamesField; }
-            set { this.titlesBeforeNamesField = value; }
-        }
-
-        /// <remarks/>
-        public string PersonName
-        {
-            get { return this.personNameField; }
-            set { this.personNameField = value; }
-        }
-
-        /// <remarks/>
-        public string PersonNameInverted
-        {
-            get { return this.personNameInvertedField; }
-            set { this.personNameInvertedField = value; }
-        }
-
-        /// <remarks/>
-        public string NamesBeforeKey
-        {
-            get { return this.namesBeforeKeyField; }
-            set { this.namesBeforeKeyField = value; }
-        }
-
-        /// <remarks/>
-        public string KeyNames
-        {
-            get { return this.keyNamesField; }
-            set { this.keyNamesField = value; }
-        }
-
-        /// <remarks/>
-        public string LettersAfterNames
-        {
-            get { return this.lettersAfterNamesField; }
-            set { this.lettersAfterNamesField = value; }
-        }
-
-        /// <remarks/>
-        public string TitlesAfterNames
-        {
-            get { return this.titlesAfterNamesField; }
-            set { this.titlesAfterNamesField = value; }
-        }
-
-        public string BiographicalNote
+        /// <summary>
+        /// A group of data elements which together specify a name identifier, used here to carry an identifier for a person or organization name given in an occurrence of the <see cref="OnixContributor"/> composite.
+        /// Optional and repeatable to specify name identifiers of different types for the same person or organization name.
+        /// </summary>
+        [XmlChoiceIdentifier("NameIdentifierChoice")]
+        [XmlElement("NameIdentifier")]
+        [XmlElement("nameidentifier")]
+        public OnixNameIdentifier[] NameIdentifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NameIdentifierEnum { NameIdentifier, nameidentifier }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NameIdentifierEnum[] NameIdentifierChoice
         {
             get
-            { return this.biographicalNoteField; }
-            set
-            { this.biographicalNoteField = value; }
+            {
+                if (NameIdentifier == null) return null;
+                NameIdentifierEnum choice = SerializationSettings.UseShortTags ? NameIdentifierEnum.nameidentifier : NameIdentifierEnum.NameIdentifier;
+                NameIdentifierEnum[] result = new NameIdentifierEnum[NameIdentifier.Length];
+                for (int i = 0; i < NameIdentifier.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
-        /// <remarks/>
-        public string CorporateName
+        /// <summary>
+        /// The name of a person who contributed to the creation of the product, unstructured, and presented in normal order.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("PersonNameChoice")]
+        [XmlElement("PersonName")]
+        [XmlElement("b036")]
+        public string PersonName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PersonNameEnum { PersonName, b036 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PersonNameEnum PersonNameChoice
         {
-            get { return this.corporateNameField; }
-            set { this.corporateNameField = value; }
+            get { return SerializationSettings.UseShortTags ? PersonNameEnum.b036 : PersonNameEnum.PersonName; }
+            set { }
         }
 
-        /// <remarks/>
-        public string PrefixToKey
+        /// <summary>
+        /// The name of a person who contributed to the creation of the product, presented with the element used for alphabetical sorting placed first (‘inverted order’).
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("PersonNameInvertedChoice")]
+        [XmlElement("PersonNameInverted")]
+        [XmlElement("b037")]
+        public string PersonNameInverted { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PersonNameInvertedEnum { PersonNameInverted, b037 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PersonNameInvertedEnum PersonNameInvertedChoice
         {
-            get { return this.prefixToKeyNameField; }
-            set { this.prefixToKeyNameField = value; }
+            get { return SerializationSettings.UseShortTags ? PersonNameInvertedEnum.b037 : PersonNameInvertedEnum.PersonNameInverted; }
+            set { }
         }
 
-        /// <remarks/>
-        public string SuffixToKey
+
+        /// <summary>
+        /// The first part of a structured name of a person who contributed to the creation of the product:
+        /// qualifications and/or titles preceding a person’s names, eg ‘Professor’ or ‘HRH Prince’ or ‘Saint’.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("TitlesBeforeNamesChoice")]
+        [XmlElement("TitlesBeforeNames")]
+        [XmlElement("b038")]
+        public string TitlesBeforeNames { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TitlesBeforeNamesEnum { TitlesBeforeNames, b038 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitlesBeforeNamesEnum TitlesBeforeNamesChoice
         {
-            get { return this.suffixToKeyNameField; }
-            set { this.suffixToKeyNameField = value; }
+            get { return SerializationSettings.UseShortTags ? TitlesBeforeNamesEnum.b038 : TitlesBeforeNamesEnum.TitlesBeforeNames; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("AlternativeName")]
-        public OnixAlternateName[] AlternativeName
+        /// <summary>
+        /// The second part of a structured name of a person who contributed to the creation of the product:
+        /// name(s) and/or initial(s) preceding a person’s key name(s), eg James J.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("NamesBeforeKeyChoice")]
+        [XmlElement("NamesBeforeKey")]
+        [XmlElement("b039")]
+        public string NamesBeforeKey { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NamesBeforeKeyEnum { NamesBeforeKey, b039 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NamesBeforeKeyEnum NamesBeforeKeyChoice
         {
-            get { return this.altNameField; }
-            set { this.altNameField = value; }
+            get { return SerializationSettings.UseShortTags ? NamesBeforeKeyEnum.b039 : NamesBeforeKeyEnum.NamesBeforeKey; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("NameIdentifier")]
-        public OnixNameIdentifier[] NameIdentifier
+        /// <summary>
+        /// The third part of a structured name of a person who contributed to the creation of the product:
+        /// a prefix which precedes the key name(s) but which is not to be treated as part of the key name, eg ‘van’ in Ludwig van Beethoven.
+        /// This element may also be used for titles that appear after given names and before key names, eg ‘Lord’ in Alfred, Lord Tennyson.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("PrefixToKeyChoice")]
+        [XmlElement("PrefixToKey")]
+        [XmlElement("b247")]
+        public string PrefixToKey { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PrefixToKeyEnum { PrefixToKey, b247 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PrefixToKeyEnum PrefixToKeyChoice
         {
-            get { return this.nameIdField; }
-            set { this.nameIdField = value; }
+            get { return SerializationSettings.UseShortTags ? PrefixToKeyEnum.b247 : PrefixToKeyEnum.PrefixToKey; }
+            set { }
         }
 
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string b034
+        /// <summary>
+        /// The fourth part of a structured name of a person who contributed to the creation of the product:
+        /// key name(s), ie the name elements normally used to open an entry in an alphabetical list, eg ‘Smith’ or ‘Garcia Marquez’ or ‘Madonna’ or ‘Francis de Sales’ (in Saint Francis de Sales).
+        /// Non-repeating.
+        /// Required if <see cref="TitlesBeforeNames"/>, <see cref="NamesBeforeKey"/>, <see cref="PrefixToKey"/>, <see cref="NamesAfterKey"/>, <see cref="SuffixToKey"/>, <see cref="LettersAfterNames"/>, or <see cref="TitlesAfterNames"/> are used.
+        /// </summary>
+        [XmlChoiceIdentifier("KeyNamesChoice")]
+        [XmlElement("KeyNames")]
+        [XmlElement("b040")]
+        public string KeyNames { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum KeyNamesEnum { KeyNames, b040 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public KeyNamesEnum KeyNamesChoice
         {
-            get { return SequenceNumber; }
-            set { SequenceNumber = value; }
+            get { return SerializationSettings.UseShortTags ? KeyNamesEnum.b040 : KeyNamesEnum.KeyNames; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b035
+        /// <summary>
+        /// The fifth part of a structured name of a person who contributed to the creation of the product:
+        /// name suffix, or name(s) following a person’s key name(s), eg ‘Ibrahim’ (in Anwar Ibrahim).
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("NamesAfterKeyChoice")]
+        [XmlElement("NamesAfterKey")]
+        [XmlElement("b041")]
+        public string NamesAfterKey { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum NamesAfterKeyEnum { NamesAfterKey, b041 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NamesAfterKeyEnum NamesAfterKeyChoice
         {
-            get { return ContributorRole; }
-            set { ContributorRole = value; }
+            get { return SerializationSettings.UseShortTags ? NamesAfterKeyEnum.b041 : NamesAfterKeyEnum.NamesAfterKey; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b036
+        /// <summary>
+        /// The sixth part of a structured name of a person who contributed to the creation of the product:
+        /// a suffix following a person’s key name(s), eg ‘Jr’ or ‘III’.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("SuffixToKeyChoice")]
+        [XmlElement("SuffixToKey")]
+        [XmlElement("b248")]
+        public string SuffixToKey { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SuffixToKeyEnum { SuffixToKey, b248 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SuffixToKeyEnum SuffixToKeyChoice
         {
-            get { return PersonName; }
-            set { PersonName = value; }
+            get { return SerializationSettings.UseShortTags ? SuffixToKeyEnum.b248 : SuffixToKeyEnum.SuffixToKey; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b037
+        /// <summary>
+        /// The seventh part of a structured name of a person who contributed to the creation of the product:
+        /// qualifications and honors following a person’s names, eg ‘CBE FRS’.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("LettersAfterNamesChoice")]
+        [XmlElement("LettersAfterNames")]
+        [XmlElement("b042")]
+        public string LettersAfterNames { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum LettersAfterNamesEnum { LettersAfterNames, b042 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public LettersAfterNamesEnum LettersAfterNamesChoice
         {
-            get { return PersonNameInverted; }
-            set { PersonNameInverted = value; }
+            get { return SerializationSettings.UseShortTags ? LettersAfterNamesEnum.b042 : LettersAfterNamesEnum.LettersAfterNames; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b038
+        /// <summary>
+        /// The eighth part of a structured name of a person who contributed to the creation of the product:
+        /// titles following a person’s names, eg ‘Duke of Edinburgh’.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("TitlesAfterNamesChoice")]
+        [XmlElement("TitlesAfterNames")]
+        [XmlElement("b043")]
+        public string TitlesAfterNames { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TitlesAfterNamesEnum { TitlesAfterNames, b043 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitlesAfterNamesEnum TitlesAfterNamesChoice
         {
-            get { return TitlesBeforeNames; }
-            set { TitlesBeforeNames = value; }
+            get { return SerializationSettings.UseShortTags ? TitlesAfterNamesEnum.b043 : TitlesAfterNamesEnum.TitlesAfterNames; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b039
+        /// <summary>
+        /// An optional ONIX code specifying the gender of a personal contributor.
+        /// Not repeatable.
+        /// Note that this indicates the gender of the contributor’s public identity (which may be pseudonymous) based on designations used in ISO 5218, rather than the gender identity, biological sex or sexuality of a natural person.
+        /// </summary>
+        /// <remarks>Onix List 229</remarks>
+        [XmlChoiceIdentifier("GenderChoice")]
+        [XmlElement("Gender")]
+        [XmlElement("x524")]
+        public string Gender { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum GenderEnum { Gender, x524 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public GenderEnum GenderChoice
         {
-            get { return NamesBeforeKey; }
-            set { NamesBeforeKey = value; }
+            get { return SerializationSettings.UseShortTags ? GenderEnum.x524 : GenderEnum.Gender; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b040
+        /// <summary>
+        /// The name of a corporate body which contributed to the creation of the product, unstructured.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("CorporateNameChoice")]
+        [XmlElement("CorporateName")]
+        [XmlElement("b047")]
+        public string CorporateName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CorporateNameEnum { CorporateName, b047 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CorporateNameEnum CorporateNameChoice
         {
-            get { return KeyNames; }
-            set { KeyNames = value; }
+            get { return SerializationSettings.UseShortTags ? CorporateNameEnum.b047 : CorporateNameEnum.CorporateName; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b042
+        /// <summary>
+        /// The name of a corporate body which contributed to the creation of the product, presented in inverted order, with the element used for alphabetical sorting placed first.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("CorporateNameInvertedChoice")]
+        [XmlElement("CorporateNameInverted")]
+        [XmlElement("x443")]
+        public string CorporateNameInverted { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CorporateNameInvertedEnum { CorporateNameInverted, x443 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CorporateNameInvertedEnum CorporateNameInvertedChoice
         {
-            get { return LettersAfterNames; }
-            set { LettersAfterNames = value; }
+            get { return SerializationSettings.UseShortTags ? CorporateNameInvertedEnum.x443 : CorporateNameInvertedEnum.CorporateNameInverted; }
+            set { }
         }
 
-        /// <remarks/>
-        public string b043
+        /// <summary>
+        /// An ONIX code allowing a positive indication to be given when authorship is unknown or anonymous, or when as a matter of editorial policy only a limited number of contributors are named.
+        /// Optional and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 19</remarks>
+        [XmlChoiceIdentifier("UnnamedPersonsChoice")]
+        [XmlElement("UnnamedPersons")]
+        [XmlElement("b249")]
+        public string UnnamedPersons { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum UnnamedPersonsEnum { UnnamedPersons, b249 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public UnnamedPersonsEnum UnnamedPersonsChoice
         {
-            get { return TitlesAfterNames; }
-            set { TitlesAfterNames = value; }
-        }
-
-        public string b044
-        {
-            get { return BiographicalNote; }
-            set { BiographicalNote = value; }
-        }
-
-        /// <remarks/>
-        public string b047
-        {
-            get { return CorporateName; }
-            set { CorporateName = value; }
-        }
-
-        /// <remarks/>
-        public string b247
-        {
-            get { return PrefixToKey; }
-            set { PrefixToKey = value; }
-        }
-
-        /// <remarks/>
-        public string b248
-        {
-            get { return SuffixToKey; }
-            set { SuffixToKey = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("alternativename")]
-        public OnixAlternateName[] alternativename
-        {
-            get { return this.shortAltNameField; }
-            set { this.shortAltNameField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("nameidentifier")]
-        public OnixNameIdentifier[] nameidentifier
-        {
-            get { return this.shortNameIdField; }
-            set { this.shortNameIdField = value; }
+            get { return SerializationSettings.UseShortTags ? UnnamedPersonsEnum.b249 : UnnamedPersonsEnum.UnnamedPersons; }
+            set { }
         }
 
         #endregion
@@ -444,17 +783,17 @@ namespace OnixData.Version3
         private void DetermineContribFields()
         {
             StringBuilder KeyNamePrefixBuilder = new StringBuilder();
-            StringBuilder KeyNameBuilder       = new StringBuilder();
+            StringBuilder KeyNameBuilder = new StringBuilder();
             StringBuilder LettersTitlesBuilder = new StringBuilder();
 
-            if (!String.IsNullOrEmpty(this.KeyNames))
+            if (!string.IsNullOrEmpty(this.KeyNames))
             {
                 KeyNameBuilder.Append(this.KeyNames);
 
-                if (!String.IsNullOrEmpty(this.NamesBeforeKey))
+                if (!string.IsNullOrEmpty(this.NamesBeforeKey))
                     KeyNamePrefixBuilder.Append(this.NamesBeforeKey);
             }
-            else if (!String.IsNullOrEmpty(this.PersonNameInverted))
+            else if (!string.IsNullOrEmpty(this.PersonNameInverted))
             {
                 string[] NameComponents = this.PersonNameInverted.Split(new char[1] { ',' });
 
@@ -478,7 +817,7 @@ namespace OnixData.Version3
                     }
                 }
             }
-            else if (!String.IsNullOrEmpty(this.PersonName))
+            else if (!string.IsNullOrEmpty(this.PersonName))
             {
                 string[] NameComponents = this.PersonName.Split(new char[1] { ' ' });
 
@@ -486,24 +825,24 @@ namespace OnixData.Version3
                     KeyNameBuilder.Append(NameComponents[NameComponents.Length - 1]);
                 else if (NameComponents.Length > 1)
                 {
-                    bool   bLongSuffix      = false;
-                    bool   bExtraLongSuffix = false;
-                    string sPossibleSuffix  = "";
+                    bool bLongSuffix = false;
+                    bool bExtraLongSuffix = false;
+                    string sPossibleSuffix = "";
 
                     if (NameComponents.Length > 4)
                     {
-                        sPossibleSuffix  = NameComponents[NameComponents.Length - 3] + " " + NameComponents[NameComponents.Length - 2] + " " + NameComponents[NameComponents.Length - 1];
+                        sPossibleSuffix = NameComponents[NameComponents.Length - 3] + " " + NameComponents[NameComponents.Length - 2] + " " + NameComponents[NameComponents.Length - 1];
                         bExtraLongSuffix = true;
                     }
                     else if (NameComponents.Length > 3)
                     {
-                        sPossibleSuffix = NameComponents[NameComponents.Length-2] + " " + NameComponents[NameComponents.Length-1];
-                        bLongSuffix     = true;
+                        sPossibleSuffix = NameComponents[NameComponents.Length - 2] + " " + NameComponents[NameComponents.Length - 1];
+                        bLongSuffix = true;
                     }
                     else
                     {
-                        sPossibleSuffix = NameComponents[NameComponents.Length-1];
-                        bLongSuffix     = bExtraLongSuffix = false;
+                        sPossibleSuffix = NameComponents[NameComponents.Length - 1];
+                        bLongSuffix = bExtraLongSuffix = false;
                     }
 
                     int nKeyNameIndex = (NameComponents.Length - 1);
@@ -530,18 +869,18 @@ namespace OnixData.Version3
                     }
                 }
             }
-            else if (!String.IsNullOrEmpty(this.CorporateName))
+            else if (!string.IsNullOrEmpty(this.CorporateName))
             {
                 KeyNameBuilder.Append(CorporateName);
             }
 
-            if (!String.IsNullOrEmpty(LettersAfterNames))
+            if (!string.IsNullOrEmpty(LettersAfterNames))
             {
                 LettersTitlesBuilder.Clear();
                 LettersTitlesBuilder.Append(LettersAfterNames);
             }
 
-            if (!String.IsNullOrEmpty(TitlesAfterNames))
+            if (!string.IsNullOrEmpty(TitlesAfterNames))
             {
                 if (LettersTitlesBuilder.Length > 0)
                     LettersTitlesBuilder.Append(" ");
@@ -549,14 +888,14 @@ namespace OnixData.Version3
                 LettersTitlesBuilder.Append(TitlesAfterNames);
             }
 
-            if (!String.IsNullOrEmpty(PrefixToKey))
+            if (!string.IsNullOrEmpty(PrefixToKey))
                 KeyNamePrefixBuilder.Append(" " + PrefixToKey);
 
-            if (!String.IsNullOrEmpty(SuffixToKey))
+            if (!string.IsNullOrEmpty(SuffixToKey))
                 LettersTitlesBuilder.Insert(0, SuffixToKey + " ");
 
-            onixNamesBeforeKey   = KeyNamePrefixBuilder.ToString().Trim();
-            onixKeyNames         = KeyNameBuilder.ToString().Trim();
+            onixNamesBeforeKey = KeyNamePrefixBuilder.ToString().Trim();
+            onixKeyNames = KeyNameBuilder.ToString().Trim();
             onixLettersAndTitles = LettersTitlesBuilder.ToString().Trim();
         }
 
@@ -564,7 +903,7 @@ namespace OnixData.Version3
         {
             bool bSuffixMatch = false;
 
-            if (!String.IsNullOrEmpty(psTestSuffix))
+            if (!string.IsNullOrEmpty(psTestSuffix))
             {
                 bSuffixMatch = CONST_ALL_ALLOWED_SUFFIX_LIST.Contains(psTestSuffix);
 
@@ -577,75 +916,6 @@ namespace OnixData.Version3
             }
 
             return bSuffixMatch;
-        }
-
-        #endregion
-    }
-
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public partial class OnixAlternateName : OnixContributor
-    {
-        #region CONSTANTS
-
-        public const int CONST_NAME_TYPE_UNKNOWN   = 0;
-        public const int CONST_NAME_TYPE_PSEUDONYM = 1;
-        public const int CONST_NAME_TYPE_AUTH_CNTL = 2;
-        public const int CONST_NAME_TYPE_EARLIER   = 3;
-        public const int CONST_NAME_TYPE_REAL      = 4;
-        public const int CONST_NAME_TYPE_TRANSLIT  = 6;
-        public const int CONST_NAME_TYPE_LATER     = 7;
-
-        public readonly int[] CONST_SOUGHT_NAME_TYPES = { CONST_NAME_TYPE_PSEUDONYM, CONST_NAME_TYPE_REAL };
-
-        #endregion
-
-        public OnixAlternateName()
-        {
-            NameType = "";
-        }
-
-        private string nameTypeField;
-
-        #region Helper Methods
-
-        public bool IsSoughtNameType()
-        {
-            return CONST_SOUGHT_NAME_TYPES.Contains(NameTypeNum);
-        }
-
-        public int NameTypeNum
-        {
-            get
-            {
-                int nTypeNum = -1;
-
-                if (!String.IsNullOrEmpty(NameType))
-                    Int32.TryParse(NameType, out nTypeNum);
-
-                return nTypeNum;
-            }
-        }
-
-        #endregion
-
-        #region Reference Tags
-
-        /// <remarks/>
-        public string NameType
-        {
-            get { return this.nameTypeField; }
-            set { this.nameTypeField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        public string x414
-        {
-            get { return NameType; }
-            set { NameType = value; }
         }
 
         #endregion

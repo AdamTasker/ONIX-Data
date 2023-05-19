@@ -58,11 +58,11 @@ namespace OnixData.Version3
                 OnixSubject FoundSubject = new OnixSubject();
 
                 if ((DescriptiveDetail != null) &&
-                    (DescriptiveDetail.OnixSubjectList != null) &&
-                    (DescriptiveDetail.OnixSubjectList.Length > 0))
+                    (DescriptiveDetail.Subject != null) &&
+                    (DescriptiveDetail.Subject.Length > 0))
                 {
                     FoundSubject =
-                        DescriptiveDetail.OnixSubjectList.Where(x => x.SubjectSchemeIdentifierNum == OnixSubject.CONST_SUBJ_SCHEME_BISAC_CAT_ID).LastOrDefault();
+                        DescriptiveDetail.Subject.Where(x => x.SubjectSchemeIdentifierNum == OnixSubject.CONST_SUBJ_SCHEME_BISAC_CAT_ID).LastOrDefault();
                 }
 
                 return FoundSubject;
@@ -76,11 +76,11 @@ namespace OnixData.Version3
                 OnixSubject FoundSubject = new OnixSubject();
 
                 if ((DescriptiveDetail != null) &&
-                    (DescriptiveDetail.OnixSubjectList != null) &&
-                    (DescriptiveDetail.OnixSubjectList.Length > 0))
+                    (DescriptiveDetail.Subject != null) &&
+                    (DescriptiveDetail.Subject.Length > 0))
                 {
                     FoundSubject =
-                        DescriptiveDetail.OnixSubjectList.Where(x => x.SubjectSchemeIdentifierNum == OnixSubject.CONST_SUBJ_SCHEME_REGION_ID).LastOrDefault();
+                        DescriptiveDetail.Subject.Where(x => x.SubjectSchemeIdentifierNum == OnixSubject.CONST_SUBJ_SCHEME_REGION_ID).LastOrDefault();
                 }
 
                 return FoundSubject;
@@ -217,7 +217,7 @@ namespace OnixData.Version3
 
                 if (String.IsNullOrEmpty(sNumOfPages))
                 {
-                    if ((this.DescriptiveDetail != null) && (this.DescriptiveDetail.OnixExtentList != null))
+                    if ((this.DescriptiveDetail != null) && (this.DescriptiveDetail.Extent != null))
                     {
                         if (this.DescriptiveDetail.PageNumber > 0)
                             sNumOfPages = Convert.ToString(this.DescriptiveDetail.PageNumber);
@@ -240,7 +240,7 @@ namespace OnixData.Version3
 
         public string[] ProductFormDetailList
         {
-            get { return (this.DescriptiveDetail != null ? this.DescriptiveDetail.OnixProductFormDetailList : new string[0]); }
+            get { return (this.DescriptiveDetail != null ? this.DescriptiveDetail.ProductFormDetail : new string[0]); }
         }
 
         public string PrimaryContentType
@@ -255,7 +255,7 @@ namespace OnixData.Version3
 
         public string[] ProductContentTypeList
         {
-            get { return (this.DescriptiveDetail != null ? this.DescriptiveDetail.OnixProductContentTypeList : new string[0]); }
+            get { return (this.DescriptiveDetail != null ? this.DescriptiveDetail.ProductContentType : new string[0]); }
         }
 
         public string PROPRIETARY_ID
@@ -369,10 +369,10 @@ namespace OnixData.Version3
             {
                 OnixContributor MainAuthor = new OnixContributor();
 
-                if ((DescriptiveDetail.OnixContributorList != null) && (DescriptiveDetail.OnixContributorList.Length > 0))
+                if ((DescriptiveDetail.Contributor != null) && (DescriptiveDetail.Contributor.Length > 0))
                 {
                     MainAuthor =
-                        DescriptiveDetail.OnixContributorList.Where(x => x.ContributorRole == OnixContributor.CONST_CONTRIB_ROLE_AUTHOR).FirstOrDefault();
+                        DescriptiveDetail.Contributor.Where(x => x.ContributorRole.Contains(OnixContributor.CONST_CONTRIB_ROLE_AUTHOR)).FirstOrDefault();
                 }
 
                 return MainAuthor;
@@ -685,9 +685,9 @@ namespace OnixData.Version3
 
                 if ((DescriptiveDetail != null) &&
                     (DescriptiveDetail.TitleDetail != null) &&
-                    (DescriptiveDetail.TitleDetail.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT))
+                    (DescriptiveDetail.TitleDetail.Where((td) => td.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT) != null))
                 {
-                    OnixTitleDetail ProductTitleDetail = DescriptiveDetail.TitleDetail;
+                    OnixTitleDetail ProductTitleDetail = DescriptiveDetail.TitleDetail.Where((td) => td.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT).First();
 
                     if (ProductTitleDetail.FirstTitleElement != null)
                     {
@@ -995,10 +995,10 @@ namespace OnixData.Version3
             OnixMeasure FoundMeasurement = new OnixMeasure();
 
             if ((DescriptiveDetail != null) &&
-                (DescriptiveDetail.OnixMeasureList != null) &&
-                (DescriptiveDetail.OnixMeasureList.Length > 0))
+                (DescriptiveDetail.Measure != null) &&
+                (DescriptiveDetail.Measure.Length > 0))
             {
-                OnixMeasure[] MeasureList = DescriptiveDetail.OnixMeasureList;
+                OnixMeasure[] MeasureList = DescriptiveDetail.Measure;
 
                 OnixMeasure MeasureType = null;
 

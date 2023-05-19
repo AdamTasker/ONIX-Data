@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Audience
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public class OnixAudience
     {
         #region CONSTANTS
@@ -19,63 +16,58 @@ namespace OnixData.Version3.Audience
 
         #endregion
 
-        public OnixAudience()
-        {
-            audienceCodeTypeField = -1;
-
-            audienceCodeTypeNameField = audienceCodeValueField = "";
-        }
-
-        private int    audienceCodeTypeField;
-        private string audienceCodeTypeNameField;
-        private string audienceCodeValueField;
-
         #region Reference Tags
 
-        /// <remarks/>
-        public int AudienceCodeType
+        /// <summary>
+        /// An ONIX code which identifies the scheme from which the code in <see cref="AudienceCodeValue"/> is taken.
+        /// Mandatory in each occurrence of the <see cref="OnixAudience"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>List 29</remarks>
+        [XmlChoiceIdentifier("AudienceCodeTypeChoice")]
+        [XmlElement("AudienceCodeType")]
+        [XmlElement("b204")]
+        public int AudienceCodeType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceCodeTypeEnum { AudienceCodeType, b204 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceCodeTypeEnum AudienceCodeTypeChoice
         {
-            get { return this.audienceCodeTypeField; }
-            set { this.audienceCodeTypeField = value; }
+            get { return SerializationSettings.UseShortTags ? AudienceCodeTypeEnum.b204 : AudienceCodeTypeEnum.AudienceCodeType; }
+            set { }
         }
 
-        /// <remarks/>
-        public string AudienceCodeTypeName
+        /// <summary>
+        /// A name which identifies a proprietary audience code when the code in <see cref="AudienceCodeType"/> indicates a proprietary scheme, eg a vendor’s own code.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("AudienceCodeTypeNameChoice")]
+        [XmlElement("AudiencCodeTypeName")]
+        [XmlElement("b205")]
+        public string AudienceCodeTypeName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceCodeTypeNameEnum { AudienceCodeTypeName, b205 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceCodeTypeNameEnum AudienceCodeTypeNameChoice
         {
-            get { return this.audienceCodeTypeNameField; }
-            set { this.audienceCodeTypeNameField = value; }
+            get { return SerializationSettings.UseShortTags ? AudienceCodeTypeNameEnum.b205 : AudienceCodeTypeNameEnum.AudienceCodeTypeName; }
+            set { }
         }
 
-        /// <remarks/>
-        public string AudienceCodeValue
+        /// <summary>
+        /// A code value taken from the scheme specified in <see cref="AudienceCodeType"/>.
+        /// Mandatory in each occurrence of the <see cref="OnixAudience"/> composite, and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("AudienceCodeValueChoice")]
+        [XmlElement("AudienceCodeValue")]
+        [XmlElement("b206")]
+        public string AudienceCodeValue { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AudienceCodeValueEnum { AudienceCodeValue, b206 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AudienceCodeValueEnum AudienceCodeValueChoice
         {
-            get { return this.audienceCodeValueField; }
-            set { this.audienceCodeValueField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public int b204
-        {
-            get { return AudienceCodeType; }
-            set { AudienceCodeType = value; }
-        }
-
-        /// <remarks/>
-        public string b205
-        {
-            get { return AudienceCodeTypeName; }
-            set { AudienceCodeTypeName = value; }
-        }
-
-        /// <remarks/>
-        public string b206
-        {
-            get { return AudienceCodeValue; }
-            set { AudienceCodeValue = value; }
+            get { return SerializationSettings.UseShortTags ? AudienceCodeValueEnum.b206 : AudienceCodeValueEnum.AudienceCodeValue; }
+            set { }
         }
 
         #endregion
