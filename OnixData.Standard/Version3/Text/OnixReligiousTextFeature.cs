@@ -49,18 +49,18 @@ namespace OnixData.Version3.Text
         [XmlChoiceIdentifier("ReligiousTextFeatureDescriptionChoice")]
         [XmlElement("ReligiousTextFeatureDescription")]
         [XmlElement("b360")]
-        public string[] ReligiousCodeFeatureDescription { get; set; }
+        public string[] ReligiousTextFeatureDescription { get; set; }
         [XmlType(IncludeInSchema = false)]
-        public enum ReligiousCodeFeatureDescriptionEnum { ReligiousCodeFeatureDescription, b360 }
+        public enum ReligiousTextFeatureDescriptionEnum { ReligiousTextFeatureDescription, b360 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ReligiousCodeFeatureDescriptionEnum[] ReligiousCodeFeatureDescriptionChoice
+        public ReligiousTextFeatureDescriptionEnum[] ReligiousTextFeatureDescriptionChoice
         {
             get
             {
-                if (ReligiousCodeFeatureDescription == null) return null;
-                ReligiousCodeFeatureDescriptionEnum choice = SerializationSettings.UseShortTags ? ReligiousCodeFeatureDescriptionEnum.b360 : ReligiousCodeFeatureDescriptionEnum.ReligiousCodeFeatureDescription;
-                ReligiousCodeFeatureDescriptionEnum[] result = new ReligiousCodeFeatureDescriptionEnum[ReligiousCodeFeatureDescription.Length];
-                for (int i = 0; i < ReligiousCodeFeatureDescription.Length; i++) result[i] = choice;
+                if (ReligiousTextFeatureDescription == null) return null;
+                ReligiousTextFeatureDescriptionEnum choice = SerializationSettings.UseShortTags ? ReligiousTextFeatureDescriptionEnum.b360 : ReligiousTextFeatureDescriptionEnum.ReligiousTextFeatureDescription;
+                ReligiousTextFeatureDescriptionEnum[] result = new ReligiousTextFeatureDescriptionEnum[ReligiousTextFeatureDescription.Length];
+                for (int i = 0; i < ReligiousTextFeatureDescription.Length; i++) result[i] = choice;
                 return result;
             }
             set { }

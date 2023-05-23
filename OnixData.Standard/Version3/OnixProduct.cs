@@ -13,6 +13,7 @@ using OnixData.Version3.Related;
 using OnixData.Version3.Supply;
 using OnixData.Version3.Text;
 using OnixData.Version3.Title;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3
 {
@@ -95,14 +96,14 @@ namespace OnixData.Version3
                 OnixProductId[] ProductIdList = ProductIdentifier;
 
                 string TempISBN = this.isbnField;
-                if (String.IsNullOrEmpty(TempISBN))
+                if (string.IsNullOrEmpty(TempISBN))
                 {
                     if ((ProductIdList != null) && (ProductIdList.Length > 0))
                     {
                         OnixProductId IsbnProductId =
                             ProductIdList.Where(x => x.ProductIDType == CONST_PRODUCT_TYPE_ISBN).LastOrDefault();
 
-                        if ((IsbnProductId != null) && !String.IsNullOrEmpty(IsbnProductId.IDValue))
+                        if ((IsbnProductId != null) && !string.IsNullOrEmpty(IsbnProductId.IDValue))
                             TempISBN = this.isbnField = IsbnProductId.IDValue;
                     }
                 }
@@ -131,7 +132,7 @@ namespace OnixData.Version3
                             ProductIdList.Where(x => (x.ProductIDType == CONST_PRODUCT_TYPE_EAN) ||
                                                      (x.ProductIDType == CONST_PRODUCT_TYPE_ISBN13)).LastOrDefault();
 
-                        if ((EanProductId != null) && !String.IsNullOrEmpty(EanProductId.IDValue))
+                        if ((EanProductId != null) && !string.IsNullOrEmpty(EanProductId.IDValue))
                             TempEAN = this.eanField = Convert.ToInt64(EanProductId.IDValue);
                     }
                 }
@@ -177,7 +178,7 @@ namespace OnixData.Version3
                     var SoughtDate =
                         SoughtSupplyDetail.OnixSupplyDateList.Where(x => x.IsLasteDateForReturns()).FirstOrDefault();
 
-                    if ((SoughtDate != null) && !String.IsNullOrEmpty(SoughtDate.Date))
+                    if ((SoughtDate != null) && !string.IsNullOrEmpty(SoughtDate.Date))
                         sLastDt = SoughtDate.Date;
                 }
 
@@ -198,7 +199,7 @@ namespace OnixData.Version3
                     OnixProductId LccnProductId =
                         ProductIdList.Where(x => (x.ProductIDType == CONST_PRODUCT_TYPE_LCCN)).LastOrDefault();
 
-                    if ((LccnProductId != null) && !String.IsNullOrEmpty(LccnProductId.IDValue))
+                    if ((LccnProductId != null) && !string.IsNullOrEmpty(LccnProductId.IDValue))
                         sLibCongressNum = LccnProductId.IDValue;
                 }
 
@@ -215,12 +216,12 @@ namespace OnixData.Version3
                 if ((this.ContentDetail != null) && (this.ContentDetail.PrimaryContentItem != null))
                     sNumOfPages = this.ContentDetail.PrimaryContentItem.NumberOfPages;
 
-                if (String.IsNullOrEmpty(sNumOfPages))
+                if (string.IsNullOrEmpty(sNumOfPages))
                 {
                     if ((this.DescriptiveDetail != null) && (this.DescriptiveDetail.Extent != null))
                     {
                         if (this.DescriptiveDetail.PageNumber > 0)
-                            sNumOfPages = Convert.ToString(this.DescriptiveDetail.PageNumber);
+                            sNumOfPages = this.DescriptiveDetail.PageNumber.ToString();
                     }
                 }
 
@@ -271,7 +272,7 @@ namespace OnixData.Version3
                     OnixProductId PropProductId =
                         ProductIdList.Where(x => (x.ProductIDType == CONST_PRODUCT_TYPE_PROP)).LastOrDefault();
 
-                    if ((PropProductId != null) && !String.IsNullOrEmpty(PropProductId.IDValue))
+                    if ((PropProductId != null) && !string.IsNullOrEmpty(PropProductId.IDValue))
                         sPropId = PropProductId.IDValue;
                 }
 
@@ -342,14 +343,14 @@ namespace OnixData.Version3
                     OnixPublisher FoundPublisher =
                         PublishingDetail.OnixPublisherList.Where(x => SoughtPubTypes.Contains(x.PublishingRole)).LastOrDefault();
 
-                    if ((FoundPublisher != null) && !String.IsNullOrEmpty(FoundPublisher.PublisherName))
+                    if ((FoundPublisher != null) && !string.IsNullOrEmpty(FoundPublisher.PublisherName))
                         FoundPubName = FoundPublisher.PublisherName;
                     else
                     {
                         FoundPublisher =
                             PublishingDetail.OnixPublisherList.Where(x => x.PublishingRole == OnixPublisher.CONST_PUB_ROLE_IN_ASSOC).LastOrDefault();
 
-                        if ((FoundPublisher != null) && !String.IsNullOrEmpty(FoundPublisher.PublisherName))
+                        if ((FoundPublisher != null) && !string.IsNullOrEmpty(FoundPublisher.PublisherName))
                             FoundPubName = FoundPublisher.PublisherName;
                     }
                 }
@@ -657,14 +658,14 @@ namespace OnixData.Version3
                 OnixProductId[] ProductIdList = ProductIdentifier;
 
                 string TempUPC = this.upcField;
-                if (String.IsNullOrEmpty(TempUPC))
+                if (string.IsNullOrEmpty(TempUPC))
                 {
                     if ((ProductIdList != null) && (ProductIdList.Length > 0))
                     {
                         OnixProductId UpcProductId =
                             ProductIdList.Where(x => x.ProductIDType == CONST_PRODUCT_TYPE_UPC).LastOrDefault();
 
-                        if ((UpcProductId != null) && !String.IsNullOrEmpty(UpcProductId.IDValue))
+                        if ((UpcProductId != null) && !string.IsNullOrEmpty(UpcProductId.IDValue))
                             TempUPC = this.upcField = UpcProductId.IDValue;
                     }
                 }
@@ -693,7 +694,7 @@ namespace OnixData.Version3
                     {
                         ProductTitle = ProductTitleDetail.FirstTitleElement.Title;
 
-                        if (!String.IsNullOrEmpty(ProductTitleDetail.FirstTitleElement.Subtitle))
+                        if (!string.IsNullOrEmpty(ProductTitleDetail.FirstTitleElement.Subtitle))
                             ProductTitle += ": " + ProductTitleDetail.FirstTitleElement.Subtitle;
                     }
                 }
@@ -850,8 +851,6 @@ namespace OnixData.Version3
         [XmlElement("ProductIdentifier")]
         [XmlElement("productidentifier")]
         public OnixProductId[] ProductIdentifier { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductIdentifierEnum { ProductIdentifier, productidentifier }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductIdentifierEnum[] ProductIdentifierChoice
         {
@@ -1022,11 +1021,11 @@ namespace OnixData.Version3
         {
             string sVolumeUnit = "";
 
-            if (!String.IsNullOrEmpty(this.Thick.MeasureUnitCode))
+            if (!string.IsNullOrEmpty(this.Thick.MeasureUnitCode))
                 sVolumeUnit = this.Thick.MeasureUnitCode;
-            else if (!String.IsNullOrEmpty(this.Height.MeasureUnitCode))
+            else if (!string.IsNullOrEmpty(this.Height.MeasureUnitCode))
                 sVolumeUnit = this.Height.MeasureUnitCode;
-            else if (!String.IsNullOrEmpty(this.Width.MeasureUnitCode))
+            else if (!string.IsNullOrEmpty(this.Width.MeasureUnitCode))
                 sVolumeUnit = this.Width.MeasureUnitCode;
 
             return sVolumeUnit;

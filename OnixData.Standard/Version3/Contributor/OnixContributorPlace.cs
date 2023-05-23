@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Contributor
 {
@@ -34,8 +35,6 @@ namespace OnixData.Version3.Contributor
         [XmlElement("CountryCode")]
         [XmlElement("b251")]
         public string CountryCode { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum CountryCodeEnum { CountryCode, b251 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public CountryCodeEnum CountryCodeChoice
         {
@@ -56,8 +55,6 @@ namespace OnixData.Version3.Contributor
         [XmlElement("RegionCode")]
         [XmlElement("b398")]
         public string RegionCode { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum RegionCodeEnum { RegionCode, b398 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public RegionCodeEnum RegionCodeChoice
         {

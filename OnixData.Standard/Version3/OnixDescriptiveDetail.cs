@@ -11,6 +11,7 @@ using OnixData.Version3.Language;
 using OnixData.Version3.ProductPart;
 using OnixData.Version3.Text;
 using OnixData.Version3.Title;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3
 {
@@ -374,8 +375,6 @@ namespace OnixData.Version3
         [XmlElement("ProductForm")]
         [XmlElement("b012")]
         public string ProductForm { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormEnum { ProductForm, b012 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormEnum ProductFormChoice
         {
@@ -392,8 +391,6 @@ namespace OnixData.Version3
         [XmlElement("ProductFormDetail")]
         [XmlElement("b333")]
         public string[] ProductFormDetail { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormDetailEnum { ProductFormDetail, b333 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormDetailEnum[] ProductFormDetailChoice
         {
@@ -416,8 +413,6 @@ namespace OnixData.Version3
         [XmlElement("ProductFormFeature")]
         [XmlElement("productformfeature")]
         public OnixProductFormFeature[] ProductFormFeature { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormFeatureEnum { ProductFormFeature, productformfeature }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormFeatureEnum[] ProductFormFeatureChoice
         {
@@ -441,8 +436,6 @@ namespace OnixData.Version3
         [XmlElement("ProductPackaging")]
         [XmlElement("b225")]
         public string ProductPackaging { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductPackagingEnum { ProductPackaging, b225 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductPackagingEnum ProductPackagingChoice
         {
@@ -459,8 +452,6 @@ namespace OnixData.Version3
         [XmlElement("ProductFormDescription")]
         [XmlElement("b014")]
         public string[] ProductFormDescription { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormDescriptionEnum { ProductFormDescription, b014 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormDescriptionEnum[] ProductFormDescriptionChoice
         {
@@ -523,8 +514,6 @@ namespace OnixData.Version3
         [XmlElement("ProductContentType")]
         [XmlElement("b385")]
         public string[] ProductContentType { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductContentTypeEnum { ProductContentType, b385 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductContentTypeEnum[] ProductContentTypeChoice
         {
@@ -547,8 +536,6 @@ namespace OnixData.Version3
         [XmlElement("Measure")]
         [XmlElement("measure")]
         public OnixMeasure[] Measure { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum MeasureEnum { Measure, measure }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public MeasureEnum[] MeasureChoice
         {
@@ -573,8 +560,6 @@ namespace OnixData.Version3
         [XmlElement("CountryOfManufacture")]
         [XmlElement("x316")]
         public string CountryOfManufacture { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum CountryOfManufactureEnum { CountryOfManufacture, x316 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public CountryOfManufactureEnum CountryOfManufactureChoice
         {
@@ -754,8 +739,6 @@ namespace OnixData.Version3
         [XmlElement("TitleDetail")]
         [XmlElement("titledetail")]
         public OnixTitleDetail[] TitleDetail { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum TitleDetailEnum { TitleDetail, titledetail }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TitleDetailEnum[] TitleDetailChoice
         {
@@ -826,12 +809,10 @@ namespace OnixData.Version3
         /// A group of data elements which together describe a personal or corporate contributor to the product.
         /// Optional, and repeatable to describe multiple contributors.
         /// </summary>
-        [XmlElement("ContributorChoice")]
+        [XmlChoiceIdentifier("ContributorChoice")]
         [XmlElement("Contributor")]
         [XmlElement("contributor")]
         public OnixContributor[] Contributor { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ContributorEnum { Contributor, contributor }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ContributorEnum[] ContributorChoice
         {
@@ -858,8 +839,6 @@ namespace OnixData.Version3
         [XmlElement("ContributorStatement")]
         [XmlElement("b049")]
         public string[] ContributorStatement { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ContributorStatementEnum { ContributorStatement, b049 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ContributorStatementEnum[] ContributorStatementChoice
         {
@@ -884,8 +863,6 @@ namespace OnixData.Version3
         [XmlElement("NoContributor")]
         [XmlElement("n339")]
         public string NoContributor { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum NoContributorEnum { NoContributor, n339 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public NoContributorEnum NoContributorChoice
         {
@@ -1051,14 +1028,14 @@ namespace OnixData.Version3
         [XmlElement("language")]
         public OnixLanguage[] Language { get; set; }
         [XmlType(IncludeInSchema = false)]
-        public enum LanguageEnum { Language, langauge }
+        public enum LanguageEnum { Language, language }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public LanguageEnum[] LanguageChoice
         {
             get
             {
                 if (Language == null) return null;
-                LanguageEnum choice = SerializationSettings.UseShortTags ? LanguageEnum.langauge : LanguageEnum.Language;
+                LanguageEnum choice = SerializationSettings.UseShortTags ? LanguageEnum.language : LanguageEnum.Language;
                 LanguageEnum[] result = new LanguageEnum[Language.Length];
                 for (int i = 0; i < Language.Length; i++) result[i] = choice;
                 return result;

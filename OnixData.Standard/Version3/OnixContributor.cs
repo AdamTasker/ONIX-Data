@@ -9,6 +9,7 @@ using OnixData.Version3.Names;
 using OnixData.Version3.Subject;
 using OnixData.Version3.Supply;
 using OnixData.Version3.Text;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3
 {
@@ -49,8 +50,6 @@ namespace OnixData.Version3
         [XmlElement("SequenceNumber")]
         [XmlElement("b034")]
         public int SequenceNumber { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum SequenceNumberEnum { SequenceNumber, b034 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public SequenceNumberEnum SequenceNumberChoice
         {
@@ -70,9 +69,16 @@ namespace OnixData.Version3
         [XmlType(IncludeInSchema = false)]
         public enum ContributorRoleEnum { ContributorRole, b035 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ContributorRoleEnum ContributorRoleChoice
+        public ContributorRoleEnum[] ContributorRoleChoice
         {
-            get { return SerializationSettings.UseShortTags ? ContributorRoleEnum.b035 : ContributorRoleEnum.ContributorRole; }
+            get
+            {
+                if (ContributorRole == null) return null;
+                ContributorRoleEnum choice = SerializationSettings.UseShortTags ? ContributorRoleEnum.b035 : ContributorRoleEnum.ContributorRole;
+                ContributorRoleEnum[] result = new ContributorRoleEnum[ContributorRole.Length];
+                for (int i = 0; i < ContributorRole.Length; i++) result[i] = choice;
+                return result;
+            }
             set { }
         }
 
@@ -212,8 +218,6 @@ namespace OnixData.Version3
         [XmlElement("Website")]
         [XmlElement("website")]
         public OnixWebsite[] Website { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum WebsiteEnum { Website, website }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public WebsiteEnum[] WebsiteChoice
         {
@@ -301,6 +305,12 @@ namespace OnixData.Version3
         [XmlElement("NameType")]
         [XmlElement("x414")]
         public new string NameType { get; set; }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public new NameTypeEnum NameTypeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? NameTypeEnum.x414 : NameTypeEnum.NameType; }
+            set { }
+        }
 
         /// <remarks/>
         [XmlChoiceIdentifier("AlternativeNameChoice")]
@@ -532,8 +542,6 @@ namespace OnixData.Version3
         [XmlElement("PersonName")]
         [XmlElement("b036")]
         public string PersonName { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum PersonNameEnum { PersonName, b036 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public PersonNameEnum PersonNameChoice
         {
@@ -732,8 +740,6 @@ namespace OnixData.Version3
         [XmlElement("CorporateName")]
         [XmlElement("b047")]
         public string CorporateName { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum CorporateNameEnum { CorporateName, b047 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public CorporateNameEnum CorporateNameChoice
         {

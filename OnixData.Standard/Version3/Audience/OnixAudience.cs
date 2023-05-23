@@ -41,7 +41,7 @@ namespace OnixData.Version3.Audience
         /// Optional and non-repeating.
         /// </summary>
         [XmlChoiceIdentifier("AudienceCodeTypeNameChoice")]
-        [XmlElement("AudiencCodeTypeName")]
+        [XmlElement("AudienceCodeTypeName")]
         [XmlElement("b205")]
         public string AudienceCodeTypeName { get; set; }
         [XmlType(IncludeInSchema = false)]

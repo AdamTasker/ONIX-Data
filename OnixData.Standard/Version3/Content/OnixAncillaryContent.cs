@@ -11,7 +11,7 @@ namespace OnixData.Version3.Content
         /// </summary>
         /// <remarks>Onix List 25</remarks>
         [XmlChoiceIdentifier("AncillaryContentTypeChoice")]
-        [XmlElement("AncillaryContent")]
+        [XmlElement("AncillaryContentType")]
         [XmlElement("x423")]
         public string AncillaryContentType { get; set; }
         [XmlType(IncludeInSchema = false)]

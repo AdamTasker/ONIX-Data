@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Event
 {
@@ -37,8 +38,6 @@ namespace OnixData.Version3.Event
         [XmlElement("PersonName")]
         [XmlElement("b036")]
         public string PersonName { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum PersonNameEnum { PersonName, b036 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public PersonNameEnum PersonNameChoice
         {
@@ -54,8 +53,6 @@ namespace OnixData.Version3.Event
         [XmlElement("CorporateName")]
         [XmlElement("b047")]
         public string CorporateName { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum CorporateNameEnum { CorporateName, b047 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public CorporateNameEnum CorporateNameChoice
         {

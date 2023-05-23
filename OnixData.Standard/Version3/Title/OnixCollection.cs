@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Title
 {
@@ -238,8 +239,6 @@ namespace OnixData.Version3.Title
         [XmlElement("TitleDetail")]
         [XmlElement("titledetail")]
         public OnixTitleDetail[] TitleDetail { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum TitleDetailEnum { TitleDetail, titledetail }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TitleDetailEnum[] TitleDetailChoice
         {
@@ -264,8 +263,6 @@ namespace OnixData.Version3.Title
         [XmlElement("Contributor")]
         [XmlElement("contributor")]
         public OnixContributor[] Contributor { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ContributorEnum { Contributor, contributor }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ContributorEnum[] ContributorChoice
         {
@@ -295,8 +292,6 @@ namespace OnixData.Version3.Title
         [XmlElement("ContributorStatement")]
         [XmlElement("b049")]
         public string[] ContributorStatement { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ContributorStatementEnum { ContributorStatement, b049 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ContributorStatementEnum[] ContributorStatementChoice
         {
@@ -323,8 +318,6 @@ namespace OnixData.Version3.Title
         [XmlElement("NoContributor")]
         [XmlElement("n339")]
         public string NoContributor { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum NoContributorEnum { NoContributor, n339 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public NoContributorEnum NoContributorChoice
         {

@@ -20,9 +20,16 @@ namespace OnixData.Version3.Epub
         [XmlType(IncludeInSchema = false)]
         public enum EpubLicenseNameEnum { EpubLicenseName, x511 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EpubLicenseNameEnum EpubLicenseNameChoice
+        public EpubLicenseNameEnum[] EpubLicenseNameChoice
         {
-            get { return SerializationSettings.UseShortTags ? EpubLicenseNameEnum.x511 : EpubLicenseNameEnum.EpubLicenseName; }
+            get
+            {
+                if (EpubLicenseName == null) return null;
+                EpubLicenseNameEnum choice = SerializationSettings.UseShortTags ? EpubLicenseNameEnum.x511 : EpubLicenseNameEnum.EpubLicenseName;
+                EpubLicenseNameEnum[] result = new EpubLicenseNameEnum[EpubLicenseName.Length];
+                for (int i = 0; i < EpubLicenseName.Length; i++) result[i] = choice;
+                return result;
+            }
             set { }
         }
 
@@ -37,9 +44,16 @@ namespace OnixData.Version3.Epub
         [XmlType(IncludeInSchema = false)]
         public enum EpubLicenseExpressionEnum { EpubLicenseExpression, epublicenseexpression }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EpubLicenseExpressionEnum EpubLicenseExpressionChoice
+        public EpubLicenseExpressionEnum[] EpubLicenseExpressionChoice
         {
-            get { return SerializationSettings.UseShortTags ? EpubLicenseExpressionEnum.epublicenseexpression : EpubLicenseExpressionEnum.EpubLicenseExpression; }
+            get
+            {
+                if (EpubLicenseExpression == null) return null;
+                EpubLicenseExpressionEnum choice = SerializationSettings.UseShortTags ? EpubLicenseExpressionEnum.epublicenseexpression : EpubLicenseExpressionEnum.EpubLicenseExpression;
+                EpubLicenseExpressionEnum[] result = new EpubLicenseExpressionEnum[EpubLicenseExpression.Length];
+                for (int i = 0; i < EpubLicenseExpression.Length; i++) result[i] = choice;
+                return result;
+            }
             set { }
         }
     }

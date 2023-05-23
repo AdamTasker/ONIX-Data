@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.ProductPart
 {
@@ -49,8 +50,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("ProductIdentifier")]
         [XmlElement("productidentifier")]
         public OnixProductId[] ProductIdentifier { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductIdentifierEnum { ProductIdentifier, productidentifier }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductIdentifierEnum[] ProductIdentifierChoice
         {
@@ -74,8 +73,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("ProductForm")]
         [XmlElement("b012")]
         public string ProductForm { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormEnum { ProductForm, b012 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormEnum ProductFormChoice
         {
@@ -92,8 +89,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("ProductFormDetail")]
         [XmlElement("b333")]
         public string[] ProductFormDetail { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormDetailEnum { ProductFormDetail, b333 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormDetailEnum[] ProductFormDetailChoice
         {
@@ -117,8 +112,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("ProductFormFeature")]
         [XmlElement("productformfeature")]
         public OnixProductFormFeature[] ProductFormFeature { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormFeatureEnum { ProductFormFeature, productformfeature }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormFeatureEnum[] ProductFormFeatureChoice
         {
@@ -142,8 +135,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("ProductPackaging")]
         [XmlElement("b225")]
         public string ProductPackaging { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductPackagingEnum { ProductPackaging, b225 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductPackagingEnum ProductPackagingChoice
         {
@@ -160,8 +151,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("ProductFormDescription")]
         [XmlElement("b014")]
         public string[] ProductFormDescription { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductFormDescriptionEnum { ProductFormDescription, b014 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductFormDescriptionEnum[] ProductFormDescriptionChoice
         {
@@ -184,8 +173,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("ProductContentType")]
         [XmlElement("b385")]
         public string[] ProductContentType { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum ProductContentTypeEnum { ProductContentType, b385 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ProductContentTypeEnum[] ProductContentTypeChoice
         {
@@ -208,8 +195,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("Measure")]
         [XmlElement("measure")]
         public OnixMeasure[] Measure { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum MeasureEnum { Measure, measure }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public MeasureEnum[] MeasureChoice
         {
@@ -270,8 +255,6 @@ namespace OnixData.Version3.ProductPart
         [XmlElement("CountryOfManufacture")]
         [XmlElement("x316")]
         public string CountryOfManufacture { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum CountryOfManufactureEnum { CountryOfManufacture, x316 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public CountryOfManufactureEnum CountryOfManufactureChoice
         {

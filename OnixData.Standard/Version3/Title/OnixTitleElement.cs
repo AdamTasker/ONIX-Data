@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Title
 {
@@ -92,8 +93,6 @@ namespace OnixData.Version3.Title
         [XmlElement("SequenceNumber")]
         [XmlElement("b034")]
         public int SequenceNumber { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum SequenceNumberEnum { SequenceNumber, b034 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public SequenceNumberEnum SequenceNumberChoice
         {

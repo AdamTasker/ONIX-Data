@@ -32,7 +32,7 @@ namespace OnixData.Version3.Epub
         /// Optional and non-repeating, and must be included when (and only when) the <see cref="EpubLicenseExpressionType"/> element indicates the expression is encoded in a proprietary way.
         /// </summary>
         [XmlChoiceIdentifier("EpubLicenseExpressionTypeNameChoice")]
-        [XmlElement("EpubLicenseExpressionTypeNameChoice")]
+        [XmlElement("EpubLicenseExpressionTypeName")]
         [XmlElement("x509")]
         public string EpubLicenseExpressionTypeName { get; set; }
         [XmlType(IncludeInSchema = false)]
@@ -51,13 +51,13 @@ namespace OnixData.Version3.Epub
         [XmlChoiceIdentifier("EpubLicenseExpressionLinkChoice")]
         [XmlElement("EpubLicenseExpressionLink")]
         [XmlElement("x510")]
-        public string EpubExpressionLink { get; set; }
+        public string EpubLicenseExpressionLink { get; set; }
         [XmlType(IncludeInSchema = false)]
-        public enum EpubExpressionLinkEnum { EpubExpressionLink, x510 }
+        public enum EpubExpressionLinkEnum { EpubLicenseExpressionLink, x510 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EpubExpressionLinkEnum EpubExpressionLinkEnumChoice
+        public EpubExpressionLinkEnum EpubLicenseExpressionLinkChoice
         {
-            get { return SerializationSettings.UseShortTags ? EpubExpressionLinkEnum.x510 : EpubExpressionLinkEnum.EpubExpressionLink; }
+            get { return SerializationSettings.UseShortTags ? EpubExpressionLinkEnum.x510 : EpubExpressionLinkEnum.EpubLicenseExpressionLink; }
             set { }
         }
     }

@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 
 using OnixData.Version3.Supply;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Event
 {
@@ -191,8 +192,6 @@ namespace OnixData.Version3.Event
         [XmlElement("Website")]
         [XmlElement("website")]
         public OnixWebsite[] Website { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum WebsiteEnum { Website, website }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public WebsiteEnum[] WebsiteChoice
         {
