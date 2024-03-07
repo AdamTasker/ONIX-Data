@@ -129,9 +129,17 @@ namespace OnixData.Version3
                     if ((ProductIdList != null) && (ProductIdList.Length > 0))
                     {
                         OnixProductId IsbnProductId =
-                            ProductIdList.Where(x => x.ProductIDType == CONST_PRODUCT_TYPE_ISBN).LastOrDefault();
+                            ProductIdList
+                                .Where(
+                                    x => !string.IsNullOrEmpty(x.IDValue) && (
+                                        (x.ProductIDType == CONST_PRODUCT_TYPE_ISBN) ||
+                                        (x.ProductIDType == CONST_PRODUCT_TYPE_ISBN13)
+                                    )
+                                )
+                                .OrderBy(x => x.ProductIDType)
+                                .LastOrDefault();
 
-                        if ((IsbnProductId != null) && !string.IsNullOrEmpty(IsbnProductId.IDValue))
+                        if (IsbnProductId != null)
                             TempISBN = this.isbnField = IsbnProductId.IDValue;
                     }
                 }
