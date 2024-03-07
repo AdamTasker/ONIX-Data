@@ -88,6 +88,34 @@ namespace OnixData.Version3
             }
         }
 
+        public string Description
+        {
+            get
+            {
+                OnixCollateralDetail descCollateralDetail = CollateralDetail;
+
+                string TempDescription = "";
+                if (descCollateralDetail != null)
+                {
+                    OnixTextContent DescTextContent =
+                        descCollateralDetail.OnixTextContentList
+                            .Where(
+                                x => (!string.IsNullOrEmpty(x.Text)) && (
+                                    (x.TextType == 3) ||
+                                    (x.TextType == 2)
+                                )
+                            )
+                            .OrderBy(x => x.TextType)
+                            .LastOrDefault();
+
+                    if (DescTextContent != null)
+                        TempDescription = DescTextContent.Text;
+                }
+
+                return TempDescription;
+            }
+        }
+
         private string isbnField;
         public string ISBN
         {
