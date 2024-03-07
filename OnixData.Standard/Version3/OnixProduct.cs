@@ -718,24 +718,42 @@ namespace OnixData.Version3
         {
             get
             {
+                string CollectionTitle = "";
                 string ProductTitle = "";
 
-                if ((DescriptiveDetail != null) &&
-                    (DescriptiveDetail.TitleDetail != null) &&
-                    (DescriptiveDetail.TitleDetail.Where((td) => td.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT) != null))
+                if (DescriptiveDetail != null)
                 {
-                    OnixTitleDetail ProductTitleDetail = DescriptiveDetail.TitleDetail.Where((td) => td.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT).First();
-
-                    if (ProductTitleDetail.FirstTitleElement != null)
+                    if ((DescriptiveDetail.Collection != null) &&
+                        (DescriptiveDetail.Collection.Where((c) => c.TitleDetail != null && c.CollectionTypeNum == 10).Count() > 0))
                     {
-                        ProductTitle = ProductTitleDetail.FirstTitleElement.Title;
+                        OnixTitleDetail[] CollectionTitleDetailList = DescriptiveDetail.Collection.Where((c) => c.TitleDetail != null && c.CollectionTypeNum == 10).First().TitleDetail;
 
-                        if (!string.IsNullOrEmpty(ProductTitleDetail.FirstTitleElement.Subtitle))
-                            ProductTitle += ": " + ProductTitleDetail.FirstTitleElement.Subtitle;
+                        if ((CollectionTitleDetailList != null) &&
+                            (CollectionTitleDetailList.Where((ctd) => ctd.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT).Count() > 0))
+                        {
+                            OnixTitleDetail CollectionTitleDetail = CollectionTitleDetailList.Where((ctd) => ctd.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT).First();
+                            CollectionTitle = CollectionTitleDetail.FirstCollectionTitleElement?.Title;
+                        }
+                    }
+
+                    if ((DescriptiveDetail.TitleDetail != null) &&
+                        (DescriptiveDetail.TitleDetail.Where((td) => td.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT).Count() > 0))
+                    {
+                        OnixTitleDetail ProductTitleDetail = DescriptiveDetail.TitleDetail.Where((td) => td.TitleTypeNum == OnixTitleElement.CONST_TITLE_TYPE_PRODUCT).First();
+
+                        if (ProductTitleDetail.FirstProductTitleElement != null)
+                        {
+                            ProductTitle = ProductTitleDetail.FirstProductTitleElement.Title;
+
+                            if (!string.IsNullOrEmpty(ProductTitleDetail.FirstProductTitleElement.Subtitle))
+                                ProductTitle += ": " + ProductTitleDetail.FirstProductTitleElement.Subtitle;
+                        }
                     }
                 }
 
-                return ProductTitle;
+                if (ProductTitle.Replace(":", "").Replace(" - ", " ").IndexOf(CollectionTitle.Replace(":", "").Replace(" - ", " "), StringComparison.OrdinalIgnoreCase) >= 0)
+                    CollectionTitle = "";
+                return (string.IsNullOrEmpty(CollectionTitle) ? "" : CollectionTitle + ": ") + ProductTitle;
             }
         }
 
