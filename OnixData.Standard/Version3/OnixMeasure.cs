@@ -70,7 +70,7 @@ namespace OnixData.Version3
         [XmlChoiceIdentifier("MeasurementChoice")]
         [XmlElement("Measurement")]
         [XmlElement("c094")]
-        public decimal Measurement { get; set; }
+        public float Measurement { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum MeasurementEnum { Measurement, c094 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
