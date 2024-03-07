@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using OnixData.Version3.Publishing;
 
@@ -217,6 +217,24 @@ namespace OnixData.Version3.Price
             {
                 this.priceTypeField = value;
             }
+        }
+
+
+        /// <summary>
+        /// An ONIX code which further specifies the type of price, eg member price, reduced price when purchased as part of a set.
+        /// Optional and non-repeating.
+        /// </summary>
+        [XmlChoiceIdentifier("PriceQualifierChoice")]
+        [XmlElement("PriceQualifier")]
+        [XmlElement("j261")]
+        public int PriceQualifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceQualifierEnum { PriceQualifier, j261 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceQualifierEnum PriceQualifierChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PriceQualifierEnum.j261 : PriceQualifierEnum.PriceQualifier; }
+            set { }
         }
 
         /// <remarks/>
