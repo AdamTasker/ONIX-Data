@@ -325,7 +325,7 @@ namespace OnixData.Version3
                     if ((SeriesCollection == null) || (SeriesCollection.CollectionTypeNum < 0))
                         SeriesCollection = CollList.Where(x => x.IsGeneralType()).FirstOrDefault();
 
-                    if (SeriesCollection != null)
+                    if (SeriesCollection != null && SeriesCollection.TitleDetail != null)
                     {
                         var SeriesTitleDetail =
                             SeriesCollection.TitleDetail
