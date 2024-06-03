@@ -110,7 +110,7 @@ namespace OnixData.Extensions
                         break;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 sValue = String.Empty;
             }
@@ -158,7 +158,7 @@ namespace OnixData.Extensions
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 bIsValidXml = false;
             }

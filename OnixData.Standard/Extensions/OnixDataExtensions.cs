@@ -204,7 +204,7 @@ namespace OnixData.Extensions
             {
                 long nEAN = Convert.ToInt64(TargetEAN);
             }
-            catch (Exception ex)
+            catch
             { return false; }
 
             if (TargetEAN.Length < CONST_EAN_LEN)
@@ -260,7 +260,7 @@ namespace OnixData.Extensions
             {
                 long nISBNPrefix = Convert.ToInt64(ISBNPrefix);
             }
-            catch (Exception ex) { return false; }
+            catch { return false; }
 
             try
             {
@@ -298,7 +298,7 @@ namespace OnixData.Extensions
                 else
                     IsValid = false;
             }
-            catch(Exception ex)
+            catch
             {
                 IsValid = false;
             }

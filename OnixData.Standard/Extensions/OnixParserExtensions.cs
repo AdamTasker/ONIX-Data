@@ -245,7 +245,7 @@ namespace OnixData.Extensions
                 else if (m.Value.StartsWith("&"))
                     sResult = m.Value;
             }
-            catch (Exception ex)
+            catch
             {
                 sResult = m.Value;
             }
