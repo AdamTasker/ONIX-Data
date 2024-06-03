@@ -88,7 +88,6 @@ namespace OnixData.Legacy
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnore]
         public string d104
         {
             get { return Text; }
