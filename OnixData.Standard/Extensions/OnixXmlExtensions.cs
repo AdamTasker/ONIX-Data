@@ -135,26 +135,22 @@ namespace OnixData.Extensions
         private static bool IsValidXmlRecord(string psTmpXmlRecord, string psRecordTagName)
         {
             bool   bIsValidXml = true;
-            string sTmpBody    = String.Empty;
-
-            XmlReader BadXmlReader = null;
 
             try
             {
                 // NOTE: Since the XML body needs a root tag
                 string sTmpXml = "<root>" + psTmpXmlRecord + "</root>";
 
-                BadXmlReader =
-                    new OnixXmlTextReader(sTmpXml) { DtdProcessing = DtdProcessing.Ignore };
-
-                BadXmlReader.MoveToContent();
-
-                while (BadXmlReader.Read())
+                using (XmlReader BadXmlReader = new OnixXmlTextReader(sTmpXml) { DtdProcessing = DtdProcessing.Ignore })
                 {
-                    if ((BadXmlReader.NodeType == XmlNodeType.Element) && (BadXmlReader.Name == psRecordTagName))
+                    BadXmlReader.MoveToContent();
+                    while (BadXmlReader.Read())
                     {
-                        sTmpBody = BadXmlReader.ReadOuterXml();
-                        break;
+                        if ((BadXmlReader.NodeType == XmlNodeType.Element) && (BadXmlReader.Name == psRecordTagName))
+                        {
+                            BadXmlReader.ReadOuterXml();
+                            break;
+                        }
                     }
                 }
             }
