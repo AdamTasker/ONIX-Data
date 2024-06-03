@@ -1,90 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OnixData.Legacy
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixLegacyPrice
     {
         #region CONSTANTS
 
-        public const int CONST_PRICE_TYPE_RRP_EXCL         = 1;
-        public const int CONST_PRICE_TYPE_RRP_INCL         = 2;
-        public const int CONST_PRICE_TYPE_FRP_EXCL         = 3;
-        public const int CONST_PRICE_TYPE_FRP_INCL         = 4;
-        public const int CONST_PRICE_TYPE_SUPP_COST        = 5;
-        public const int CONST_PRICE_TYPE_RRP_PREP         = 21;
-        public const int CONST_PRICE_TYPE_FPT_RRP_EXCL_TAX = 31;
-        public const int CONST_PRICE_TYPE_FPT_BIL_EXCL_TAX = 32;
-        public const int CONST_PRICE_TYPE_PROP_MISC_1      = 41;
-        public const int CONST_PRICE_TYPE_PROP_MISC_2      = 99;
-
         public const int CONST_PUB_DISC_CD_TYPE_PTY   = 2;
         public const int CONST_PUB_DISC_CD_TYPE_PTY_2 = 5;
 
-        public readonly int[] CONST_SOUGHT_RETAIL_PRICE_TYPES
+        public readonly Lists.OnixList58[] CONST_SOUGHT_RETAIL_PRICE_TYPES
             = {
-                CONST_PRICE_TYPE_RRP_EXCL, CONST_PRICE_TYPE_RRP_PREP,
-                CONST_PRICE_TYPE_FPT_BIL_EXCL_TAX, CONST_PRICE_TYPE_PROP_MISC_1
+                Lists.OnixList58.RrpExcludingTax, Lists.OnixList58.PrePublicationRrpExcludingTax,
+                Lists.OnixList58.FreightPassThroughBillingPriceExcludingTax, Lists.OnixList58.PublishersRetailPriceExcludingTax
               };
 
-        public readonly int[] CONST_SOUGHT_SUPP_COST_PRICE_TYPES
+        public readonly Lists.OnixList58[] CONST_SOUGHT_SUPP_COST_PRICE_TYPES
             = {
-                CONST_PRICE_TYPE_SUPP_COST
+                Lists.OnixList58.SuppliersNetPriceExcludingTax
               };
 
-        public readonly int[] CONST_SOUGHT_PRICE_TYPES 
+        public readonly Lists.OnixList58[] CONST_SOUGHT_PRICE_TYPES 
             = {
-                CONST_PRICE_TYPE_RRP_EXCL, CONST_PRICE_TYPE_SUPP_COST, CONST_PRICE_TYPE_RRP_PREP,
-                CONST_PRICE_TYPE_FPT_RRP_EXCL_TAX, CONST_PRICE_TYPE_FPT_BIL_EXCL_TAX,
-                CONST_PRICE_TYPE_PROP_MISC_1, CONST_PRICE_TYPE_PROP_MISC_2
+                Lists.OnixList58.RrpExcludingTax, Lists.OnixList58.SuppliersNetPriceExcludingTax, Lists.OnixList58.PrePublicationRrpExcludingTax,
+                Lists.OnixList58.FreightPassThroughRrpExcludingTax, Lists.OnixList58.FreightPassThroughBillingPriceExcludingTax,
+                Lists.OnixList58.PublishersRetailPriceExcludingTax
               };
 
         #endregion
-
-        public OnixLegacyPrice()
-        {
-            PriceTypeCode = -1;
-            CurrencyCode  = PriceAmount = ClassOfTrade = DiscountPercent = "";
-
-            discountCodedField = shortDiscountCodedField = new OnixLegacyDiscountCoded[0];
-        }
-
-        private int      priceTypeCodeField;
-        private string   classOfTradeField;
-        private string   discountPercentageField;
-        private string   priceAmountField;
-        private string   currencyCodeField;
-        private string   priceEffectiveFromField;
-        private string   priceEffectiveUntilField;
-        private string   priceTypeDescriptionField;
-        private string   pricePerField;
-        private int      minimumOrderQuantityField;
-        private string   priceStatusField;
-        private string   countryCodeField;
-
-        private OnixLegacyDiscountCoded[] discountCodedField;
-        private OnixLegacyDiscountCoded[] shortDiscountCodedField;
 
         #region ONIX helpers
 
         public bool HasSoughtRetailPriceType()
         {
-            return CONST_SOUGHT_RETAIL_PRICE_TYPES.Contains(this.PriceType);
+            if (this.PriceTypeCode == null)
+                return false;
+            return CONST_SOUGHT_RETAIL_PRICE_TYPES.Contains(this.PriceTypeCode.Value);
         }
 
         public bool HasSoughtSupplyCostPriceType()
         {
-            return CONST_SOUGHT_SUPP_COST_PRICE_TYPES.Contains(this.PriceType);
+            if (this.PriceTypeCode == null)
+                return false;
+            return CONST_SOUGHT_SUPP_COST_PRICE_TYPES.Contains(this.PriceTypeCode.Value);
         }
 
         public bool HasSoughtPriceTypeCode()
         {
-            return CONST_SOUGHT_PRICE_TYPES.Contains(this.PriceType);
+            if (this.PriceTypeCode == null)
+                return false;
+            return CONST_SOUGHT_PRICE_TYPES.Contains(this.PriceTypeCode.Value);
         }
 
         public bool HasViablePubDiscountCode()
@@ -98,10 +68,10 @@ namespace OnixData.Legacy
             {
                 OnixLegacyDiscountCoded ViableDiscountCoded = null;
 
-                if ((this.OnixDiscountCodedList != null) && (this.OnixDiscountCodedList.Length > 0))
+                if ((this.DiscountCoded != null) && (this.DiscountCoded.Length > 0))
                 {
                     OnixLegacyDiscountCoded DiscountCodedCandidate =
-                        OnixDiscountCodedList.Where(x => (x.DiscountCodeType == CONST_PUB_DISC_CD_TYPE_PTY) || (x.DiscountCodeType == CONST_PUB_DISC_CD_TYPE_PTY_2)).FirstOrDefault();
+                        DiscountCoded.Where(x => (x.DiscountCodeType == CONST_PUB_DISC_CD_TYPE_PTY) || (x.DiscountCodeType == CONST_PUB_DISC_CD_TYPE_PTY_2)).FirstOrDefault();
 
                     if ((DiscountCodedCandidate != null) && !String.IsNullOrEmpty(DiscountCodedCandidate.DiscountCode))
                         ViableDiscountCoded = DiscountCodedCandidate;
@@ -111,20 +81,17 @@ namespace OnixData.Legacy
             }
         }
 
-        public OnixLegacyDiscountCoded[] OnixDiscountCodedList
+        public decimal PriceExcludingTax
         {
             get
             {
-                OnixLegacyDiscountCoded[] DiscountCodedList = null;
+                if (TaxableAmount1 == null)
+                    return PriceAmount;
 
-                if (discountCodedField != null)
-                    DiscountCodedList = this.discountCodedField;
-                else if (shortDiscountCodedField != null)
-                    DiscountCodedList = this.shortDiscountCodedField;
-                else
-                    DiscountCodedList = new OnixLegacyDiscountCoded[0];
-
-                return DiscountCodedList;
+                decimal TaxableAmount = TaxableAmount1.Value;
+                if (TaxableAmount2 != null)
+                    TaxableAmount += TaxableAmount2.Value;
+                return TaxableAmount;
             }
         }
 
@@ -132,295 +99,398 @@ namespace OnixData.Legacy
 
         #region Reference Tags
 
-        public int PriceType
+        [XmlChoiceIdentifier("PriceTypeCodeChoice")]
+        [XmlElement("PriceTypeCode")]
+        [XmlElement("j148")]
+        public Lists.OnixList58? PriceTypeCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceTypeCodeEnum { PriceTypeCode, j148 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceTypeCodeEnum PriceTypeCodeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PriceTypeCodeEnum.j148 : PriceTypeCodeEnum.PriceTypeCode; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("PriceQualifierChoice")]
+        [XmlElement("PriceQualifier")]
+        [XmlElement("j261")]
+        public Lists.OnixList59? PriceQualifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceQualifierEnum { PriceQualifier, j261 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceQualifierEnum PriceQualifierChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PriceQualifierEnum.j261 : PriceQualifierEnum.PriceQualifier; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("PriceTypeDescriptionChoice")]
+        [XmlElement("PriceTypeDescription")]
+        [XmlElement("j262")]
+        public string PriceTypeDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceTypeDescriptionEnum { PriceTypeDescription, j262 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceTypeDescriptionEnum PriceTypeDescriptionChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PriceTypeDescriptionEnum.j262 : PriceTypeDescriptionEnum.PriceTypeDescription; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("PricePerChoice")]
+        [XmlElement("PricePer")]
+        [XmlElement("j239")]
+        public Lists.OnixList60? PricePer { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PricePerEnum { PricePer, j239 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PricePerEnum PricePerChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PricePerEnum.j239 : PricePerEnum.PricePer; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("MinimumOrderQuantityChoice")]
+        [XmlElement("MinimumOrderQuantity")]
+        [XmlElement("j263")]
+        public int? MinimumOrderQuantity { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MinimumOrderQuantityEnum { MinimumOrderQuantity, j263 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MinimumOrderQuantityEnum MinimumOrderQuantityChoice
+        {
+            get { return SerializationSettings.UseShortTags ? MinimumOrderQuantityEnum.j263 : MinimumOrderQuantityEnum.MinimumOrderQuantity; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("BatchBonusChoice")]
+        [XmlElement("BatchBonus")]
+        [XmlElement("batchbonus")]
+        public OnixLegacyBatchBonus[] BatchBonus { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum BatchBonusEnum { BatchBonus, batchbonus };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public BatchBonusEnum[] BatchBonusChoice
         {
             get
             {
-                return PriceTypeCode;
+              if (BatchBonus == null) return null;
+              BatchBonusEnum choice = SerializationSettings.UseShortTags ? BatchBonusEnum.batchbonus : BatchBonusEnum.BatchBonus;
+              BatchBonusEnum[] result = new BatchBonusEnum[BatchBonus.Length];
+              for (int i = 0; i < BatchBonus.Length; i++) result[i] = choice;
+              return result;
             }
-            set
-            {
-                PriceTypeCode = value;
-            }
+            set { }
         }
 
-        /// <remarks/>
-        public int PriceTypeCode
+        [XmlChoiceIdentifier("ClassOfTradeChoice")]
+        [XmlElement("ClassOfTrade")]
+        [XmlElement("j149")]
+        public string ClassOfTrade { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ClassOfTradeEnum { ClassOfTrade, j149 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ClassOfTradeEnum ClassOfTradeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ClassOfTradeEnum.j149 : ClassOfTradeEnum.ClassOfTrade; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("BICDiscountGroupCodeChoice")]
+        [XmlElement("BICDiscountGroupCode")]
+        [XmlElement("j150")]
+        public string BICDiscountGroupCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum BICDiscountGroupCodeEnum { BICDiscountGroupCode, j150 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public BICDiscountGroupCodeEnum BICDiscountGroupCodeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? BICDiscountGroupCodeEnum.j150 : BICDiscountGroupCodeEnum.BICDiscountGroupCode; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("DiscountCodedChoice")]
+        [XmlElement("DiscountCoded")]
+        [XmlElement("discountcoded")]
+        public OnixLegacyDiscountCoded[] DiscountCoded { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum DiscountCodedEnum { DiscountCoded, discountcoded };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DiscountCodedEnum[] DiscountCodedChoice
         {
             get
             {
-                return this.priceTypeCodeField;
+                if (DiscountCoded == null) return null;
+                DiscountCodedEnum choice = SerializationSettings.UseShortTags ? DiscountCodedEnum.discountcoded : DiscountCodedEnum.DiscountCoded;
+                DiscountCodedEnum[] result = new DiscountCodedEnum[DiscountCoded.Length];
+                for (int i = 0; i < DiscountCoded.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.priceTypeCodeField = value;
-            }
+            set { }
         }
 
-        /// <remarks/>
-        public string ClassOfTrade
+        [XmlChoiceIdentifier("DiscountPercentChoice")]
+        [XmlElement("DiscountPercent")]
+        [XmlElement("j267")]
+        public float? DiscountPercent { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum DiscountPercentEnum { DiscountPercent, j267 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public DiscountPercentEnum DiscountPercentChoice
         {
-            get
-            {
-                return this.classOfTradeField;
-            }
-            set
-            {
-                this.classOfTradeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? DiscountPercentEnum.j267 : DiscountPercentEnum.DiscountPercent; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("DiscountCoded")]
-        public OnixLegacyDiscountCoded[] DiscountCoded
+        [XmlChoiceIdentifier("PriceStatusChoice")]
+        [XmlElement("PriceStatus")]
+        [XmlElement("j266")]
+        public Lists.OnixList61? PriceStatus { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceStatusEnum { PriceStatus, j266 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceStatusEnum PriceStatusChoice
         {
-            get
-            {
-                return this.discountCodedField;
-            }
-            set
-            {
-                this.discountCodedField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? PriceStatusEnum.j266 : PriceStatusEnum.PriceStatus; }
+            set { }
         }
 
-        /// <remarks/>
-        public string DiscountPercent
+        [XmlChoiceIdentifier("PriceAmountChoice")]
+        [XmlElement("PriceAmount")]
+        [XmlElement("j151")]
+        public decimal PriceAmount { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceAmountEnum { PriceAmount, j151 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceAmountEnum PriceAmountChoice
         {
-            get
-            {
-                return this.discountPercentageField;
-            }
-            set
-            {
-                this.discountPercentageField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? PriceAmountEnum.j151 : PriceAmountEnum.PriceAmount; }
+            set { }
         }
 
-        /// <remarks/>
-        public string PriceAmount
+        [XmlChoiceIdentifier("CurrencyCodeChoice")]
+        [XmlElement("CurrencyCode")]
+        [XmlElement("j152")]
+        public string CurrencyCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CurrencyCodeEnum { CurrencyCode, j152 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CurrencyCodeEnum CurrencyCodeChoice
         {
-            get
-            {
-                return this.priceAmountField;
-            }
-            set
-            {
-                this.priceAmountField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? CurrencyCodeEnum.j152 : CurrencyCodeEnum.CurrencyCode; }
+            set { }
         }
 
-        /// <remarks/>
-        public decimal PriceAmountNum
+        [XmlChoiceIdentifier("CountryCodeChoice")]
+        [XmlElement("CountryCode")]
+        [XmlElement("b251")]
+        public string CountryCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CountryCodeEnum { CountryCode, b251 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CountryCodeEnum CountryCodeChoice
         {
-            get
-            {
-                decimal dPriceAmountNum = -1;
-
-                if (!String.IsNullOrEmpty(this.priceAmountField))
-                    Decimal.TryParse(this.priceAmountField, out dPriceAmountNum);
-
-                return dPriceAmountNum;
-            }
+            get { return SerializationSettings.UseShortTags ? CountryCodeEnum.b251 : CountryCodeEnum.CountryCode; }
+            set { }
         }
 
-        /// <remarks/>
-        public string CurrencyCode
+        [XmlChoiceIdentifier("TerritoryChoice")]
+        [XmlElement("Territory")]
+        [XmlElement("j303")]
+        public string Territory { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TerritoryEnum { Territory, j303 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TerritoryEnum TerritoryChoice
         {
-            get
-            {
-                return this.currencyCodeField;
-            }
-            set
-            {
-                this.currencyCodeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TerritoryEnum.j303 : TerritoryEnum.Territory; }
+            set { }
         }
 
-        /// <remarks/>
-        public string PriceEffectiveFrom
+        [XmlChoiceIdentifier("CountryExcludedChoice")]
+        [XmlElement("CountryExcluded")]
+        [XmlElement("j304")]
+        public string CountryExcluded { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CountryExcludedEnum { CountryExcluded, j304 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CountryExcludedEnum CountryExcludedChoice
         {
-            get
-            {
-                return this.priceEffectiveFromField;
-            }
-            set
-            {
-                this.priceEffectiveFromField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? CountryExcludedEnum.j304 : CountryExcludedEnum.CountryExcluded; }
+            set { }
         }
 
-        /// <remarks/>
-        public string PriceEffectiveUntil
+        [XmlChoiceIdentifier("TerritoryExcludedChoice")]
+        [XmlElement("TerritoryExcluded")]
+        [XmlElement("j308")]
+        public string TerritoryExcluded { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TerritoryExcludedEnum { TerritoryExcluded, j308 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TerritoryExcludedEnum TerritoryExcludedChoice
         {
-            get
-            {
-                return this.priceEffectiveUntilField;
-            }
-            set
-            {
-                this.priceEffectiveUntilField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TerritoryExcludedEnum.j308 : TerritoryExcludedEnum.TerritoryExcluded; }
+            set { }
         }
 
-        /// <remarks/>
-        public string PriceTypeDescription
+        [XmlChoiceIdentifier("TaxRateCode1Choice")]
+        [XmlElement("TaxRateCode1")]
+        [XmlElement("j153")]
+        public Lists.OnixList62? TaxRateCode1 { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxRateCode1Enum { TaxRateCode1, j153 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxRateCode1Enum TaxRateCode1Choice
         {
-            get
-            {
-                return this.priceTypeDescriptionField;
-            }
-            set
-            {
-                this.priceTypeDescriptionField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxRateCode1Enum.j153 : TaxRateCode1Enum.TaxRateCode1; }
+            set { }
         }
 
-        /// <remarks/>
-        public string PricePer
+        [XmlChoiceIdentifier("TaxRatePercent1Choice")]
+        [XmlElement("TaxRatePercent1")]
+        [XmlElement("j154")]
+        public decimal? TaxRatePercent1 { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxRatePercent1Enum { TaxRatePercent1, j154 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxRatePercent1Enum TaxRatePercent1Choice
         {
-            get
-            {
-                return this.pricePerField;
-            }
-            set
-            {
-                this.pricePerField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxRatePercent1Enum.j154 : TaxRatePercent1Enum.TaxRatePercent1; }
+            set { }
         }
 
-        /// <remarks/>
-        public int MinimumOrderQuantity
+        [XmlChoiceIdentifier("TaxableAmount1Choice")]
+        [XmlElement("TaxableAmount1")]
+        [XmlElement("j155")]
+        public decimal? TaxableAmount1 { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxableAmount1Enum { TaxableAmount1, j155 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxableAmount1Enum TaxableAmount1Choice
         {
-            get
-            {
-                return this.minimumOrderQuantityField;
-            }
-            set
-            {
-                this.minimumOrderQuantityField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxableAmount1Enum.j155 : TaxableAmount1Enum.TaxableAmount1; }
+            set { }
         }
 
-        /// <remarks/>
-        public string PriceStatus
+        [XmlChoiceIdentifier("TaxAmount1Choice")]
+        [XmlElement("TaxAmount1")]
+        [XmlElement("j156")]
+        public decimal? TaxAmount1 { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxAmount1Enum { TaxAmount1, j156 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxAmount1Enum TaxAmount1Choice
         {
-            get
-            {
-                return this.priceStatusField;
-            }
-            set
-            {
-                this.priceStatusField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxAmount1Enum.j156 : TaxAmount1Enum.TaxAmount1; }
+            set { }
         }
 
-        /// <remarks/>
-        public string CountryCode
+        [XmlChoiceIdentifier("TaxRateCode2Choice")]
+        [XmlElement("TaxRateCode2")]
+        [XmlElement("j157")]
+        public Lists.OnixList62? TaxRateCode2 { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxRateCode2Enum { TaxRateCode2, j157 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxRateCode2Enum TaxRateCode2Choice
         {
-            get
-            {
-                return this.countryCodeField;
-            }
-            set
-            {
-                this.countryCodeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxRateCode2Enum.j157 : TaxRateCode2Enum.TaxRateCode2; }
+            set { }
         }
 
-        #endregion
-
-        #region Short Tags
-
-        public int j148
+        [XmlChoiceIdentifier("TaxRatePercent2Choice")]
+        [XmlElement("TaxRatePercent2")]
+        [XmlElement("j158")]
+        public decimal? TaxRatePercent2 { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxRatePercent2Enum { TaxRatePercent2, j158 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxRatePercent2Enum TaxRatePercent2Choice
         {
-            get { return this.PriceTypeCode; }
-            set { PriceTypeCode = value; }
+            get { return SerializationSettings.UseShortTags ? TaxRatePercent2Enum.j158 : TaxRatePercent2Enum.TaxRatePercent2; }
+            set { }
         }
 
-        /// <remarks/>
-        public string j149
+        [XmlChoiceIdentifier("TaxableAmount2Choice")]
+        [XmlElement("TaxableAmount2")]
+        [XmlElement("j159")]
+        public decimal? TaxableAmount2 { get; set; }
+
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxableAmount2Enum { TaxableAmount2, j159 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxableAmount2Enum TaxableAmount2Choice
         {
-            get { return ClassOfTrade; }
-            set { ClassOfTrade = value; }
+            get { return SerializationSettings.UseShortTags ? TaxableAmount2Enum.j159 : TaxableAmount2Enum.TaxableAmount2; }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("discountcoded")]
-        public OnixLegacyDiscountCoded[] discountcoded
+        [XmlChoiceIdentifier("TaxAmount2Choice")]
+        [XmlElement("TaxAmount2")]
+        [XmlElement("j160")]
+        public decimal? TaxAmount2 { get; set; }
+
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxAmount2Enum { TaxAmount2, j160 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxAmount2Enum TaxAmount2Choice
         {
-            get { return shortDiscountCodedField; }
-            set { shortDiscountCodedField = value; }
+            get { return SerializationSettings.UseShortTags ? TaxAmount2Enum.j160 : TaxAmount2Enum.TaxAmount2; }
+            set { }
         }
 
-        /// <remarks/>
-        public string j267
+        [XmlChoiceIdentifier("PriceEffectiveFromChoice")]
+        [XmlElement("PriceEffectiveFrom")]
+        [XmlElement("j161")]
+        public string PriceEffectiveFrom { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceEffectiveFromEnum { PriceEffectiveFrom, j161 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceEffectiveFromEnum PriceEffectiveFromChoice
         {
-            get { return DiscountPercent; }
-            set { DiscountPercent = value; }
+            get { return SerializationSettings.UseShortTags ? PriceEffectiveFromEnum.j161 : PriceEffectiveFromEnum.PriceEffectiveFrom; }
+            set { }
         }
 
-        /// <remarks/>
-        public string j151
+        [XmlChoiceIdentifier("PriceEffectiveUntilChoice")]
+        [XmlElement("PriceEffectiveUntil")]
+        [XmlElement("j162")]
+        public string PriceEffectiveUntil { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceEffectiveUntilEnum { PriceEffectiveUntil, j162 };
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceEffectiveUntilEnum PriceEffectiveUntilChoice
         {
-            get { return this.priceAmountField; }
-            set { this.priceAmountField = value; }
-        }
-
-        /// <remarks/>
-        public string j152
-        {
-            get { return CurrencyCode; }
-            set { CurrencyCode = value; }
-        }
-
-        /// <remarks/>
-        public string j161
-        {
-            get { return this.priceEffectiveFromField; }
-            set { this.priceEffectiveFromField = value; }
-        }
-
-        /// <remarks/>
-        public string j162
-        {
-            get { return this.priceEffectiveUntilField; }
-            set { this.priceEffectiveUntilField = value; }
-        }
-
-        /// <remarks/>
-        public string j262
-        {
-            get { return PriceTypeDescription; }
-            set { PriceTypeDescription = value; }
-        }
-
-        /// <remarks/>
-        public string j239
-        {
-            get { return PricePer; }
-            set { PricePer = value; }
-        }
-
-        /// <remarks/>
-        public int j263
-        {
-            get { return this.minimumOrderQuantityField; }
-            set { this.minimumOrderQuantityField = value; }
-        }
-
-        /// <remarks/>
-        public string j266
-        {
-            get { return PriceStatus; }
-            set { PriceStatus = value; }
-        }
-
-        /// <remarks/>
-        public string b251
-        {
-            get { return CountryCode; }
-            set { CountryCode = value; }
+            get { return SerializationSettings.UseShortTags ? PriceEffectiveUntilEnum.j162 : PriceEffectiveUntilEnum.PriceEffectiveUntil; }
+            set { }
         }
 
         #endregion

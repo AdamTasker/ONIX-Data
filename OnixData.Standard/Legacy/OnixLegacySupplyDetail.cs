@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OnixData.Legacy
 {
@@ -16,367 +18,249 @@ namespace OnixData.Legacy
 
         #endregion
 
-        public OnixLegacySupplyDetail()
-        {
-            SupplierName        = "";
-            ReturnsCodeType     = "";
-            ReturnsCode         = "";
-            LastDateForReturns  = "";
-            ExpectedShipDate    = "";
-            OnSaleDate          = "";
-            PackQuantity        = "";
-
-            supplierIdentifierField = shortSupplierIdentifierField = new OnixLegacySupplierId[0];
-            priceField              = shortPriceField              = new OnixLegacyPrice[0];
-        }
-
-        private string supplierNameField;
-        private string returnsCodeTypeField;
-        private string returnsCodeField;
-        private string lastDateForReturnsField;
-        private Lists.OnixList54 availabilityCodeField;
-        private Lists.OnixList65 productAvailabilityField;
-        private string expectedShipDateField;
-        private string onSaleDateField;
-        private string packQuantityField;
-        private string unpricedItemTypeField;
-
-        private OnixLegacySupplierId[] supplierIdentifierField;
-        private OnixLegacySupplierId[] shortSupplierIdentifierField;
-        private OnixLegacyPrice[]      priceField;
-        private OnixLegacyPrice[]      shortPriceField;
-
-        #region ONIX Lists
-
-        public OnixLegacySupplierId[] OnixSupplierIdList
-        {
-            get
-            {
-                OnixLegacySupplierId[] SupplierIds = null;
-
-                if (supplierIdentifierField != null)
-                    SupplierIds = this.supplierIdentifierField;
-                else if (shortSupplierIdentifierField != null)
-                    SupplierIds = this.shortSupplierIdentifierField;
-                else
-                    SupplierIds = new OnixLegacySupplierId[0];
-
-                return SupplierIds;
-            }
-        }
-
-        public OnixLegacyPrice[] OnixPriceList
-        {
-            get
-            {
-                OnixLegacyPrice[] Prices = null;
-
-                if (priceField != null)
-                    Prices = this.priceField;
-                else if (shortPriceField != null)
-                    Prices = this.shortPriceField;
-                else
-                    Prices = new OnixLegacyPrice[0];
-
-                return Prices;
-            }
-        }
-
-        #endregion
-
         #region ONIX Helpers
 
         public bool HasUSDPrice()
         {
             bool bHasUSDPrice = false;
 
-            if ((this.OnixPriceList != null) && (this.OnixPriceList.Length > 0))
+            if ((this.Price != null) && (this.Price.Length > 0))
             {
-                OnixLegacyPrice[] Prices = this.OnixPriceList;
+                OnixLegacyPrice[] Prices = this.Price;
 
                 OnixLegacyPrice USDPrice =
                     Prices.Where(x => x.HasSoughtRetailPriceType() && (x.CurrencyCode == "USD")).FirstOrDefault();
 
-                bHasUSDPrice = (USDPrice != null) && (USDPrice.PriceAmountNum >= 0);
+                bHasUSDPrice = (USDPrice != null) && (USDPrice.PriceAmount >= 0);
             }
 
             return bHasUSDPrice;
+        }
+
+        public OnixLegacyPrice MainPrice
+        {
+            get
+            {
+                if (Price == null) return null;
+
+                OnixLegacyPrice mainPrice;
+
+                // Get the price we will be using for the product
+                if (Price.Length == 1)
+                {
+                    mainPrice = Price[0];
+                }
+                else
+                {
+                    var prices = Price.Where(
+                        p =>
+                            p.MinimumOrderQuantity == null &&
+                            (p.PriceTypeCode == null || p.HasSoughtRetailPriceType())
+                    );
+
+                    if (prices.Any())
+                    {
+                        mainPrice = prices.First();
+                    }
+                    else
+                    {
+                        mainPrice = Price.Where(p => p.MinimumOrderQuantity == null).First();
+                    }
+                }
+
+                return mainPrice;
+            }
         }
 
         #endregion
 
         #region Reference Tags
 
-        /// <remarks/>
-        public string SupplierName
+        [XmlChoiceIdentifier("SupplierNameChoice")]
+        [XmlElement("SupplierName")]
+        [XmlElement("j137")]
+        public string SupplierName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SupplierNameEnum { SupplierName, j137 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SupplierNameEnum SupplierNameChoice
+        {
+            get { return SerializationSettings.UseShortTags ? SupplierNameEnum.j137 : SupplierNameEnum.SupplierName; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("ReturnsCodeTypeChoice")]
+        [XmlElement("ReturnsCodeType")]
+        [XmlElement("j268")]
+        public int ReturnsCodeType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ReturnsCodeTypeEnum { ReturnsCodeType, j268 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ReturnsCodeTypeEnum ReturnsCodeTypeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ReturnsCodeTypeEnum.j268 : ReturnsCodeTypeEnum.ReturnsCodeType; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("ReturnsCodeChoice")]
+        [XmlElement("ReturnsCode")]
+        [XmlElement("j269")]
+        public string ReturnsCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ReturnsCodeEnum { ReturnsCode, j269 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ReturnsCodeEnum ReturnsCodeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ReturnsCodeEnum.j269 : ReturnsCodeEnum.ReturnsCode; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("LastDateForReturnsChoice")]
+        [XmlElement("LastDateForReturns")]
+        [XmlElement("j387")]
+        public string LastDateForReturns { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum LastDateForReturnsEnum { LastDateForReturns, j387 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public LastDateForReturnsEnum LastDateForReturnsChoice
+        {
+            get { return SerializationSettings.UseShortTags ? LastDateForReturnsEnum.j387 : LastDateForReturnsEnum.LastDateForReturns; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("AvailabilityCodeChoice")]
+        [XmlElement("AvailabilityCode")]
+        [XmlElement("j141")]
+        public Lists.OnixList54 AvailabilityCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum AvailabilityCodeEnum { AvailabilityCode, j141 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public AvailabilityCodeEnum AvailabilityCodeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? AvailabilityCodeEnum.j141 : AvailabilityCodeEnum.AvailabilityCode; }
+            set { }
+        }
+
+
+        [XmlChoiceIdentifier("ProductAvailabilityChoice")]
+        [XmlElement("ProductAvailability")]
+        [XmlElement("j396")]
+        public Lists.OnixList65 ProductAvailability { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductAvailabilityEnum { ProductAvailability, j396 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductAvailabilityEnum ProductAvailabilityChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ProductAvailabilityEnum.j396 : ProductAvailabilityEnum.ProductAvailability; }
+            set { }
+        }
+
+
+        [XmlChoiceIdentifier("ExpectedShipDateChoice")]
+        [XmlElement("ExpectedShipDate")]
+        [XmlElement("j142")]
+        public string ExpectedShipDate { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ExpectedShipDateEnum { ExpectedShipDate, j142 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ExpectedShipDateEnum ExpectedShipDateChoice
+        {
+            get { return SerializationSettings.UseShortTags ? ExpectedShipDateEnum.j142 : ExpectedShipDateEnum.ExpectedShipDate; }
+            set { }
+        }
+
+
+        [XmlChoiceIdentifier("OnSaleDateChoice")]
+        [XmlElement("OnSaleDate")]
+        [XmlElement("j143")]
+        public string OnSaleDate { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum OnSaleDateEnum { OnSaleDate, j143 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public OnSaleDateEnum OnSaleDateChoice
+        {
+            get { return SerializationSettings.UseShortTags ? OnSaleDateEnum.j143 : OnSaleDateEnum.OnSaleDate; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("PackQuantityChoice")]
+        [XmlElement("PackQuantity")]
+        [XmlElement("j145")]
+        public int PackQuantity { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PackQuantityEnum { PackQuantity, j145 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PackQuantityEnum PackQuantityChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PackQuantityEnum.j145 : PackQuantityEnum.PackQuantity; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("UnpricedItemTypeChoice")]
+        [XmlElement("UnpricedItemType")]
+        [XmlElement("j192")]
+        public string UnpricedItemType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum UnpricedItemTypeEnum { UnpricedItemType, j192 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public UnpricedItemTypeEnum UnpricedItemTypeChoice
+        {
+            get { return SerializationSettings.UseShortTags ? UnpricedItemTypeEnum.j192 : UnpricedItemTypeEnum.UnpricedItemType; }
+            set { }
+        }
+
+        [XmlChoiceIdentifier("SupplierIdentifierChoice")]
+        [XmlElement("SupplierIdentifier")]
+        [XmlElement("supplieridentifier")]
+        public OnixLegacySupplierId[] SupplierIdentifier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SupplierIdentifierEnum { SupplierIdentifier, supplieridentifier }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SupplierIdentifierEnum[] SupplierIdentifierChoice
         {
             get
             {
-                return this.supplierNameField;
+                if (SupplierIdentifier == null) return null;
+                SupplierIdentifierEnum choice = SerializationSettings.UseShortTags ? SupplierIdentifierEnum.supplieridentifier : SupplierIdentifierEnum.SupplierIdentifier;
+                SupplierIdentifierEnum[] result = new SupplierIdentifierEnum[SupplierIdentifier.Length];
+                for (int i = 0; i < SupplierIdentifier.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.supplierNameField = value;
-            }
+            set { }
         }
 
-        /// <remarks/>
-        public string ReturnsCodeType
+        [XmlChoiceIdentifier("PriceChoice")]
+        [XmlElement("Price")]
+        [XmlElement("price")]
+        public OnixLegacyPrice[] Price { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceEnum { Price, price }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceEnum[] PriceChoice
         {
             get
             {
-                return this.returnsCodeTypeField;
+                if (Price == null) return null;
+                PriceEnum choice = SerializationSettings.UseShortTags ? PriceEnum.price : PriceEnum.Price;
+                PriceEnum[] result = new PriceEnum[Price.Length];
+                for (int i = 0; i < Price.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.returnsCodeTypeField = value;
-            }
+            set { }
         }
 
-        public int ReturnsCodeTypeNum
-        {
-            get
-            {
-                int nReturnsCodeTypeVal = -1;
-                if (!String.IsNullOrEmpty(ReturnsCodeType))
-                    Int32.TryParse(ReturnsCodeType, out nReturnsCodeTypeVal);
-
-                return nReturnsCodeTypeVal;
-            }
-        }
-
-        /// <remarks/>
-        public string ReturnsCode
-        {
-            get
-            {
-                return this.returnsCodeField;
-            }
-            set
-            {
-                this.returnsCodeField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string LastDateForReturns
-        {
-            get
-            {
-                return this.lastDateForReturnsField;
-            }
-            set
-            {
-                this.lastDateForReturnsField = value;
-            }
-        }
-
-        /// <remarks/>
-        public Lists.OnixList54 AvailabilityCode
-        {
-            get
-            {
-                return this.availabilityCodeField;
-            }
-            set
-            {
-                this.availabilityCodeField = value;
-            }
-        }
-
-        /// <remarks/>
-        public Lists.OnixList65 ProductAvailability
-        {
-            get
-            {
-                return this.productAvailabilityField;
-            }
-            set
-            {
-                this.productAvailabilityField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string ExpectedShipDate
-        {
-            get
-            {
-                return this.expectedShipDateField;
-            }
-            set
-            {
-                this.expectedShipDateField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string OnSaleDate
-        {
-            get
-            {
-                return this.onSaleDateField;
-            }
-            set
-            {
-                this.onSaleDateField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string PackQuantity
-        {
-            get
-            {
-                return this.packQuantityField;
-            }
-            set
-            {
-                this.packQuantityField = value;
-            }
-        }
-
-        public int PackQuantityNum
-        {
-            get
-            {
-                int nPackQuantityVal = -1;
-                if (!String.IsNullOrEmpty(PackQuantity))
-                    Int32.TryParse(PackQuantity, out nPackQuantityVal);
-
-                return nPackQuantityVal;
-            }
-        }
-
-        /// <remarks/>
-        public string UnpricedItemType
-        {
-            get
-            {
-                return this.unpricedItemTypeField;
-            }
-            set
-            {
-                this.unpricedItemTypeField = value;
-            }
-        }
-
-        [System.Xml.Serialization.XmlElementAttribute("SupplierIdentifier")]
-        public OnixLegacySupplierId[] SupplierIdentifier
-        {
-            get
-            {
-                return this.supplierIdentifierField;
-            }
-            set
-            {
-                this.supplierIdentifierField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Price")]
-        public OnixLegacyPrice[] Price
-        {
-            get
-            {
-                return this.priceField;
-            }
-            set
-            {
-                this.priceField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string j137
-        {
-            get { return SupplierName; }
-            set { SupplierName = value; }
-        }
-
-        /// <remarks/>
-        public string j268
-        {
-            get
-            { return ReturnsCodeType; }
-            set { ReturnsCodeType = value; }
-        }
-
-        /// <remarks/>
-        public string j269
-        {
-            get { return ReturnsCode; }
-            set { ReturnsCode = value; }
-        }
-
-        /// <remarks/>
-        public string j387
-        {
-            get { return LastDateForReturns; }
-            set { LastDateForReturns = value; }
-        }
-
-        /// <remarks/>
-        public Lists.OnixList54 j141
-        {
-            get { return AvailabilityCode; }
-            set { AvailabilityCode = value; }
-        }
-
-        /// <remarks/>
-        public Lists.OnixList65 j396
-        {
-            get { return ProductAvailability; }
-            set { ProductAvailability = value; }
-        }
-
-        /// <remarks/>
-        public string j142
-        {
-            get { return ExpectedShipDate; }
-            set { ExpectedShipDate = value; }
-        }
-
-        /// <remarks/>
-        public string j143
-        {
-            get { return OnSaleDate; }
-            set { OnSaleDate = value; }
-        }
-
-        /// <remarks/>
-        public string j145
-        {
-            get { return PackQuantity; }
-            set { PackQuantity = value; }
-        }
-
-        /// <remarks/>
-        public string j192
-        {
-            get { return UnpricedItemType; }
-            set { UnpricedItemType = value; }
-        }
-
-        [System.Xml.Serialization.XmlElementAttribute("supplieridentifier")]
-        public OnixLegacySupplierId[] supplieridentifier
-        {
-            get { return this.shortSupplierIdentifierField; }
-            set { this.shortSupplierIdentifierField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("price")]
-        public OnixLegacyPrice[] price
-        {
-            get { return this.shortPriceField; }
-            set { this.shortPriceField = value; }
-        }
 
         #endregion
     }

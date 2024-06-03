@@ -56,22 +56,17 @@ namespace OnixData.Extensions
             {
                 foreach (OnixLegacySupplyDetail TmpSupplyDetail in poOnixProduct.SupplyDetail)
                 {
-                    if ((TmpSupplyDetail != null) && (TmpSupplyDetail.OnixPriceList != null))
+                    if ((TmpSupplyDetail != null) && (TmpSupplyDetail.Price != null))
                     {
-                        foreach (OnixLegacyPrice TmpPrice in TmpSupplyDetail.OnixPriceList)
+                        foreach (OnixLegacyPrice TmpPrice in TmpSupplyDetail.Price)
                         {
                             if (!string.IsNullOrEmpty(poOnixHeader.DefaultCurrencyCode) && string.IsNullOrEmpty(TmpPrice.CurrencyCode))
                                 TmpPrice.CurrencyCode = poOnixHeader.DefaultCurrencyCode;
 
-                            if (poOnixHeader.DefaultPriceTypeCode != null && (TmpPrice.PriceTypeCode <= 0))
+                            if (poOnixHeader.DefaultPriceTypeCode != null && TmpPrice.PriceTypeCode == null)
                             {
-                                int nDefPriceTypeCd = -1;
-
-                                try { nDefPriceTypeCd = Convert.ToInt32(poOnixHeader.DefaultPriceTypeCode); }
-                                catch (Exception ex) { }
-
-                                if (nDefPriceTypeCd > 0)
-                                    TmpPrice.PriceTypeCode = nDefPriceTypeCd;
+                                if (poOnixHeader.DefaultPriceTypeCode != null)
+                                    TmpPrice.PriceTypeCode = poOnixHeader.DefaultPriceTypeCode;
                             }
                         }
                     }

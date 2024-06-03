@@ -9,74 +9,51 @@ using System.Xml.Serialization;
 namespace OnixData.Version3.Price
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixPriceTax
     {
-        public OnixPriceTax()
-        {
-            TaxType     = -1;
-            TaxRateCode = TaxRatePercent = String.Empty;
-        }            
-
-        private int    taxTypeField;
-        private string taxRateCodeField;
-        private string taxRatePercentField;
-        
-        #region Helper Methods
-
-        public decimal TaxRatePercentNum
-        {
-            get
-            {
-                decimal nPercent = 0;
-
-                if (!String.IsNullOrEmpty(TaxRatePercent))
-                    Decimal.TryParse(TaxRatePercent, out nPercent);
-
-                return nPercent;
-            }
-        }
-
-        #endregion
-
         #region Reference Tags
 
-        /// <remarks/>
-        public int TaxType
+        [XmlChoiceIdentifier("TaxTypeChoice")]
+        [XmlElement("TaxType")]
+        [XmlElement("x470")]
+        public int TaxType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxTypeEnum { TaxType, x470 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxTypeEnum TaxTypeChoice
         {
-            get
-            {
-                return this.taxTypeField;
-            }
-            set
-            {
-                this.taxTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxTypeEnum.x470 : TaxTypeEnum.TaxType; }
+            set { }
         }
 
-        /// <remarks/>
-        public string TaxRateCode
+        [XmlChoiceIdentifier("TaxRateCodeChoice")]
+        [XmlElement("TaxRateCode")]
+        [XmlElement("x471")]
+        public string TaxRateCode { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxRateCodeEnum { TaxRateCode, x471 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxRateCodeEnum TaxRateCodeChoice
         {
-            get
-            {
-                return this.taxRateCodeField;
-            }
-            set
-            {
-                this.taxRateCodeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxRateCodeEnum.x471 : TaxRateCodeEnum.TaxRateCode; }
+            set { }
         }
-        
-        public string TaxRatePercent
+
+        [XmlChoiceIdentifier("TaxRatePercentChoice")]
+        [XmlElement("TaxRatePercent")]
+        [XmlElement("x472")]
+        public string TaxRatePercent { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TaxRatePercentEnum { TaxRatePercent, x472 }
+        [XmlIgnore]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TaxRatePercentEnum TaxRatePercentChoice
         {
-            get
-            {
-                return this.taxRatePercentField;
-            }
-            set
-            {
-                this.taxRatePercentField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TaxRatePercentEnum.x472 : TaxRatePercentEnum.TaxRatePercent; }
+            set { }
         }
 
 
@@ -94,8 +71,8 @@ namespace OnixData.Version3.Price
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TaxableAmountEnum TaxableAmountChoice
         {
-          get { return SerializationSettings.UseShortTags ? TaxableAmountEnum.x473 : TaxableAmountEnum.TaxableAmount; }
-          set { }
+            get { return SerializationSettings.UseShortTags ? TaxableAmountEnum.x473 : TaxableAmountEnum.TaxableAmount; }
+            set { }
         }
         /// <summary>
         /// The amount of tax chargeable at the rate specified in an occurrence of the <see cref="OnixPriceTax"/> composite.
@@ -110,33 +87,8 @@ namespace OnixData.Version3.Price
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TaxAmountEnum TaxAmountChoice
         {
-          get { return SerializationSettings.UseShortTags ? TaxAmountEnum.x474 : TaxAmountEnum.TaxAmount; }
-          set { }
-        }
-
-        /// <remarks/>
-        public string x472
-        {
-            get { return TaxRatePercent; }
-            set { TaxRatePercent = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public int x470
-        {
-            get { return TaxType; }
-            set { TaxType = value; }
-        }
-
-        /// <remarks/>
-        public string x471
-        {
-            get { return TaxRateCode; }
-            set { TaxRateCode = value; }
+            get { return SerializationSettings.UseShortTags ? TaxAmountEnum.x474 : TaxAmountEnum.TaxAmount; }
+            set { }
         }
 
         #endregion
