@@ -20,8 +20,6 @@ namespace OnixData.Version3.Publishing
         }
 
         private string imprintIdTypeField;
-        private string idTypeNameField;
-        private string idValueField;
 
         #region Reference Tags
 
