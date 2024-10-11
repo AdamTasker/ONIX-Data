@@ -1,156 +1,102 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Xml.Serialization;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Text
 {
     public partial class OnixCollateralDetail
     {
-        public OnixCollateralDetail()
-        {
-            textContentField = shortTextContentField = Array.Empty<OnixTextContent>();
-            contentDateField = shortContentDateField = Array.Empty<OnixContentDate>();
-            supportingResourceField = shortSupportingResourceField = Array.Empty<OnixSupportingResource>();
-        }
-
-        private OnixTextContent[] textContentField;
-        private OnixTextContent[] shortTextContentField;
-        
-        private OnixContentDate[] contentDateField;
-        private OnixContentDate[] shortContentDateField;
-        
-        private OnixSupportingResource[] supportingResourceField;
-        private OnixSupportingResource[] shortSupportingResourceField;
-
-        #region ONIX Lists
-
-        public OnixTextContent[] OnixTextContentList
-        {
-            get
-            {
-                OnixTextContent[] TextContents = null;
-
-                if (this.textContentField != null)
-                    TextContents = this.textContentField;
-                else if (this.shortTextContentField != null)
-                    TextContents = this.shortTextContentField;
-                else
-                    TextContents = new OnixTextContent[0];
-
-                return TextContents;
-            }
-        }
-
-        public OnixContentDate[] OnixContentDateList
-        {
-            get
-            {
-                OnixContentDate[] ContentDates = null;
-
-                if (this.contentDateField != null)
-                    ContentDates = this.contentDateField;
-                else if (this.shortContentDateField != null)
-                    ContentDates = this.shortContentDateField;
-                else
-                    ContentDates = new OnixContentDate[0];
-
-                return ContentDates;
-            }
-        }
-        
-        public OnixSupportingResource[] OnixSupportingResourceList
-        {
-            get
-            {
-                OnixSupportingResource[] supportingResources = null;
-
-                if (this.supportingResourceField != null)
-                    supportingResources = this.supportingResourceField;
-                else if (this.shortSupportingResourceField != null)
-                    supportingResources = this.shortSupportingResourceField;
-                else
-                    supportingResources = new OnixSupportingResource[0];
-
-                return supportingResources;
-            }
-        }
-
-        #endregion
 
         #region Reference Tags
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("TextContent", IsNullable = false)]
-        public OnixTextContent[] TextContent
+        [XmlChoiceIdentifier("TextContentChoice")]
+        [XmlElement("TextContent")]
+        [XmlElement("textcontent")]
+        public OnixTextContent[] TextContent { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TextContentEnum { TextContent, textcontent }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TextContentEnum[] TextContentChoice
         {
             get
             {
-                return this.textContentField;
+                if (TextContent == null) return null;
+                TextContentEnum choice = SerializationSettings.UseShortTags ? TextContentEnum.textcontent : TextContentEnum.TextContent;
+                TextContentEnum[] result = new TextContentEnum[TextContent.Length];
+                for (int i = 0; i < TextContent.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.textContentField = value;
-            }
+            set { }
         }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ContentDate", IsNullable = false)]
-        public OnixContentDate[] ContentDate
+        [XmlChoiceIdentifier("CitedContentChoice")]
+        [XmlElement("CitedContent")]
+        [XmlElement("citedcontent")]
+        public OnixCitedContent[] CitedContent { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CitedContentEnum { CitedContent, citedcontent }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CitedContentEnum[] CitedContentChoice
         {
             get
             {
-                return this.contentDateField;
+                if (CitedContent == null) return null;
+                CitedContentEnum choice = SerializationSettings.UseShortTags ? CitedContentEnum.citedcontent : CitedContentEnum.CitedContent;
+                CitedContentEnum[] result = new CitedContentEnum[CitedContent.Length];
+                for (int i = 0; i < CitedContent.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.contentDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("SupportingResource", IsNullable = true)]
-        public OnixSupportingResource[] SupportingResource
-        {
-            get => supportingResourceField;
-            set => supportingResourceField = value;
+            set { }
         }
 
-        #endregion
-
-        #region Short Tags
-
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("textcontent", IsNullable = false)]
-        public OnixTextContent[] textcontent
+        [XmlChoiceIdentifier("ContentDateChoice")]
+        [XmlElement("ContentDate")]
+        [XmlElement("contentdate")]
+        public OnixContentDate[] ContentDate { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContentDateEnum[] ContentDateChoice
         {
             get
             {
-                return this.shortTextContentField;
+                if (ContentDate == null) return null;
+                ContentDateEnum choice = SerializationSettings.UseShortTags ? ContentDateEnum.contentdate : ContentDateEnum.ContentDate;
+                ContentDateEnum[] result = new ContentDateEnum[ContentDate.Length];
+                for (int i = 0; i < ContentDate.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.shortTextContentField = value;
-            }
+            set { }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("contentdate", IsNullable = false)]
-        public OnixContentDate[] contentdate
+        [XmlChoiceIdentifier("SupportingResourceChoice")]
+        [XmlElement("SupportingResource")]
+        [XmlElement("supportingresource")]
+        public OnixSupportingResource[] SupportingResource { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SupportingResourceEnum { SupportingResource, supportingresource }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SupportingResourceEnum[] SupportingResourceChoice
         {
             get
             {
-                return this.shortContentDateField;
+                if (SupportingResource == null) return null;
+                SupportingResourceEnum choice = SerializationSettings.UseShortTags ? SupportingResourceEnum.supportingresource : SupportingResourceEnum.SupportingResource;
+                SupportingResourceEnum[] result = new SupportingResourceEnum[SupportingResource.Length];
+                for (int i = 0; i < SupportingResource.Length; i++) result[i] = choice;
+                return result;
             }
-            set
-            {
-                this.shortContentDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("supportingresource", IsNullable = true)]
-        public OnixSupportingResource[] supportingresource
-        {
-            get => shortSupportingResourceField;
-            set => shortSupportingResourceField = value;
+            set { }
         }
 
         #endregion

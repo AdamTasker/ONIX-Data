@@ -1,170 +1,97 @@
 using System;
-using OnixData.Version3.Text;
+using System.ComponentModel;
+using System.Xml.Serialization;
+using OnixData.Version3.Lists;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Text
 {
     public class OnixResourceVersion
     {
-        public OnixResourceVersion()
-        {
-            resourceVersionFeatureField = shortResourceVersionFeature = Array.Empty<OnixResourceVersionFeature>();
-            resourceLinkField = shortResourceLinkFeatureField = Array.Empty<string>();
-            contentDateField = shortContentDateField = Array.Empty<OnixContentDate>();
-        }
-        private int resourceFormField;
 
-        private OnixResourceVersionFeature[] resourceVersionFeatureField;
-        private OnixResourceVersionFeature[] shortResourceVersionFeature;
-        
-        private string featureNoteField;
-        
-        private string[] resourceLinkField;
-        private string[] shortResourceLinkFeatureField;
-        
-        private OnixContentDate[] contentDateField;
-        private OnixContentDate[] shortContentDateField;
-
-        #region ONIX Lists
-        
-        public OnixResourceVersionFeature[] OnixResourceVersionFeatureList
-        {
-            get
-            {
-                OnixResourceVersionFeature[] resourceVersionFeatures = null;
-
-                if (this.resourceVersionFeatureField != null)
-                    resourceVersionFeatures = this.resourceVersionFeatureField;
-                else if (this.shortResourceVersionFeature != null)
-                    resourceVersionFeatures = this.shortResourceVersionFeature;
-                else
-                    resourceVersionFeatures = new OnixResourceVersionFeature[0];
-
-                return resourceVersionFeatures;
-            }
-        }
-        
-        public string[] ResourceLinksList
-        {
-            get
-            {
-                string[] resourceLinksList = null;
-
-                if (this.resourceLinkField != null)
-                    resourceLinksList = this.resourceLinkField;
-                else if (this.shortResourceLinkFeatureField != null)
-                    resourceLinksList = this.shortResourceLinkFeatureField;
-                else
-                    resourceLinksList = new string[0];
-
-                return resourceLinksList;
-            }
-        }
-        
-        public OnixContentDate[] ContentDatesList
-        {
-            get
-            {
-                OnixContentDate[] contentDatesList = null;
-
-                if (this.contentDateField != null)
-                    contentDatesList = this.contentDateField;
-                else if (this.shortContentDateField != null)
-                    contentDatesList = this.shortContentDateField;
-                else
-                    contentDatesList = new OnixContentDate[0];
-
-                return contentDatesList;
-            }
-        }
-
-        #endregion
-        
         #region Reference Tags
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceForm", IsNullable = false)]
-        public int ResourceForm
+        [XmlChoiceIdentifier("ResourceFormChoice")]
+        [XmlElement("ResourceForm")]
+        [XmlElement("x441")]
+        public OnixList161 ResourceForm { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ResourceFormEnum { ResourceForm, x441 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ResourceFormEnum ResourceFormChoice
         {
-            get => resourceFormField;
-            set => resourceFormField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceVersionFeature", IsNullable = true)]
-        public OnixResourceVersionFeature[] ResourceVersionFeature
-        {
-            get => resourceVersionFeatureField;
-            set => resourceVersionFeatureField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("FeatureNote", IsNullable = true)]
-        public string FeatureNote
-        {
-            get => featureNoteField;
-            set => featureNoteField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceLink", IsNullable = false)]
-        public string[] ResourceLink
-        {
-            get => resourceLinkField;
-            set => resourceLinkField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ContentDate", IsNullable = true)]
-        public OnixContentDate[] ContentDate
-        {
-            get => contentDateField;
-            set => contentDateField = value;
+            get { return SerializationSettings.UseShortTags ? ResourceFormEnum.x441 : ResourceFormEnum.ResourceForm; }
+            set { }
         }
 
-        #endregion
+        /// <remarks/>
+        [XmlChoiceIdentifier("ResourceVersionFeatureChoice")]
+        [XmlElement("ResourceVersionFeature")]
+        [XmlElement("resourceversionfeature")]
+        public OnixResourceVersionFeature[] ResourceVersionFeature { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ResourceVersionFeatureEnum { ResourceVersionFeature, resourceversionfeature }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ResourceVersionFeatureEnum[] ResourceVersionFeatureChoice
+        {
+            get
+            {
+                if (ResourceVersionFeature == null) return null;
+                ResourceVersionFeatureEnum choice = SerializationSettings.UseShortTags ? ResourceVersionFeatureEnum.resourceversionfeature : ResourceVersionFeatureEnum.ResourceVersionFeature;
+                ResourceVersionFeatureEnum[] result = new ResourceVersionFeatureEnum[ResourceVersionFeature.Length];
+                for (int i = 0; i < ResourceVersionFeature.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
-        #region Short Tags
+        /// <remarks/>
+        [XmlChoiceIdentifier("ResourceLinkChoice")]
+        [XmlElement("ResourceLink")]
+        [XmlElement("x435")]
+        public string[] ResourceLink { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ResourceLinkEnum[] ResourceLinkChoice
+        {
+            get
+            {
+                if (ResourceLink == null) return null;
+                ResourceLinkEnum choice = SerializationSettings.UseShortTags ? ResourceLinkEnum.x435 : ResourceLinkEnum.ResourceLink;
+                ResourceLinkEnum[] result = new ResourceLinkEnum[ResourceLink.Length];
+                for (int i = 0; i < ResourceLink.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x441", IsNullable = false)]
-        public int x441
+        [XmlChoiceIdentifier("ContentDateChoice")]
+        [XmlElement("ContentDate")]
+        [XmlElement("contentdate")]
+        public OnixContentDate[] ContentDate { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ContentDateEnum[] ContentDateChoice
         {
-            get => ResourceForm;
-            set => ResourceForm = value;
+            get
+            {
+                if (ContentDate == null) return null;
+                ContentDateEnum choice = SerializationSettings.UseShortTags ? ContentDateEnum.contentdate : ContentDateEnum.ContentDate;
+                ContentDateEnum[] result = new ContentDateEnum[ContentDate.Length];
+                for (int i = 0; i < ContentDate.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("resourceversionfeature", IsNullable = true)]
-        public OnixResourceVersionFeature[] resourceversionfeature
-        {
-            get => shortResourceVersionFeature;
-            set => shortResourceVersionFeature = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x440", IsNullable = true)]
-        public string x440
-        {
-            get => FeatureNote;
-            set => FeatureNote = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x435", IsNullable = false)]
-        public string[] x435
-        {
-            get => shortResourceLinkFeatureField;
-            set => shortResourceLinkFeatureField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("contentdate", IsNullable = true)]
-        public OnixContentDate[] contentdate
-        {
-            get => shortContentDateField;
-            set => shortContentDateField = value;
-        }
-        
+
         #endregion
     }
 }

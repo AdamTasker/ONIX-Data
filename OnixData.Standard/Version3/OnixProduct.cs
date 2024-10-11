@@ -92,13 +92,14 @@ namespace OnixData.Version3
         {
             get
             {
+                if (CollateralDetail == null || CollateralDetail.TextContent == null) return "";
                 OnixCollateralDetail descCollateralDetail = CollateralDetail;
 
                 string TempDescription = "";
                 if (descCollateralDetail != null)
                 {
                     OnixTextContent DescTextContent =
-                        descCollateralDetail.OnixTextContentList
+                        descCollateralDetail.TextContent
                             .Where(
                                 x => (!string.IsNullOrEmpty(x.Text)) && (
                                     (x.TextType == 3) ||
@@ -512,7 +513,7 @@ namespace OnixData.Version3
                         OnixPrice[] Prices = TmpSupplyDetail.OnixPriceList;
 
                         bHasSoughtPrice =
-                            Prices.Any(x => (x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD"));
+                            Prices.Any(x => ((int)x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD"));
 
                         if (bHasSoughtPrice)
                             break;
@@ -598,7 +599,7 @@ namespace OnixData.Version3
                     OnixPrice[] Prices = TargetSupplyDetail.OnixPriceList;
 
                     USDPrice =
-                        Prices.Where(x => (x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD")).FirstOrDefault();
+                        Prices.Where(x => ((int)x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD")).FirstOrDefault();
 
                     if (USDPrice == null)
                         USDPrice = new OnixPrice();
@@ -671,9 +672,9 @@ namespace OnixData.Version3
                             OnixPrice[] Prices = TmpSupplyDetail.OnixPriceList;
 
                             OnixPrice USDPrice =
-                                Prices.Where(x => (x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD")).FirstOrDefault();
+                                Prices.Where(x => ((int)x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD")).FirstOrDefault();
 
-                            if ((USDPrice != null) && (USDPrice.PriceAmountNum > 0))
+                            if ((USDPrice != null) && (USDPrice.PriceAmount > 0))
                             {
                                 SupplyDetail = TmpSupplyDetail;
                                 break;

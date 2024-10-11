@@ -103,7 +103,7 @@ namespace OnixData.Extensions
         {
             if (pOnixHeader != null)
             {
-                if (!String.IsNullOrEmpty(pOnixHeader.DefaultCurrencyCode) || !String.IsNullOrEmpty(pOnixHeader.DefaultPriceType))
+                if (!string.IsNullOrEmpty(pOnixHeader.DefaultCurrencyCode) || pOnixHeader.DefaultPriceType != null)
                 {
                     foreach (OnixProductSupply TmpSupply in pOnixProduct.ProductSupply)
                     {
@@ -113,16 +113,12 @@ namespace OnixData.Extensions
                             {
                                 foreach (OnixPrice TmpPrice in TmpSupplyDetail.OnixPriceList)
                                 {
-                                    if (!String.IsNullOrEmpty(pOnixHeader.DefaultCurrencyCode) && String.IsNullOrEmpty(TmpPrice.CurrencyCode))
+                                    if (!string.IsNullOrEmpty(pOnixHeader.DefaultCurrencyCode) && string.IsNullOrEmpty(TmpPrice.CurrencyCode))
                                         TmpPrice.CurrencyCode = pOnixHeader.DefaultCurrencyCode;
 
-                                    if (!String.IsNullOrEmpty(pOnixHeader.DefaultPriceType) && (TmpPrice.PriceType <= 0))
+                                    if (pOnixHeader.DefaultPriceType != null && TmpPrice.PriceType == null)
                                     {
-                                        int nDefPriceTypeCd = -1;
-                                        Int32.TryParse(pOnixHeader.DefaultPriceType, out nDefPriceTypeCd);
-
-                                        if (nDefPriceTypeCd > 0)
-                                            TmpPrice.PriceType = nDefPriceTypeCd;
+                                        TmpPrice.PriceType = pOnixHeader.DefaultPriceType;
                                     }
                                 }
                             }
@@ -130,12 +126,12 @@ namespace OnixData.Extensions
                     }
                 }
 
-                if (!String.IsNullOrEmpty(pOnixHeader.DefaultLanguageOfText))
+                if (!string.IsNullOrEmpty(pOnixHeader.DefaultLanguageOfText))
                 {
                     if ((pOnixProduct.DescriptiveDetail != null) && (pOnixProduct.DescriptiveDetail.Language != null))
                     {
                         pOnixProduct.DescriptiveDetail.Language
-                                                      .Where(x => String.IsNullOrEmpty(x.LanguageCode))
+                                                      .Where(x => string.IsNullOrEmpty(x.LanguageCode))
                                                       .ToList()
                                                       .ForEach(x => x.LanguageCode = pOnixHeader.DefaultLanguageOfText);
                     }
@@ -174,7 +170,7 @@ namespace OnixData.Extensions
                     var sAllFileText = AllFileText.ToString();
 
                     sAllFileText =
-                         Regex.Replace(sAllFileText, CONST_REMOVE_CTRL_CHARS_REG_EXPR, "", System.Text.RegularExpressions.RegexOptions.Compiled);
+                         Regex.Replace(sAllFileText, CONST_REMOVE_CTRL_CHARS_REG_EXPR, "", RegexOptions.Compiled);
 
                     File.WriteAllText(ParserFileInfo.FullName, sAllFileText);
                 }

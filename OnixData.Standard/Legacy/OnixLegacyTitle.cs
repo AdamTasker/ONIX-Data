@@ -1,8 +1,12 @@
-﻿using System;
+﻿using OnixData.Version3.Market;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using OnixData.Legacy.Xml.Enums;
 
 namespace OnixData.Legacy
 {
@@ -12,23 +16,10 @@ namespace OnixData.Legacy
     {
         #region CONSTANTS
 
-        public const int CONST_TITLE_TYPE_UN_TITLE   = 0;
+        public const int CONST_TITLE_TYPE_UN_TITLE = 0;
         public const int CONST_TITLE_TYPE_DIST_TITLE = 1;
 
         #endregion
-
-        public OnixLegacyTitle()
-        {
-            TitleType = -1;
-            TitleText = TitlePrefix = TitleWithoutPrefix = "";
-            Subtitle  = "";
-        }
-
-        private int    titleTypeField;
-        private string titleTextField;
-        private string titlePrefixField;
-        private string titleWithoutPrefixField;
-        private string subtitleField;
 
         #region ONIX Helpers
 
@@ -63,110 +54,76 @@ namespace OnixData.Legacy
 
         #region Reference Tags
 
-        /// <remarks/>
-        public int TitleType
+        [XmlChoiceIdentifier("TitleTypeChoice")]
+        [XmlElement("TitleType")]
+        [XmlElement("b202")]
+        public int TitleType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TitleTypeEnum { TitleType, b202 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitleTypeEnum TitleTypeChoice
         {
-            get
-            {
-                return this.titleTypeField;
-            }
-            set
-            {
-                this.titleTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TitleTypeEnum.b202 : TitleTypeEnum.TitleType; }
+            set { }
         }
 
-        /// <remarks/>
-        public string TitleText
+        [XmlChoiceIdentifier("TitleTextChoice")]
+        [XmlElement("TitleText")]
+        [XmlElement("b203")]
+        public string TitleText { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum TitleTextEnum { TitleText, b203 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitleTextEnum TitleTextChoice
         {
-            get
-            {
-                return this.titleTextField;
-            }
-            set
-            {
-                this.titleTextField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TitleTextEnum.b203 : TitleTextEnum.TitleText; }
+            set { }
         }
 
-        /// <remarks/>
-        public string TitlePrefix
+        [XmlChoiceIdentifier("TitlePrefixChoice")]
+        [XmlElement("TitlePrefix")]
+        [XmlElement("b030")]
+        public string TitlePrefix { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitlePrefixEnum TitlePrefixChoice
         {
-            get
-            {
-                return this.titlePrefixField;
-            }
-            set
-            {
-                this.titlePrefixField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TitlePrefixEnum.b030 : TitlePrefixEnum.TitlePrefix; }
+            set { }
         }
 
-        /// <remarks/>
-        public string TitleWithoutPrefix
+        [XmlChoiceIdentifier("TitleWithoutPrefixChoice")]
+        [XmlElement("TitleWithoutPrefix")]
+        [XmlElement("b031")]
+        public string TitleWithoutPrefix { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public TitleWithoutPrefixEnum TitleWithoutPrefixChoice
         {
-            get
-            {
-                return this.titleWithoutPrefixField;
-            }
-            set
-            {
-                this.titleWithoutPrefixField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? TitleWithoutPrefixEnum.b031 : TitleWithoutPrefixEnum.TitleWithoutPrefix; }
+            set { }
         }
 
-        /// <remarks/>
-        public string Subtitle
+        [XmlChoiceIdentifier("SubtitleChoice")]
+        [XmlElement("Subtitle")]
+        [XmlElement("b029")]
+        public string Subtitle { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SubtitleEnum SubtitleChoice
         {
-            get
-            {
-                return this.subtitleField;
-            }
-            set
-            {
-                this.subtitleField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public int b202
-        {
-            get { return TitleType; }
-            set { TitleType = value; }
-        }
-
-        /// <remarks/>
-        public string b203
-        {
-            get { return TitleText; }
-            set { TitleText = value; }
-        }
-
-        /// <remarks/>
-        public string b030
-        {
-            get { return TitlePrefix; }
-            set { TitlePrefix = value; }
-        }
-
-        /// <remarks/>
-        public string b031
-        {
-            get { return TitleWithoutPrefix; }
-            set { TitleWithoutPrefix = value; }
-        }
-
-        /// <remarks/>
-        public string b029
-        {
-            get { return Subtitle; }
-            set { Subtitle = value; }
+            get { return SerializationSettings.UseShortTags ? SubtitleEnum.b029 : SubtitleEnum.Subtitle; }
+            set { }
         }
 
         #endregion
+
     }
 }

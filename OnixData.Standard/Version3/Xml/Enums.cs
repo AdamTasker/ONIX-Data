@@ -21,4 +21,10 @@ namespace OnixData.Version3.Xml.Enums
     [XmlType(IncludeInSchema = false)] public enum WebsiteEnum { Website, website }
     [XmlType(IncludeInSchema = false)] public enum CountryCodeEnum { CountryCode, b251 }
     [XmlType(IncludeInSchema = false)] public enum RegionCodeEnum { RegionCode, b398 }
+    [XmlType(IncludeInSchema = false)] public enum ContentDateEnum { ContentDate, contentdate }
+    [XmlType(IncludeInSchema = false)] public enum ContentAudienceEnum { ContentAudience, x427 }
+    [XmlType(IncludeInSchema = false)] public enum TerritoryEnum { Territory, territory }
+    [XmlType(IncludeInSchema = false)] public enum FeatureValueEnum { FeatureValue, x439 }
+    [XmlType(IncludeInSchema = false)] public enum FeatureNoteEnum { FeatureNote, x440 }
+    [XmlType(IncludeInSchema = false)] public enum ResourceLinkEnum { ResourceLink, x435 }
 }

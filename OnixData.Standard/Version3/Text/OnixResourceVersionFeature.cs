@@ -1,95 +1,67 @@
 using System;
+using System.ComponentModel;
+using System.Xml.Serialization;
+using OnixData.Version3.Lists;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Text
 {
     public class OnixResourceVersionFeature
     {
-        public OnixResourceVersionFeature()
-        {
-            featureNoteField = shortFeatureNoteField = Array.Empty<string>();
-        }
-        
-        private int resourceVersionFeatureTypeField;
-        private string featureValueField;
 
-        private string[] featureNoteField;
-        private string[] shortFeatureNoteField;
-        
-        #region ONIX Lists
-        
-        public string[] FeatureNotesList
-        {
-            get
-            {
-                string[] featureNotesList = null;
-
-                if (this.featureNoteField != null)
-                    featureNotesList = this.featureNoteField;
-                else if (this.shortFeatureNoteField != null)
-                    featureNotesList = this.shortFeatureNoteField;
-                else
-                    featureNotesList = new string[0];
-
-                return featureNotesList;
-            }
-        }
-
-        #endregion
-        
         #region Reference Tags
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceVersionFeatureType", IsNullable = false)]
-        public int ResourceVersionFeatureType
+        [XmlChoiceIdentifier("ResourceVersionFeatureTypeChoice")]
+        [XmlElement("ResourceVersionFeatureType")]
+        [XmlElement("x442")]
+        public OnixList162 ResourceVersionFeatureType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ResourceVersionFeatureTypeEnum { ResourceVersionFeatureType, x442 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ResourceVersionFeatureTypeEnum ResourceVersionFeatureTypeChoice
         {
-            get => resourceVersionFeatureTypeField;
-            set => resourceVersionFeatureTypeField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("FeatureValue", IsNullable = true)]
-        public string FeatureValue
-        {
-            get => featureValueField;
-            set => featureValueField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("FeatureNote", IsNullable = true)]
-        public string[] FeatureNote
-        {
-            get => featureNoteField;
-            set => featureNoteField = value;
+            get { return SerializationSettings.UseShortTags ? ResourceVersionFeatureTypeEnum.x442 : ResourceVersionFeatureTypeEnum.ResourceVersionFeatureType; }
+            set { }
         }
 
-        #endregion
+        /// <remarks/>
+        [XmlChoiceIdentifier("FeatureValueChoice")]
+        [XmlElement("FeatureValue")]
+        [XmlElement("x439")]
+        public string FeatureValue { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public FeatureValueEnum FeatureValueChoice
+        {
+            get { return SerializationSettings.UseShortTags ? FeatureValueEnum.x439 : FeatureValueEnum.FeatureValue; }
+            set { }
+        }
 
-        #region Short Tags
+        /// <remarks/>
+        [XmlChoiceIdentifier("FeatureNoteChoice")]
+        [XmlElement("FeatureNote")]
+        [XmlElement("x440")]
+        public string[] FeatureNote { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public FeatureNoteEnum[] FeatureNoteChoice        
+        {
+            get
+            {
+                if (FeatureNote == null) return null;
+                FeatureNoteEnum choice = SerializationSettings.UseShortTags ? FeatureNoteEnum.x440 : FeatureNoteEnum.FeatureNote;
+                FeatureNoteEnum[] result = new FeatureNoteEnum[FeatureNote.Length];
+                for (int i = 0; i < FeatureNote.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x442", IsNullable = false)]
-        public int x442
-        {
-            get => ResourceVersionFeatureType;
-            set => ResourceVersionFeatureType = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x439", IsNullable = true)]
-        public string x439
-        {
-            get => FeatureValue;
-            set => FeatureValue = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x440", IsNullable = true)]
-        public string[] x440
-        {
-            get => shortFeatureNoteField;
-            set => shortFeatureNoteField = value;
-        }
-        
         #endregion
     }
 }

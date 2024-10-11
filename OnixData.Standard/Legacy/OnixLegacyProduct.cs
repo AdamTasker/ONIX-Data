@@ -1,5 +1,4 @@
-﻿using OnixData.Version3.Supply;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using OnixData.Legacy.Lists;
 
 namespace OnixData.Legacy
 {
@@ -20,69 +20,6 @@ namespace OnixData.Legacy
         private const char CONST_KEYWORDS_DELIM = ';';
 
         #endregion
-
-        public OnixLegacyProduct()
-        {
-            SalesRightsInUS = SalesRightsInNonUSCountry = false;
-            NoSalesRightsInUS = SalesRightsAllWorld = false;
-
-            RecordReference = "";
-            NotificationType = NumberOfPieces = TradeCategory = -1;
-
-            ProductIdentifier = new OnixLegacyProductId[0];
-
-            BookFormDetail = "";
-            ProductFormDetail = new Lists.OnixList78[0];
-            ProductFormDescription = "";
-            ProductContentType = new string[0];
-            EpubType = EpubTypeVersion = EpubFormatDescription = "";
-
-            AudienceCode = null;
-            EditionTypeCode = null;
-            EditionNumber = null;
-
-            ProductFormFeature = new OnixLegacyProductFormFeature();
-
-            ContributorStatement = "";
-
-            Language = new OnixLegacyLanguage[0];
-
-            NumberOfPages = PagesArabic = PagesRoman = "";
-
-            BASICMainSubject = "";
-            MainSubject = new OnixLegacySubject[0];
-
-            Title = new OnixLegacyTitle[0];
-
-            Audience = new OnixLegacyAudience[0];
-            AudienceRange = new OnixLegacyAudRange[0];
-            Contributor = new OnixLegacyContributor[0];
-            Extent = new OnixLegacyExtent[0];
-            Series = new OnixLegacySeries[0];
-            Set = new OnixLegacySet[0];
-            Subject = new OnixLegacySubject[0];
-            Complexity = new OnixLegacyComplexity[0];
-            Imprint = new OnixLegacyImprint[0];
-            Measure = new OnixLegacyMeasure[0];
-            MediaFile = new OnixLegacyMediaFile[0];
-            OtherText = new OnixLegacyOtherText[0];
-            RelatedProduct = new OnixLegacyRelatedProduct[0];
-            SalesRights = new OnixLegacySalesRights[0];
-
-            NotForSale = new OnixLegacyNotForSale[0];
-
-            CityOfPublication = CountryOfPublication = PublishingStatus = "";
-            AnnouncementDate = TradeAnnouncementDate = "";
-
-            PublicationDate = YearFirstPublished = "";
-
-            usdPriceField = null;
-
-            SupplyDetail = new OnixLegacySupplyDetail[0];
-            ProductClassification = new OnixLegacyProductClassification[0];
-
-            ParsingError = null;
-        }
 
         private bool SalesRightsInUS;
         private bool SalesRightsInNonUSCountry;
@@ -350,7 +287,7 @@ namespace OnixData.Legacy
                     if ((AudienceList != null) && (AudienceList.Length > 0))
                     {
                         OnixLegacyAudience OnixAudCode =
-                            AudienceList.Where(x => x.AudienceCodeType == OnixLegacyAudience.CONST_AUD_TYPE_ONIX).LastOrDefault();
+                            AudienceList.Where(x => x.AudienceCodeType == OnixList29.OnixAudienceCodes).LastOrDefault();
 
                         if ((OnixAudCode != null) && !string.IsNullOrEmpty(OnixAudCode.AudienceCodeValue))
                             sAudCode = OnixAudCode.AudienceCodeValue;
@@ -1102,7 +1039,11 @@ namespace OnixData.Legacy
         public enum BASICMainSubjectEnum { BASICMainSubject, b064 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public BASICMainSubjectEnum BASICMainSubjectChoice;
+        public BASICMainSubjectEnum BASICMainSubjectChoice
+        {
+          get { return SerializationSettings.UseShortTags ? BASICMainSubjectEnum.b064 : BASICMainSubjectEnum.BASICMainSubject; }
+          set { }
+        }
 
         /// <summary>
         /// An optional and repeatable group of data elements which together describe a main subject classification or subject heading which is taken from a recognized scheme other than BISAC or BIC.
@@ -1115,7 +1056,18 @@ namespace OnixData.Legacy
         public enum MainSubjectEnum { MainSubject, mainsubject };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public MainSubjectEnum[] MainSubjectChoice;
+        public MainSubjectEnum[] MainSubjectChoice
+        {
+            get
+            {
+                if (MainSubject == null) return null;
+                MainSubjectEnum choice = SerializationSettings.UseShortTags ? MainSubjectEnum.mainsubject : MainSubjectEnum.MainSubject;
+                MainSubjectEnum[] result = new MainSubjectEnum[MainSubject.Length];
+                for (int i = 0; i < MainSubject.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code, derived from BISAC and BIC lists, which identifies the broad audience or readership for whom a product is intended.
@@ -1129,7 +1081,18 @@ namespace OnixData.Legacy
         public enum AudienceCodeEnum { AudienceCode, b073 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public AudienceCodeEnum[] AudienceCodesChoice;
+        public AudienceCodeEnum[] AudienceCodesChoice
+        {
+            get
+            {
+                if (AudienceCode == null) return null;
+                AudienceCodeEnum choice = SerializationSettings.UseShortTags ? AudienceCodeEnum.b073 : AudienceCodeEnum.AudienceCode;
+                AudienceCodeEnum[] result = new AudienceCodeEnum[AudienceCode.Length];
+                for (int i = 0; i < AudienceCode.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together describe an extent pertaining to the product.
@@ -1142,7 +1105,18 @@ namespace OnixData.Legacy
         public enum ExtentEnum { Extent, extent };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ExtentEnum[] ExtentChoice;
+        public ExtentEnum[] ExtentChoice
+        {
+            get
+            {
+                if (Extent == null) return null;
+                ExtentEnum choice = SerializationSettings.UseShortTags ? ExtentEnum.extent : ExtentEnum.Extent;
+                ExtentEnum[] result = new ExtentEnum[Extent.Length];
+                for (int i = 0; i < Extent.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together describe a series of which the product is part.
@@ -1155,7 +1129,18 @@ namespace OnixData.Legacy
         public enum SeriesEnum { Series, series };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SeriesEnum[] SeriesChoice;
+        public SeriesEnum[] SeriesChoice
+        {
+            get
+            {
+                if (Series == null) return null;
+                SeriesEnum choice = SerializationSettings.UseShortTags ? SeriesEnum.series : SeriesEnum.Series;
+                SeriesEnum[] result = new SeriesEnum[Series.Length];
+                for (int i = 0; i < Series.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together describe a set of which the product is part.
@@ -1168,7 +1153,18 @@ namespace OnixData.Legacy
         public enum SetEnum { Set, set };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SetEnum[] SetChoice;
+        public SetEnum[] SetChoice
+        {
+            get
+            {
+                if (Set == null) return null;
+                SetEnum choice = SerializationSettings.UseShortTags ? SetEnum.set : SetEnum.Set;
+                SetEnum[] result = new SetEnum[Set.Length];
+                for (int i = 0; i < Set.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An optional and repeatable group of data elements which together describe a subject classification or subject heading which is additional to the BISAC, BIC or other main subject category.
@@ -1181,7 +1177,18 @@ namespace OnixData.Legacy
         public enum SubjectEnum { Subject, subject };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SubjectEnum[] SubjectsChoice;
+        public SubjectEnum[] SubjectsChoice
+        {
+            get
+            {
+                if (Subject == null) return null;
+                SubjectEnum choice = SerializationSettings.UseShortTags ? SubjectEnum.subject : SubjectEnum.Subject;
+                SubjectEnum[] result = new SubjectEnum[Subject.Length];
+                for (int i = 0; i < Subject.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An optional and repeatable group of data elements which together describe the level of complexity of a text.
@@ -1194,7 +1201,18 @@ namespace OnixData.Legacy
         public enum ComplexityEnum { Complexity, complexity };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ComplexityEnum[] ComplexityChoice;
+        public ComplexityEnum[] ComplexityChoice
+        {
+            get
+            {
+                if (Complexity == null) return null;
+                ComplexityEnum choice = SerializationSettings.UseShortTags ? ComplexityEnum.complexity : ComplexityEnum.Complexity;
+                ComplexityEnum[] result = new ComplexityEnum[Complexity.Length];
+                for (int i = 0; i < Complexity.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together describe an audience to which the product is directed.
@@ -1207,7 +1225,18 @@ namespace OnixData.Legacy
         public enum AudienceEnum { Audience, audience };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public AudienceEnum[] AudienceChoice;
+        public AudienceEnum[] AudienceChoice
+        {
+            get
+            {
+                if (Audience == null) return null;
+                AudienceEnum choice = SerializationSettings.UseShortTags ? AudienceEnum.audience : AudienceEnum.Audience;
+                AudienceEnum[] result = new AudienceEnum[Audience.Length];
+                for (int i = 0; i < Audience.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An optional and repeatable group of data elements which together describe an audience or readership range for which a product is intended.
@@ -1221,7 +1250,18 @@ namespace OnixData.Legacy
         public enum AudienceRangeEnum { AudienceRange, audiencerange };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public AudienceRangeEnum[] AudienceRangesChoice;
+        public AudienceRangeEnum[] AudienceRangesChoice
+        {
+            get
+            {
+                if (AudienceRange == null) return null;
+                AudienceRangeEnum choice = SerializationSettings.UseShortTags ? AudienceRangeEnum.audiencerange : AudienceRangeEnum.AudienceRange;
+                AudienceRangeEnum[] result = new AudienceRangeEnum[AudienceRange.Length];
+                for (int i = 0; i < AudienceRange.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An optional and repeatable group of data elements which together identify and either include, or provide pointers to, text related to the product.
@@ -1234,7 +1274,18 @@ namespace OnixData.Legacy
         public enum OtherTextEnum { OtherText, othertext };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public OtherTextEnum[] OtherTextChoice;
+        public OtherTextEnum[] OtherTextChoice
+        {
+            get
+            {
+                if (OtherText == null) return null;
+                OtherTextEnum choice = SerializationSettings.UseShortTags ? OtherTextEnum.othertext : OtherTextEnum.OtherText;
+                OtherTextEnum[] result = new OtherTextEnum[OtherText.Length];
+                for (int i = 0; i < OtherText.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together identify and provide pointers to, an image, audio or video file related to the product.
@@ -1247,7 +1298,18 @@ namespace OnixData.Legacy
         public enum MediaFileEnum { MediaFile, mediafile };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public MediaFileEnum[] MediaFilesChoice;
+        public MediaFileEnum[] MediaFilesChoice
+        {
+            get
+            {
+                if (MediaFile == null) return null;
+                MediaFileEnum choice = SerializationSettings.UseShortTags ? MediaFileEnum.mediafile : MediaFileEnum.MediaFile;
+                MediaFileEnum[] result = new MediaFileEnum[MediaFile.Length];
+                for (int i = 0; i < MediaFile.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together identify an imprint or brand under which the product is marketed. The composite must carry either a name code or a name or both.
@@ -1260,7 +1322,18 @@ namespace OnixData.Legacy
         public enum ImprintEnum { Imprint, imprint };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ImprintEnum[] ImprintsChoice;
+        public ImprintEnum[] ImprintsChoice
+        {
+            get
+            {
+                if (Imprint == null) return null;
+                ImprintEnum choice = SerializationSettings.UseShortTags ? ImprintEnum.imprint : ImprintEnum.Imprint;
+                ImprintEnum[] result = new ImprintEnum[Imprint.Length];
+                for (int i = 0; i < Imprint.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// The name of a city or town associated with the imprint or publisher.
@@ -1278,7 +1351,11 @@ namespace OnixData.Legacy
         public enum CityOfPublicationEnum { CityOfPublication, b209 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public CityOfPublicationEnum CityOfPublicationChoice;
+        public CityOfPublicationEnum CityOfPublicationChoice
+        {
+            get { return SerializationSettings.UseShortTags ? CityOfPublicationEnum.b209 : CityOfPublicationEnum.CityOfPublication; }
+            set { }
+        }
 
         /// <summary>
         /// A code identifying the country where the product is issued.
@@ -1292,7 +1369,11 @@ namespace OnixData.Legacy
         public enum CountryOfPublicationEnum { CountryOfPublication, b083 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public CountryOfPublicationEnum CountryOfPublicationChoice;
+        public CountryOfPublicationEnum CountryOfPublicationChoice
+        {
+            get { return SerializationSettings.UseShortTags ? CountryOfPublicationEnum.b083 : CountryOfPublicationEnum.CountryOfPublication; }
+            set { }
+        }
 
         /// <summary>
         /// An ONIX code which identifies the status of a published product.
@@ -1308,7 +1389,11 @@ namespace OnixData.Legacy
         public enum PublishingStatusEnum { PublishingStatus, b394 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public PublishingStatusEnum PublishingStatusChoice;
+        public PublishingStatusEnum PublishingStatusChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PublishingStatusEnum.b394 : PublishingStatusEnum.PublishingStatus; }
+            set { }
+        }
 
         /// <summary>
         /// Date when information about the product can be issued to the general public. (Some publishers issue advance information under embargo.)
@@ -1322,7 +1407,11 @@ namespace OnixData.Legacy
         public enum AnnouncementDateEnum { AnnouncementDate, b086 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public AnnouncementDateEnum AnnouncementDateChoice;
+        public AnnouncementDateEnum AnnouncementDateChoice
+        {
+            get { return SerializationSettings.UseShortTags ? AnnouncementDateEnum.b086 : AnnouncementDateEnum.AnnouncementDate; }
+            set { }
+        }
 
         /// <summary>
         /// Date when information about the product can be issued to the book trade, while remaining embargoed for the general public. (Some publishers issue advance information under embargo.)
@@ -1336,7 +1425,11 @@ namespace OnixData.Legacy
         public enum TradeAnnouncementDateEnum { TradeAnnouncementDate, b362 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public TradeAnnouncementDateEnum TradeAnnouncementDateChoice;
+        public TradeAnnouncementDateEnum TradeAnnouncementDateChoice
+        {
+            get { return SerializationSettings.UseShortTags ? TradeAnnouncementDateEnum.b362 : TradeAnnouncementDateEnum.TradeAnnouncementDate; }
+            set { }
+        }
 
         /// <summary>
         /// The date of first publication of this product in the home market of the publisher (that is, under the current ISBN or other identifier, as distinct from the date of first publication of the work, which may be given in <see cref="YearFirstPublished"/> on the next page).
@@ -1356,7 +1449,11 @@ namespace OnixData.Legacy
         public enum PublicationDateEnum { PublicationDate, b003 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public PublicationDateEnum PublicationDateChoice;
+        public PublicationDateEnum PublicationDateChoice
+        {
+            get { return SerializationSettings.UseShortTags ? PublicationDateEnum.b003 : PublicationDateEnum.PublicationDate; }
+            set { }
+        }
 
         public uint PublicationDateNum
         {
@@ -1383,7 +1480,11 @@ namespace OnixData.Legacy
         public enum YearFirstPublishedEnum { YearFirstPublished, b088 };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public YearFirstPublishedEnum YearFirstPublishedChoice;
+        public YearFirstPublishedEnum YearFirstPublishedChoice
+        {
+            get { return SerializationSettings.UseShortTags ? YearFirstPublishedEnum.b088 : YearFirstPublishedEnum.YearFirstPublished; }
+            set { }
+        }
 
         public uint YearFirstPublishedNum
         {
@@ -1410,7 +1511,18 @@ namespace OnixData.Legacy
         public enum SalesRightsEnum { SalesRights, salesrights };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SalesRightsEnum[] SalesRightsChoice;
+        public SalesRightsEnum[] SalesRightsChoice
+        {
+            get
+            {
+                if (SalesRights == null) return null;
+                SalesRightsEnum choice = SerializationSettings.UseShortTags ? SalesRightsEnum.salesrights : SalesRightsEnum.SalesRights;
+                SalesRightsEnum[] result = new SalesRightsEnum[SalesRights.Length];
+                for (int i = 0; i < SalesRights.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together identify a country or countries in which the product is not for sale, together with the ISBN and/or other product identifier and/or the name of the publisher of the same work in the specified country/ies.
@@ -1423,7 +1535,18 @@ namespace OnixData.Legacy
         public enum NotForSaleEnum { NotForSale, notforsale };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public NotForSaleEnum[] NotForSaleChoice;
+        public NotForSaleEnum[] NotForSaleChoice
+        {
+            get
+            {
+                if (NotForSale == null) return null;
+                NotForSaleEnum choice = SerializationSettings.UseShortTags ? NotForSaleEnum.notforsale : NotForSaleEnum.NotForSale;
+                NotForSaleEnum[] result = new NotForSaleEnum[NotForSale.Length];
+                for (int i = 0; i < NotForSale.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// An optional and repeatable group of data elements which together identify a measurement and the units in which it is expressed.
@@ -1436,7 +1559,18 @@ namespace OnixData.Legacy
         public enum MeasureEnum { Measure, measure };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public MeasureEnum[] MeasurementsChoice;
+        public MeasureEnum[] MeasurementsChoice
+        {
+            get
+            {
+                if (Measure == null) return null;
+                MeasureEnum choice = SerializationSettings.UseShortTags ? MeasureEnum.measure : MeasureEnum.Measure;
+                MeasureEnum[] result = new MeasureEnum[Measure.Length];
+                for (int i = 0; i < Measure.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together define a product classification (NOT to be confused with a subject classification).
@@ -1450,7 +1584,18 @@ namespace OnixData.Legacy
         public enum ProductClassificationEnum { ProductClassification, productclassification };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductClassificationEnum[] ProductClassificationsChoice;
+        public ProductClassificationEnum[] ProductClassificationsChoice
+        {
+            get
+            {
+                if (ProductClassification == null) return null;
+                ProductClassificationEnum choice = SerializationSettings.UseShortTags ? ProductClassificationEnum.productclassification : ProductClassificationEnum.ProductClassification;
+                ProductClassificationEnum[] result = new ProductClassificationEnum[ProductClassification.Length];
+                for (int i = 0; i < ProductClassification.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together describe a product which has a specified relationship to the product which is described in the ONIX record.
@@ -1467,7 +1612,18 @@ namespace OnixData.Legacy
         public enum RelatedProductEnum { RelatedProduct, relatedproduct };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public RelatedProductEnum[] RelatedProductsChoice;
+        public RelatedProductEnum[] RelatedProductsChoice
+        {
+            get
+            {
+                if (RelatedProduct == null) return null;
+                RelatedProductEnum choice = SerializationSettings.UseShortTags ? RelatedProductEnum.relatedproduct : RelatedProductEnum.RelatedProduct;
+                RelatedProductEnum[] result = new RelatedProductEnum[RelatedProduct.Length];
+                for (int i = 0; i < RelatedProduct.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A repeatable group of data elements which together give details of a trade supply source and the product price and availability from that source.
@@ -1480,7 +1636,18 @@ namespace OnixData.Legacy
         public enum SupplyDetailEnum { SupplyDetail, supplydetail };
         [XmlIgnore]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SupplyDetailEnum[] SupplyDetailsChoice;
+        public SupplyDetailEnum[] SupplyDetailsChoice
+        {
+            get
+            {
+                if (SupplyDetail == null) return null;
+                SupplyDetailEnum choice = SerializationSettings.UseShortTags ? SupplyDetailEnum.supplydetail : SupplyDetailEnum.SupplyDetail;
+                SupplyDetailEnum[] result = new SupplyDetailEnum[SupplyDetail.Length];
+                for (int i = 0; i < SupplyDetail.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         #endregion
 
@@ -1505,7 +1672,7 @@ namespace OnixData.Legacy
                     {
                         FoundMeasurement =
                             MeasureList.Where(x => (x.MeasureTypeCode == Type) &&
-                                                   (OnixLegacyMeasure.MEASURE_WEIGHTS_US.Contains(x.MeasureUnitCode))).LastOrDefault();
+                                                   (x.MeasureUnitCode == null || OnixLegacyMeasure.MEASURE_WEIGHTS_US.Contains(x.MeasureUnitCode.Value))).LastOrDefault();
                     }
                 }
 

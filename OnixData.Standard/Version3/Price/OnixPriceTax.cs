@@ -21,6 +21,7 @@ namespace OnixData.Version3.Price
         [XmlType(IncludeInSchema = false)]
         public enum TaxTypeEnum { TaxType, x470 }
         [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TaxTypeEnum TaxTypeChoice
         {
@@ -35,6 +36,7 @@ namespace OnixData.Version3.Price
         [XmlType(IncludeInSchema = false)]
         public enum TaxRateCodeEnum { TaxRateCode, x471 }
         [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TaxRateCodeEnum TaxRateCodeChoice
         {
@@ -49,6 +51,7 @@ namespace OnixData.Version3.Price
         [XmlType(IncludeInSchema = false)]
         public enum TaxRatePercentEnum { TaxRatePercent, x472 }
         [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TaxRatePercentEnum TaxRatePercentChoice
         {
@@ -68,7 +71,9 @@ namespace OnixData.Version3.Price
         public decimal? TaxableAmount { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum TaxableAmountEnum { TaxableAmount, x473 }
-        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TaxableAmountEnum TaxableAmountChoice
         {
             get { return SerializationSettings.UseShortTags ? TaxableAmountEnum.x473 : TaxableAmountEnum.TaxableAmount; }
@@ -84,7 +89,9 @@ namespace OnixData.Version3.Price
         public decimal? TaxAmount { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum TaxAmountEnum { TaxAmount, x474 }
-        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public TaxAmountEnum TaxAmountChoice
         {
             get { return SerializationSettings.UseShortTags ? TaxAmountEnum.x474 : TaxAmountEnum.TaxAmount; }

@@ -331,10 +331,10 @@ namespace OnixData
 
                     if ((CurrentRecord != null) &&
                         (CurrentRecord.CollateralDetail != null) && 
-                        (CurrentRecord.CollateralDetail.OnixTextContentList != null) && 
-                        (CurrentRecord.CollateralDetail.OnixTextContentList.Length > 0))
+                        (CurrentRecord.CollateralDetail.TextContent != null) && 
+                        (CurrentRecord.CollateralDetail.TextContent.Length > 0))
                     {
-                        CurrentCommList.AddRange(CurrentRecord.CollateralDetail.OnixTextContentList);
+                        CurrentCommList.AddRange(CurrentRecord.CollateralDetail.TextContent);
                     }
                 }
                 catch (Exception ex)

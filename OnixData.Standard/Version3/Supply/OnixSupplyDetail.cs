@@ -119,7 +119,7 @@ namespace OnixData.Version3.Supply
             if ((this.OnixPriceList != null) && (this.OnixPriceList.Length > 0))
             {
                 bHasUSDPrice =
-                    this.OnixPriceList.Any(x => (x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD"));
+                    this.OnixPriceList.Any(x => (x.PriceType == null || (int)x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD"));
             }
 
             return bHasUSDPrice;

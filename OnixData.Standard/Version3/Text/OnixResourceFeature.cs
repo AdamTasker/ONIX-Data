@@ -1,65 +1,66 @@
+using System.ComponentModel;
+using System.Xml.Serialization;
+using OnixData.Version3.Lists;
+using OnixData.Version3.Xml.Enums;
+
 namespace OnixData.Version3.Text
 {
     /// <remarks/>
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class OnixResourceFeature
     {
-        private int resourceFeatureTypeField;
-        private string featureValueField;
-        private string featureNoteField;
-        
+
         #region Reference Tags
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ResourceFeatureType", IsNullable = false)]
-        public int ResourceFeatureType
+        [XmlChoiceIdentifier("ResourceFeatureTypeChoice")]
+        [XmlElement("ResourceFeatureType")]
+        [XmlElement("x438")]
+        public OnixList160 ResourceFeatureType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ResourceFeatureTypeEnum { ResourceFeatureType, x438 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ResourceFeatureTypeEnum ResourceFeatureTypeChoice
         {
-            get => resourceFeatureTypeField;
-            set => resourceFeatureTypeField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("FeatureValue", IsNullable = true)]
-        public string FeatureValue
-        {
-            get => featureValueField;
-            set => featureValueField = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("FeatureNote", IsNullable = true)]
-        public string FeatureNote
-        {
-            get => featureNoteField;
-            set => featureNoteField = value;
+            get { return SerializationSettings.UseShortTags ? ResourceFeatureTypeEnum.x438 : ResourceFeatureTypeEnum.ResourceFeatureType; }
+            set { }
         }
 
-        #endregion
-
-        #region Short Tags
-
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x438", IsNullable = false)]
-        public int x438
+        [XmlChoiceIdentifier("FeatureValueChoice")]
+        [XmlElement("FeatureValue")]
+        [XmlElement("x439")]
+        public string FeatureValue { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public FeatureValueEnum FeatureValueChoice
         {
-            get => ResourceFeatureType;
-            set => ResourceFeatureType = value;
+            get { return SerializationSettings.UseShortTags ? FeatureValueEnum.x439 : FeatureValueEnum.FeatureValue; }
+            set { }
         }
-        
+
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x439", IsNullable = true)]
-        public string x439
+        [XmlChoiceIdentifier("FeatureNoteChoice")]
+        [XmlElement("FeatureNote")]
+        [XmlElement("x440")]
+        public string[] FeatureNote { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public FeatureNoteEnum[] FeatureNoteChoice
         {
-            get => FeatureValue;
-            set => FeatureValue = value;
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("x440", IsNullable = true)]
-        public string x440
-        {
-            get => FeatureNote;
-            set => FeatureNote = value;
+            get
+            {
+                if (FeatureNote == null) return null;
+                FeatureNoteEnum choice = SerializationSettings.UseShortTags ? FeatureNoteEnum.x440 : FeatureNoteEnum.FeatureNote;
+                FeatureNoteEnum[] result = new FeatureNoteEnum[FeatureNote.Length];
+                for (int i = 0; i < FeatureNote.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
         }
 
         #endregion

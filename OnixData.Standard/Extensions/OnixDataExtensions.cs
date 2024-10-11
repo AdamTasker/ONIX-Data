@@ -171,10 +171,10 @@ namespace OnixData.Extensions
 
         public static bool HasValidEAN(this OnixLegacyProduct TargetProduct)
         {
-            bool   IsValid = false;
-            string EAN     = TargetProduct.EAN;
+            bool IsValid = false;
+            string EAN = TargetProduct.ISBN13;
 
-            if (!String.IsNullOrEmpty(EAN))
+            if (!string.IsNullOrEmpty(EAN))
                 IsValid = EAN.IsValidEAN();
 
             return IsValid;

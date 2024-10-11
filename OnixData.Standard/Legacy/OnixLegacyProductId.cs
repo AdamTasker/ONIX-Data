@@ -1,98 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using OnixData.Legacy.Lists;
 
 namespace OnixData.Legacy
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixLegacyProductId
     {
-        public OnixLegacyProductId()
-        {
-            ProductIDType = IDValue = "";
-        }
-
-        private string productIDTypeField;
-        private string iDValueField;
-
-        #region Helpers
-
-        public int ProductIDTypeNum
-        {
-            get
-            {
-                int nPidTypeNum = -1;
-
-                if (!String.IsNullOrEmpty(this.productIDTypeField))
-                    Int32.TryParse(this.productIDTypeField, out nPidTypeNum);
-
-                return nPidTypeNum;
-            }
-        }
-
-        #endregion
 
         #region Reference Tags
 
-        /// <remarks/>
-        public string ProductIDType
+        [XmlChoiceIdentifier("ProductIDTypeChoice")]
+        [XmlElement("ProductIDType")]
+        [XmlElement("b221")]
+        public OnixList5 ProductIDType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductIDTypeEnum { ProductIDType, b221 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductIDTypeEnum ProductIDTypeChoice
         {
-            get
-            {
-                return this.productIDTypeField;
-            }
-            set
-            {
-                this.productIDTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? ProductIDTypeEnum.b221 : ProductIDTypeEnum.ProductIDType; }
+            set { }
         }
 
-        /// <remarks/>
-        public string IDValue
+        [XmlChoiceIdentifier("IDTypeNameChoice")]
+        [XmlElement("IDTypeName")]
+        [XmlElement("b233")]
+        public string IDTypeName { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum IDTypeNameEnum { IDTypeName, b233 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IDTypeNameEnum IDTypeNameChoice
         {
-            get
-            {
-                return this.iDValueField;
-            }
-            set
-            {
-                this.iDValueField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? IDTypeNameEnum.b233 : IDTypeNameEnum.IDTypeName; }
+            set { }
         }
 
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string b221
+        [XmlChoiceIdentifier("IDValueChoice")]
+        [XmlElement("IDValue")]
+        [XmlElement("b244")]
+        public string IDValue { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum IDValueEnum { IDValue, b244 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IDValueEnum IDValueChoice
         {
-            get
-            {
-                return ProductIDType;
-            }
-            set
-            {
-                ProductIDType = value;
-            }
-        }
-
-        /// <remarks/>
-        public string b244
-        {
-            get
-            {
-                return IDValue;
-            }
-            set
-            {
-                IDValue = value;
-            }
+            get { return SerializationSettings.UseShortTags ? IDValueEnum.b244 : IDValueEnum.IDValue; }
+            set { }
         }
 
         #endregion
+
     }
 }

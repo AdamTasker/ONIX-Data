@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
+using OnixData.Version3.Lists;
 
 namespace OnixData.Version3.Header
 {
@@ -162,7 +163,7 @@ namespace OnixData.Version3.Header
         [XmlChoiceIdentifier("DefaultPriceTypeChoice")]
         [XmlElement("DefaultPriceType")]
         [XmlElement("x310")]
-        public string DefaultPriceType { get; set; }
+        public OnixList58? DefaultPriceType { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum DefaultPriceTypeEnum { DefaultPriceType, x310 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
