@@ -1,83 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
+using OnixData.Version3.Lists;
 
 namespace OnixData.Version3.Publishing
 {
-    /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    public class OnixPubDate
+    /// <summary>
+    /// A group of data elements which together specify a date associated with the publishing of the product.
+    /// Optional, but where known, at least a date of publication must be specified either in <see cref="OnixPublishingDetail.PublishingDate"/> (as a ‘global’ pub date) or in <see cref="Market.OnixMarketPublishingDetail.MarketDate"/>.
+    /// Other dates related to the publishing of a product can be sent in further repeats of the composite.
+    /// </summary>
+    public class OnixPubDate : OnixDate
     {
-        #region CONSTANTS
-
-        public const int CONST_PUB_DT_ROLE_NORMAL       = 1;
-        public const int CONST_PUB_DT_ROLE_ON_SALE      = 2;
-        public const int CONST_PUB_DT_ROLE_TRADE_ANN    = 10;
-        public const int CONST_PUB_DT_ROLE_PUB_FIRST    = 11;
-        public const int CONST_PUB_DT_ROLE_LAST_REPRINT = 12;
-        public const int CONST_PUB_DT_ROLE_OOP_FIRST    = 13;
-        public const int CONST_PUB_DT_ROLE_LAST_REISSUE = 16;
-        public const int CONST_PUB_DT_ROLE_PRINT_CTRPRT = 19;
-
-        #endregion
-
-        public OnixPubDate()
-        {
-            PublishingDateRole = Date = "";
-        }
-
-        private string dateField;
-        private string pubDateRoleField;
-
-        #region Helper Methods
-
-        public int PubDateRoleNum
-        {
-            get
-            {
-                int nPubDateRoleNum = -1;
-
-                if (!String.IsNullOrEmpty(PublishingDateRole))
-                    Int32.TryParse(PublishingDateRole, out nPubDateRoleNum);
-
-                return nPubDateRoleNum;
-            }
-        }
-
-        #endregion
 
         #region Reference Tags
 
-        public string Date
+
+        /// <summary>
+        /// An ONIX code indicating the significance of the date, eg publication date, announcement date, latest reprint date.
+        /// Mandatory in each occurrence of the <see cref="OnixPubDate"/> composite, and non-repeating.
+        /// </summary>
+        /// <remarks>Onix List 163</remarks>
+        [XmlChoiceIdentifier("PublishingDateRoleChoice")]
+        [XmlElement("PublishingDateRole")]
+        [XmlElement("x448")]
+        public OnixList163 PublishingDateRole { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PublishingDateRoleEnum { PublishingDateRole, x448 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PublishingDateRoleEnum PublishingDateRoleChoice
         {
-            get { return this.dateField; }
-            set { this.dateField = value; }
-        }
-
-        /// <remarks/>
-        public string PublishingDateRole
-        {
-            get { return this.pubDateRoleField; }
-            set { this.pubDateRoleField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        public string b306
-        {
-            get { return Date; }
-            set { Date = value; }
-        }        
-
-        /// <remarks/>
-        public string x448
-        {
-            get { return PublishingDateRole; }
-            set { PublishingDateRole = value; }
+            get { return SerializationSettings.UseShortTags ? PublishingDateRoleEnum.x448 : PublishingDateRoleEnum.PublishingDateRole; }
+            set { }
         }
 
         #endregion

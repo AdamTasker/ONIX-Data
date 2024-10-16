@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OnixData.Version3.Lists;
 
 namespace OnixData.Version3.Publishing
 {
@@ -185,10 +184,10 @@ namespace OnixData.Version3.Publishing
                 if ((DateList != null) && (DateList.Length > 0))
                 {
                     OnixPubDate FoundOnSaleDate =
-                        DateList.Where(x => x.PubDateRoleNum == OnixPubDate.CONST_PUB_DT_ROLE_ON_SALE).LastOrDefault();
+                        DateList.Where(x => x.PublishingDateRole == OnixList163.SalesEmbargoDate).LastOrDefault();
 
-                    if ((FoundOnSaleDate != null) && !String.IsNullOrEmpty(FoundOnSaleDate.Date))
-                        sOnSaleDate = FoundOnSaleDate.Date;
+                    if ((FoundOnSaleDate != null) && !string.IsNullOrEmpty(FoundOnSaleDate.Date.Value))
+                        sOnSaleDate = FoundOnSaleDate.Date.ReadableDate;
                 }
 
                 return sOnSaleDate;
@@ -207,11 +206,11 @@ namespace OnixData.Version3.Publishing
                 {                    
                     OnixPubDate FoundPubDate =
                         PubDtList
-                        .Where(x => (x.PubDateRoleNum == OnixPubDate.CONST_PUB_DT_ROLE_NORMAL) || (x.PubDateRoleNum == OnixPubDate.CONST_PUB_DT_ROLE_PRINT_CTRPRT))
+                        .Where(x => (x.PublishingDateRole == OnixList163.PublicationDate) || (x.PublishingDateRole == OnixList163.PublicationDateOfPrintCounterpart))
                         .LastOrDefault();
 
-                    if ((FoundPubDate != null) && !String.IsNullOrEmpty(FoundPubDate.Date))
-                        sPubDate = FoundPubDate.Date;
+                    if ((FoundPubDate != null) && !string.IsNullOrEmpty(FoundPubDate.Date.Value))
+                        sPubDate = FoundPubDate.Date.ReadableDate;
                 }
 
                 return sPubDate;
@@ -224,8 +223,8 @@ namespace OnixData.Version3.Publishing
             {
                 int nTypeNum = OnixSalesRights.CONST_MISSING_NUM_VALUE;
 
-                if (!String.IsNullOrEmpty(ROWSalesRightsType))
-                    Int32.TryParse(ROWSalesRightsType, out nTypeNum);
+                if (!string.IsNullOrEmpty(ROWSalesRightsType))
+                    int.TryParse(ROWSalesRightsType, out nTypeNum);
 
                 return nTypeNum;
             }

@@ -31,7 +31,7 @@ namespace OnixData.Version3
         [XmlChoiceIdentifier("DateChoice")]
         [XmlElement("Date")]
         [XmlElement("b306")]
-        public string Date { get; set; }
+        public OnixDateWithFormat Date { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum DateEnum { Date, b306 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
