@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using OnixData.Version3.Market;
 using OnixData.Version3.Supply;
@@ -10,29 +10,16 @@ using OnixData.Version3.Supply;
 namespace OnixData.Version3
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixProductSupply
     {
-        public OnixProductSupply()
-        {
-            Market                 = new OnixMarket();
-            MarketPublishingDetail = new OnixMarketPublishingDetail();
-
-            supplyDetailField = shortSupplyDetailField = new OnixSupplyDetail[0];
-        }
-
-        private OnixMarket                 marketField;
-        private OnixMarketPublishingDetail marketPublishingDetailField;
-        private OnixSupplyDetail[]         supplyDetailField;
-        private OnixSupplyDetail[]         shortSupplyDetailField;
-
         #region Helper Methods
 
         public OnixSupplyDetail GetSupplyDetailWithUSDPrice(bool pbCheckHasReturnCodeTypeBisac = false)
         {
             OnixSupplyDetail USDSupplyDetail = new OnixSupplyDetail();
 
-            foreach (OnixSupplyDetail TmpSupplyDetail in OnixSupplyDetailList)
+            foreach (OnixSupplyDetail TmpSupplyDetail in SupplyDetail)
             {
                 if (pbCheckHasReturnCodeTypeBisac)
                 {
@@ -52,104 +39,64 @@ namespace OnixData.Version3
             return USDSupplyDetail;
         }
 
-        public OnixSupplyDetail[] OnixSupplyDetailList
-        {
-            get
-            {
-                OnixSupplyDetail[] SupplyDetailList = new OnixSupplyDetail[0];
-
-                if (this.supplyDetailField != null)
-                    SupplyDetailList = this.supplyDetailField;
-                else if (this.shortSupplyDetailField != null)
-                    SupplyDetailList = this.shortSupplyDetailField;
-                else
-                    SupplyDetailList = new OnixSupplyDetail[0];
-
-                return SupplyDetailList;
-            }
-        }
-
-        public OnixSupplyDetail USDSupplyDetail
-        {
-            get
-            {
-                OnixSupplyDetail usdSupplyDetail = new OnixSupplyDetail();
-
-                foreach (OnixSupplyDetail tmpSupplyDetail in OnixSupplyDetailList)
-                {
-                    if (tmpSupplyDetail.HasUSDPrice())
-                    {
-                        usdSupplyDetail = tmpSupplyDetail;
-                        break;
-                    }
-                }
-
-                return usdSupplyDetail;
-            }
-        }
-
         #endregion
 
         #region Reference Tags
 
         /// <remarks/>
-        public OnixMarket Market
+        [XmlChoiceIdentifier("XmlChoiceMarket")]
+        [XmlElement("Market")]
+        [XmlElement("market")]
+        public OnixMarket[] Market { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MarketEnum { Market, market }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MarketEnum[] XmlChoiceMarket
         {
             get
             {
-                return this.marketField;
+                if (Market == null) return null;
+                return SerializationHelper.CreateEnumArray(MarketEnum.market, MarketEnum.Market, Market.Length);
             }
-            set
-            {
-                this.marketField = value;
-            }
+            set { }
         }
 
         /// <remarks/>
-        public OnixMarketPublishingDetail MarketPublishingDetail
+        [XmlChoiceIdentifier("XmlChoiceMarketPublishingDetail")]
+        [XmlElement("MarketPublishingDetail")]
+        [XmlElement("marketpublishingdetail")]
+        public OnixMarketPublishingDetail MarketPublishingDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum MarketPublishingDetailEnum { MarketPublishingDetail, marketpublishingdetail }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public MarketPublishingDetailEnum XmlChoiceMarketPublishingDetail
+        {
+            get { return SerializationSettings.UseShortTags ? MarketPublishingDetailEnum.marketpublishingdetail : MarketPublishingDetailEnum.MarketPublishingDetail; }
+            set { }
+        }
+
+        /// <remarks/>
+        [XmlChoiceIdentifier("XmlChoiceSupplyDetail")]
+        [XmlElement("SupplyDetail")]
+        [XmlElement("supplydetail")]
+        public OnixSupplyDetail[] SupplyDetail { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SupplyDetailEnum { SupplyDetail, supplydetail }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SupplyDetailEnum[] XmlChoiceSupplyDetail
         {
             get
             {
-                return this.marketPublishingDetailField;
+                if (SupplyDetail == null) return null;
+                return SerializationHelper.CreateEnumArray(SupplyDetailEnum.supplydetail, SupplyDetailEnum.SupplyDetail, SupplyDetail.Length);
             }
-            set
-            {
-                this.marketPublishingDetailField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("SupplyDetail")]
-        public OnixSupplyDetail[] SupplyDetail
-        {
-            get { return this.supplyDetailField; }
-            set { this.supplyDetailField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public OnixMarket market
-        {
-            get { return Market; }
-            set { Market = value; }
-        }
-
-        /// <remarks/>
-        public OnixMarketPublishingDetail marketpublishingdetail
-        {
-            get { return MarketPublishingDetail; }
-            set { MarketPublishingDetail = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("supplydetail")]
-        public OnixSupplyDetail[] supplydetail
-        {
-            get { return this.shortSupplyDetailField; }
-            set { this.shortSupplyDetailField = value; }
+            set { }
         }
 
         #endregion

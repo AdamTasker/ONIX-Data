@@ -107,11 +107,11 @@ namespace OnixData.Extensions
                 {
                     foreach (OnixProductSupply TmpSupply in pOnixProduct.ProductSupply)
                     {
-                        foreach (OnixSupplyDetail TmpSupplyDetail in TmpSupply.OnixSupplyDetailList)
+                        foreach (OnixSupplyDetail TmpSupplyDetail in TmpSupply.SupplyDetail)
                         {
-                            if ((TmpSupplyDetail != null) && (TmpSupplyDetail.OnixPriceList != null))
+                            if ((TmpSupplyDetail != null) && (TmpSupplyDetail.Price != null))
                             {
-                                foreach (OnixPrice TmpPrice in TmpSupplyDetail.OnixPriceList)
+                                foreach (OnixPrice TmpPrice in TmpSupplyDetail.Price)
                                 {
                                     if (!string.IsNullOrEmpty(pOnixHeader.DefaultCurrencyCode) && string.IsNullOrEmpty(TmpPrice.CurrencyCode))
                                         TmpPrice.CurrencyCode = pOnixHeader.DefaultCurrencyCode;

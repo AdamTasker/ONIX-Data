@@ -11,7 +11,7 @@ namespace OnixData.Version3.Publishing
     {
         public OnixPublishingDetail()
         {
-            PublishingStatus = ROWSalesRightsType = "";
+            PublishingStatus = "";
 
             Imprint        = new OnixImprint[0];
             Publisher      = new OnixPublisher[0];
@@ -21,12 +21,10 @@ namespace OnixData.Version3.Publishing
             salesRightsList = null;
             notForSaleList  = null;
 
-            MissingSalesRightsDataFlag = false;
             SalesRightsInUSFlag        = SalesRightsInNonUSCountryFlag = false;
             NoSalesRightsInUSFlag      = SalesRightsAllWorldFlag       = false;
         }
 
-        public bool MissingSalesRightsDataFlag { get; set; }
         public bool SalesRightsInUSFlag { get; set; }
         public bool SalesRightsInNonUSCountryFlag { get; set; }
         public bool NoSalesRightsInUSFlag { get; set; }
@@ -49,7 +47,7 @@ namespace OnixData.Version3.Publishing
         private List<string> salesRightsList;
         private List<string> notForSaleList;
 
-        private string rowSalesRightsTypeField;
+        private OnixList46? rowSalesRightsTypeField;
         private string countryOfPublicationField;
 
         #region ONIX Lists
@@ -134,7 +132,7 @@ namespace OnixData.Version3.Publishing
                                    .ToList()
                                    .Where(x => !String.IsNullOrEmpty(x.Territory.RegionsIncluded))
                                    .ToList()
-                                   .ForEach(x => salesRightsList.AddRange(x.Territory.RegionsExcluded.Split(' ').ToList()));
+                                   .ForEach(x => salesRightsList.AddRange(x.Territory.RegionsIncluded.Split(' ').ToList()));
                     }
 
                     if (notForSaleList == null)
@@ -151,7 +149,7 @@ namespace OnixData.Version3.Publishing
                                    .ToList()
                                    .Where(x => !String.IsNullOrEmpty(x.Territory.RegionsIncluded))
                                    .ToList()
-                                   .ForEach(x => notForSaleList.AddRange(x.Territory.RegionsExcluded.Split(' ').ToList()));
+                                   .ForEach(x => notForSaleList.AddRange(x.Territory.RegionsIncluded.Split(' ').ToList()));
                     }
                 }
 
@@ -203,7 +201,7 @@ namespace OnixData.Version3.Publishing
                 string sPubDate = "";
 
                 if ((PubDtList != null) && (PubDtList.Length > 0))
-                {                    
+                {
                     OnixPubDate FoundPubDate =
                         PubDtList
                         .Where(x => (x.PublishingDateRole == OnixList163.PublicationDate) || (x.PublishingDateRole == OnixList163.PublicationDateOfPrintCounterpart))
@@ -217,55 +215,39 @@ namespace OnixData.Version3.Publishing
             }
         }
 
-        public int ROWSalesRightsTypeNum
-        {
-            get
-            {
-                int nTypeNum = OnixSalesRights.CONST_MISSING_NUM_VALUE;
-
-                if (!string.IsNullOrEmpty(ROWSalesRightsType))
-                    int.TryParse(ROWSalesRightsType, out nTypeNum);
-
-                return nTypeNum;
-            }
-        }
-
         public void SetRightsFlags()
         {
-            int[] aSalesRightsColl    = OnixSalesRights.SALES_WITH_RIGHTS_COLL;
-            int[] aNonSalesRightsColl = OnixSalesRights.NO_SALES_RIGHTS_COLL;
+            OnixList46[] aSalesRightsColl    = OnixSalesRights.SALES_WITH_RIGHTS_COLL;
+            OnixList46[] aNonSalesRightsColl = OnixSalesRights.NO_SALES_RIGHTS_COLL;
 
             OnixSalesRights[] SalesRightsList = 
-                this.OnixSalesRightsList.Where(x => aSalesRightsColl.Contains(x.SalesRightTypeNum)).ToArray();
+                this.OnixSalesRightsList.Where(x => aSalesRightsColl.Contains(x.SalesRightsType)).ToArray();
 
             OnixSalesRights[] NotForSaleRightsList = 
-                this.OnixSalesRightsList.Where(x => aNonSalesRightsColl.Contains(x.SalesRightTypeNum)).ToArray();
+                this.OnixSalesRightsList.Where(x => aNonSalesRightsColl.Contains(x.SalesRightsType)).ToArray();
 
             if ((SalesRightsList != null) && (SalesRightsList.Length > 0))
             {
-                MissingSalesRightsDataFlag =
-                    this.OnixSalesRightsList.Any(x => x.SalesRightTypeNum == OnixSalesRights.CONST_MISSING_NUM_VALUE);
-
                 SalesRightsInUSFlag =
-                    SalesRightsList.Any(x => aSalesRightsColl.Contains(x.SalesRightTypeNum) && (x.RightsIncludedCountryList.Contains("US")));
+                    Array.Exists(SalesRightsList, x => aSalesRightsColl.Contains(x.SalesRightsType) && (x.RightsIncludedCountryList.Contains("US")));
 
                 SalesRightsInNonUSCountryFlag =
-                    SalesRightsList.Any(x => aSalesRightsColl.Contains(x.SalesRightTypeNum) &&
+                    Array.Exists(SalesRightsList, x => aSalesRightsColl.Contains(x.SalesRightsType) &&
                                              !x.RightsIncludedCountryList.Contains("US")    &&
                                              !x.RightsIncludedRegionList.Contains("WORLD")  &&
                                              !x.RightsIncludedRegionList.Contains("ROW"));
 
                 NoSalesRightsInUSFlag =
-                    SalesRightsList.Any(x => aNonSalesRightsColl.Contains(x.SalesRightTypeNum) && x.RightsIncludedCountryList.Contains("US"));
+                    Array.Exists(SalesRightsList, x => aNonSalesRightsColl.Contains(x.SalesRightsType) && x.RightsIncludedCountryList.Contains("US"));
                 if (!NoSalesRightsInUSFlag)
                 {
                     NoSalesRightsInUSFlag = 
-                        SalesRightsList.Any(x => aSalesRightsColl.Contains(x.SalesRightTypeNum) &&
+                        Array.Exists(SalesRightsList, x => aSalesRightsColl.Contains(x.SalesRightsType) &&
                                             x.RightsExcludedCountryList.Contains("US"));
                 }
 
                 SalesRightsAllWorldFlag =
-                    SalesRightsList.Any(x => aSalesRightsColl.Contains(x.SalesRightTypeNum) && 
+                    Array.Exists(SalesRightsList, x => aSalesRightsColl.Contains(x.SalesRightsType) && 
                                              (x.RightsIncludedRegionList.Contains("WORLD") || x.RightsIncludedRegionList.Contains("ROW")));
             }
 
@@ -274,16 +256,16 @@ namespace OnixData.Version3.Publishing
                 if (!NoSalesRightsInUSFlag)
                 {
                     NoSalesRightsInUSFlag =
-                        NotForSaleRightsList.Any(x => x.RightsIncludedCountryList.Contains("US"));
+                        Array.Exists(NotForSaleRightsList, x => x.RightsIncludedCountryList.Contains("US"));
                 }
             }
 
-            if (!String.IsNullOrEmpty(this.ROWSalesRightsType))
+            if (ROWSalesRightsType != null)
             {
                 if (!SalesRightsAllWorldFlag)
                 {
                     SalesRightsAllWorldFlag =
-                        OnixSalesRights.SALES_WITH_RIGHTS_COLL.Contains(this.ROWSalesRightsTypeNum);
+                        OnixSalesRights.SALES_WITH_RIGHTS_COLL.Contains(ROWSalesRightsType.Value);
                 }
             }
         }
@@ -331,7 +313,7 @@ namespace OnixData.Version3.Publishing
             set { this.salesRightsField = value; }
         }
 
-        public string ROWSalesRightsType
+        public OnixList46? ROWSalesRightsType
         {
             get { return this.rowSalesRightsTypeField; }
             set { this.rowSalesRightsTypeField = value; }
@@ -386,7 +368,7 @@ namespace OnixData.Version3.Publishing
             set { this.shortSalesRightsField = value; }
         }
 
-        public string x456
+        public OnixList46? x456
         {
             get { return this.ROWSalesRightsType; }
             set { this.ROWSalesRightsType = value; }

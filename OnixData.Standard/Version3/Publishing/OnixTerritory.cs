@@ -1,86 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace OnixData.Version3.Publishing
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public class OnixTerritory
     {
-        #region CONSTANTS
-
-        public const string CONST_SALES_WITH_EXCL_RIGHTS     = "01";
-        public const string CONST_SALES_WITH_NON_EXCL_RIGHTS = "02";
-        public const string CONST_NOT_FOR_SALE               = "03";
-
-        #endregion
-
-        public OnixTerritory()
-        {
-            CountriesIncluded = RegionsIncluded = "";
-            CountriesExcluded = RegionsExcluded = "";
-        }
-
-        private string countriesIncludedField;
-        private string regionsIncludedField;
-        private string countriesExludedField;
-        private string regionsExludedField;
 
         #region Reference Tags
 
-        public string CountriesIncluded
+        [XmlChoiceIdentifier("XmlChoiceCountriesIncluded")]
+        [XmlElement("CountriesIncluded")]
+        [XmlElement("x449")]
+        public string CountriesIncluded { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CountriesIncludedEnum { CountriesIncluded, x449 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CountriesIncludedEnum XmlChoiceCountriesIncluded
         {
-            get { return this.countriesIncludedField; }
-            set { this.countriesIncludedField = value; }
+            get { return SerializationSettings.UseShortTags ? CountriesIncludedEnum.x449 : CountriesIncludedEnum.CountriesIncluded; }
+            set { }
         }
 
-        public string RegionsIncluded
+        [XmlChoiceIdentifier("XmlChoiceRegionsIncluded")]
+        [XmlElement("RegionsIncluded")]
+        [XmlElement("x450")]
+        public string RegionsIncluded { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum RegionsIncludedEnum { RegionsIncluded, x450 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RegionsIncludedEnum XmlChoiceRegionsIncluded
         {
-            get { return this.regionsIncludedField; }
-            set { this.regionsIncludedField = value; }
+            get { return SerializationSettings.UseShortTags ? RegionsIncludedEnum.x450 : RegionsIncludedEnum.RegionsIncluded; }
+            set { }
         }
 
-        public string CountriesExcluded
+        [XmlChoiceIdentifier("XmlChoiceCountriesExcluded")]
+        [XmlElement("CountriesExcluded")]
+        [XmlElement("x451")]
+        public string CountriesExcluded { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum CountriesExcludedEnum { CountriesExcluded, x451 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public CountriesExcludedEnum XmlChoiceCountriesExcluded
         {
-            get { return this.countriesExludedField; }
-            set { this.countriesExludedField = value; }
+            get { return SerializationSettings.UseShortTags ? CountriesExcludedEnum.x451 : CountriesExcludedEnum.CountriesExcluded; }
+            set { }
         }
 
-        public string RegionsExcluded
+        [XmlChoiceIdentifier("XmlChoiceRegionsExcluded")]
+        [XmlElement("RegionsExcluded")]
+        [XmlElement("x452")]
+        public string RegionsExcluded { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum RegionsExcludedEnum { RegionsExcluded, x452 }
+        [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RegionsExcludedEnum XmlChoiceRegionsExcluded
         {
-            get { return this.regionsExludedField; }
-            set { this.regionsExludedField = value; }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        public string x449
-        {
-            get { return CountriesIncluded; }
-            set { CountriesIncluded = value; }
-        }
-
-        public string x450
-        {
-            get { return RegionsIncluded; }
-            set { RegionsIncluded = value; }
-        }
-
-        public string x451
-        {
-            get { return CountriesExcluded; }
-            set { CountriesExcluded = value; }
-        }
-
-        public string x452
-        {
-            get { return RegionsExcluded; }
-            set { RegionsExcluded = value; }
+            get { return SerializationSettings.UseShortTags ? RegionsExcludedEnum.x452 : RegionsExcludedEnum.RegionsExcluded; }
+            set { }
         }
 
         #endregion

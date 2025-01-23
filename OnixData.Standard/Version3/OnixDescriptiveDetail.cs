@@ -352,14 +352,14 @@ namespace OnixData.Version3
         /// An ONIX code which indicates whether a product consists of a single item or multiple items. Mandatory in an occurrence of <see cref="OnixDescriptiveDetail"/>, and non-repeating.
         /// </summary>
         /// <remarks>Onix List 2</remarks>
-        [XmlChoiceIdentifier("ProductCompositionChoice")]
+        [XmlChoiceIdentifier("XmlChoiceProductComposition")]
         [XmlElement("ProductComposition")]
         [XmlElement("x314")]
         public int ProductComposition { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum ProductCompositionEnum { ProductComposition, x314 }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductCompositionEnum ProductCompositionChoice
+        public ProductCompositionEnum XmlChoiceProductComposition
         {
             get { return SerializationSettings.UseShortTags ? ProductCompositionEnum.x314 : ProductCompositionEnum.ProductComposition; }
             set { }
@@ -371,12 +371,12 @@ namespace OnixData.Version3
         /// In ONIX 3.0, the handling of multiple-item products has been changed so that the form of the contained items is now specified only in the <see cref="ProductPart"/> composite, which must be included for full description of any multiple-item product.
         /// </summary>
         /// <remarks>Onix List 150</remarks>
-        [XmlChoiceIdentifier("ProductFormChoice")]
+        [XmlChoiceIdentifier("XmlChoiceProductForm")]
         [XmlElement("ProductForm")]
         [XmlElement("b012")]
         public string ProductForm { get; set; }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductFormEnum ProductFormChoice
+        public ProductFormEnum XmlChoiceProductForm
         {
             get { return SerializationSettings.UseShortTags ? ProductFormEnum.b012 : ProductFormEnum.ProductForm; }
             set { }
@@ -387,20 +387,17 @@ namespace OnixData.Version3
         /// Optional, and repeatable in order to provide multiple additional details.
         /// </summary>
         /// <remarks>Onix List 175</remarks>
-        [XmlChoiceIdentifier("ProductFormDetailChoice")]
+        [XmlChoiceIdentifier("XmlChoiceProductFormDetail")]
         [XmlElement("ProductFormDetail")]
         [XmlElement("b333")]
         public string[] ProductFormDetail { get; set; }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductFormDetailEnum[] ProductFormDetailChoice
+        public ProductFormDetailEnum[] XmlChoiceProductFormDetail
         {
             get
             {
                 if (ProductFormDetail == null) return null;
-                ProductFormDetailEnum choice = SerializationSettings.UseShortTags ? ProductFormDetailEnum.b333 : ProductFormDetailEnum.ProductFormDetail;
-                ProductFormDetailEnum[] result = new ProductFormDetailEnum[ProductFormDetail.Length];
-                for (int i = 0; i < ProductFormDetail.Length; i++) result[i] = choice;
-                return result;
+                return SerializationHelper.CreateEnumArray(ProductFormDetailEnum.b333, ProductFormDetailEnum.ProductFormDetail, ProductFormDetail.Length);
             }
             set { }
         }
@@ -409,20 +406,17 @@ namespace OnixData.Version3
         /// An optional group of data elements which together describe an aspect of product form that is too specific to be covered in the <see cref="ProductForm"/> and <see cref="ProductFormDetail"/> elements.
         /// Repeatable in order to describe different aspects of the product form.
         /// </summary>
-        [XmlChoiceIdentifier("ProductFormFeatureChoice")]
+        [XmlChoiceIdentifier("XmlChoiceProductFormFeature")]
         [XmlElement("ProductFormFeature")]
         [XmlElement("productformfeature")]
         public OnixProductFormFeature[] ProductFormFeature { get; set; }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductFormFeatureEnum[] ProductFormFeatureChoice
+        public ProductFormFeatureEnum[] XmlChoiceProductFormFeature
         {
             get
             {
                 if (ProductFormFeature == null) return null;
-                ProductFormFeatureEnum choice = SerializationSettings.UseShortTags ? ProductFormFeatureEnum.productformfeature : ProductFormFeatureEnum.ProductFormFeature;
-                ProductFormFeatureEnum[] result = new ProductFormFeatureEnum[ProductFormFeature.Length];
-                for (int i = 0; i < ProductFormFeature.Length; i++) result[i] = choice;
-                return result;
+                return SerializationHelper.CreateEnumArray(ProductFormFeatureEnum.productformfeature, ProductFormFeatureEnum.ProductFormFeature, ProductFormFeature.Length);
             }
             set { }
         }
@@ -661,7 +655,18 @@ namespace OnixData.Version3
         [XmlType(IncludeInSchema = false)]
         public enum ProductClassificationEnum { ProductClassification, productclassification }
         [XmlIgnore, DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ProductClassificationEnum[] ProductClassificationChoice;
+        public ProductClassificationEnum[] ProductClassificationChoice
+        {
+            get
+            {
+                if (ProductClassification == null) return null;
+                ProductClassificationEnum choice = SerializationSettings.UseShortTags ? ProductClassificationEnum.productclassification : ProductClassificationEnum.ProductClassification;
+                ProductClassificationEnum[] result = new ProductClassificationEnum[ProductClassification.Length];
+                for (int i = 0; i < ProductClassification.Length; i++) result[i] = choice;
+                return result;
+            }
+            set { }
+        }
 
         /// <summary>
         /// A group of data elements which together describe an item which is part of or contained within a multiple-component or multiple-item product or a trade pack.

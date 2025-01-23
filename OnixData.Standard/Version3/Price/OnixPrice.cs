@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
+
 using OnixData.Version3.Lists;
 using OnixData.Version3.Xml.Enums;
 
@@ -184,6 +185,29 @@ namespace OnixData.Version3.Price
             set { }
         }
 
+        /// <summary>
+        /// Free text which further describes the price type, qualifier, constraints and other parameters of the price.
+        /// Optional, and repeatable if parallel descriptions are provided in multiple languages.
+        /// </summary>
+        [XmlChoiceIdentifier("PriceTypeDescriptionChoice")]
+        [XmlElement("PriceTypeDescription")]
+        [XmlElement("j262")]
+        public string[] PriceTypeDescription { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceTypeDescriptionEnum { PriceTypeDescription, j262 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceTypeDescriptionEnum[] PriceTypeDescriptionChoice
+        {
+            get
+            {
+                if (PriceTypeDescription == null) return null;
+                return SerializationHelper.CreateEnumArray(PriceTypeDescriptionEnum.j262, PriceTypeDescriptionEnum.PriceTypeDescription, PriceTypeDescription.Length);
+            }
+            set { }
+        }
+
         [XmlChoiceIdentifier("PriceAmountChoice")]
         [XmlElement("PriceAmount")]
         [XmlElement("j151")]
@@ -284,8 +308,6 @@ namespace OnixData.Version3.Price
         [XmlElement("UnpricedItemType")]
         [XmlElement("j192")]
         public OnixList57 UnpricedItemType { get; set; }
-        [XmlType(IncludeInSchema = false)]
-        public enum UnpricedItemTypeEnum { UnpricedItemType, j192 }
         [XmlIgnore]
         [EditorBrowsable(EditorBrowsableState.Never)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

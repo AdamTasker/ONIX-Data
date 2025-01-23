@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
+using OnixData.Version3.Lists;
 using OnixData.Version3.Price;
+using OnixData.Version3.Xml.Enums;
 
 namespace OnixData.Version3.Supply
 {
@@ -12,114 +16,48 @@ namespace OnixData.Version3.Supply
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public partial class OnixSupplyDetail
     {
-        public OnixSupplyDetail()
-        {
-            ProductAvailability = PackQuantity = UnpricedItemType = "";
-
-            Price             = new OnixPrice[0];
-            Supplier          = new OnixSupplier[0];
-            ReturnsConditions = new OnixReturnsConditions[0];
-            SupplyDate        = new OnixSupplyDate[0];
-        }
-
-        private string productAvailabilityField;
-        private string packQuantityField;
-        private string unpricedItemTypeField;
-
-        private OnixReturnsConditions[] returnsConditionsField;
-        private OnixReturnsConditions[] shortReturnsConditionsField;
-
-        private OnixPrice[] priceField;
-        private OnixPrice[] shortPriceField;
-
-        private OnixSupplier[] supplierField;
-        private OnixSupplier[] shortSupplierField;
-
-        private OnixSupplyDate[] supplyDateField;
-        private OnixSupplyDate[] shortSupplyDateField;
-
-        #region ONIX Lists
-
-        public OnixPrice[] OnixPriceList
-        {
-            get
-            {
-                OnixPrice[] Prices = null;
-
-                if (this.priceField != null)
-                    Prices = this.priceField;
-                else if (this.shortPriceField != null)
-                    Prices = this.shortPriceField;
-                else
-                    Prices = new OnixPrice[0];
-
-                return Prices;
-            }
-        }
-
-        public OnixReturnsConditions[] OnixReturnsConditionsList
-        {
-            get
-            {
-                OnixReturnsConditions[] ReturnsConditions = null;
-
-                if (this.returnsConditionsField != null)
-                    ReturnsConditions = this.returnsConditionsField;
-                else if (this.shortReturnsConditionsField != null)
-                    ReturnsConditions = this.shortReturnsConditionsField;
-                else
-                    ReturnsConditions = new OnixReturnsConditions[0];
-
-                return ReturnsConditions;
-            }
-        }
-
-        public OnixSupplier[] OnixSupplierList
-        {
-            get
-            {
-                OnixSupplier[] Suppliers = null;
-
-                if (this.supplierField != null)
-                    Suppliers = this.supplierField;
-                else if (this.shortSupplierField != null)
-                    Suppliers = this.shortSupplierField;
-                else
-                    Suppliers = new OnixSupplier[0];
-
-                return Suppliers;
-            }
-        }
-
-        public OnixSupplyDate[] OnixSupplyDateList
-        {
-            get
-            {
-                OnixSupplyDate[] SupplyDates = null;
-
-                if (this.supplyDateField != null)
-                    SupplyDates = this.supplyDateField;
-                else if (this.shortSupplyDateField != null)
-                    SupplyDates = this.shortSupplyDateField;
-                else
-                    SupplyDates = new OnixSupplyDate[0];
-
-                return SupplyDates;
-            }
-        }
-
-        #endregion
 
         #region Helper Methods
+        private OnixList58[] retailPriceTypes = { OnixList58.RrpIncludingTax, OnixList58.RrpExcludingTax };
+
+        public bool HasRetailPrice
+        {
+            get
+            {
+                if (Price == null) return false;
+                return
+                    Array.Exists(
+                        Price,
+                        p =>
+                            p.PriceQualifier == 5 ||
+                            p.PriceType != null && retailPriceTypes.Contains(p.PriceType.Value) ||
+                            p.PriceTypeDescription != null && p.PriceTypeDescription.Contains("Retail Price")
+                    );
+            }
+        }
+
+        public OnixPrice RetailPrice
+        {
+            get
+            {
+                return
+                    Price.Where(
+                        p =>
+                            p.PriceQualifier == 5 ||
+                            p.PriceType != null && retailPriceTypes.Contains(p.PriceType.Value) ||
+                            p.PriceTypeDescription != null && p.PriceTypeDescription.Contains("Retail Price")
+                    ).FirstOrDefault();
+            }
+        }
 
         public bool HasUSDPrice()
         {
             bool bHasUSDPrice = false;
 
-            if ((this.OnixPriceList != null) && (this.OnixPriceList.Length > 0))
+            if ((Price != null) && (Price.Length > 0))
             {
                 bHasUSDPrice =
-                    this.OnixPriceList.Any(x => (x.PriceType == null || (int)x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD"));
+                    Array.Exists(Price, x => (x.PriceType == null || (int)x.PriceType == OnixPrice.CONST_PRICE_TYPE_RRP_EXCL) && (x.CurrencyCode == "USD"));
             }
 
             return bHasUSDPrice;
@@ -129,26 +67,13 @@ namespace OnixData.Version3.Supply
         {
             bool bHasRetCodeBisac = false;
 
-            if ((this.OnixReturnsConditionsList != null) && (this.OnixReturnsConditionsList.Length > 0))
+            if ((ReturnsConditions != null) && (ReturnsConditions.Length > 0))
             {
                 bHasRetCodeBisac =
-                    this.OnixReturnsConditionsList.Any(x => (x.ReturnsCodeTypeNum == OnixReturnsConditions.CONST_RET_CODE_TYPE_BISAC));
+                    Array.Exists(ReturnsConditions, x => (x.ReturnsCodeTypeNum == OnixReturnsConditions.CONST_RET_CODE_TYPE_BISAC));
             }
 
             return bHasRetCodeBisac;
-        }
-
-        public int PackQuantityNum
-        {
-            get
-            {
-                int nQuantity = -1;
-
-                if (!String.IsNullOrEmpty(PackQuantity))
-                    Int32.TryParse(PackQuantity, out nQuantity);
-
-                return nQuantity;
-            }
         }
 
         public string ReturnCodeBisac
@@ -157,11 +82,11 @@ namespace OnixData.Version3.Supply
             {
                 string sRetCodeBisac = "";
 
-                if ((this.OnixReturnsConditionsList != null) && (this.OnixReturnsConditionsList.Length > 0))
+                if ((ReturnsConditions != null) && (ReturnsConditions.Length > 0))
                 {
                     var RetConditions =
-                        this.OnixReturnsConditionsList.Where(x => (x.ReturnsCodeTypeNum == OnixReturnsConditions.CONST_RET_CODE_TYPE_BISAC))
-                                                      .FirstOrDefault();
+                        ReturnsConditions.Where(x => (x.ReturnsCodeTypeNum == OnixReturnsConditions.CONST_RET_CODE_TYPE_BISAC))
+                                         .FirstOrDefault();
 
                     if (RetConditions != null)
                         sRetCodeBisac = RetConditions.ReturnsCode;
@@ -176,155 +101,129 @@ namespace OnixData.Version3.Supply
         #region Reference Tags
 
         /// <remarks/>
-        public string ProductAvailability
+        [XmlChoiceIdentifier("XmlChoiceProductAvailability")]
+        [XmlElement("ProductAvailability")]
+        [XmlElement("j396")]
+        public string ProductAvailability { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ProductAvailabilityEnum { ProductAvailability, j396 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ProductAvailabilityEnum XmlChoiceProductAvailability
+        {
+            get { return SerializationSettings.UseShortTags ? ProductAvailabilityEnum.j396 : ProductAvailabilityEnum.ProductAvailability; }
+            set { }
+        }
+
+        /// <remarks/>
+        [XmlChoiceIdentifier("XmlChoicePackQuantity")]
+        [XmlElement("PackQuantity")]
+        [XmlElement("j145")]
+        public int PackQuantity { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PackQuantityEnum { PackQuantity, j145 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PackQuantityEnum XmlChoicePackQuantity
+        {
+            get { return SerializationSettings.UseShortTags ? PackQuantityEnum.j145 : PackQuantityEnum.PackQuantity; }
+            set { }
+        }
+
+        /// <remarks/>
+        [XmlChoiceIdentifier("XmlChoicePrice")]
+        [XmlElement("Price")]
+        [XmlElement("price")]
+        public OnixPrice[] Price { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum PriceEnum { Price, price }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public PriceEnum[] XmlChoicePrice
         {
             get
             {
-                return this.productAvailabilityField;
+                if (Price == null) return null;
+                return SerializationHelper.CreateEnumArray(PriceEnum.price, PriceEnum.Price, Price.Length);
             }
-            set
-            {
-                this.productAvailabilityField = value;
-            }
+            set { }
         }
 
         /// <remarks/>
-        public string PackQuantity
+        [XmlChoiceIdentifier("XmlChoiceReturnsConditions")]
+        [XmlElement("ReturnsConditions")]
+        [XmlElement("returnsconditions")]
+        public OnixReturnsConditions[] ReturnsConditions { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum ReturnsConditionsEnum { ReturnsConditions, returnsconditions }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ReturnsConditionsEnum[] XmlChoiceReturnsConditions
         {
             get
             {
-                return this.packQuantityField;
+                if (ReturnsConditions == null) return null;
+                return SerializationHelper.CreateEnumArray(ReturnsConditionsEnum.returnsconditions, ReturnsConditionsEnum.ReturnsConditions, ReturnsConditions.Length);
             }
-            set
-            {
-                this.packQuantityField = value;
-            }
-        }        
+            set { }
+        }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Price", IsNullable = false)]
-        public OnixPrice[] Price
+        [XmlChoiceIdentifier("XmlChoiceSupplier")]
+        [XmlElement("Supplier")]
+        [XmlElement("supplier")]
+        public OnixSupplier[] Supplier { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SupplierEnum { Supplier, supplier }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SupplierEnum[] XmlChoiceSupplier
         {
             get
             {
-                return this.priceField;
+                if (Supplier == null) return null;
+                return SerializationHelper.CreateEnumArray(SupplierEnum.supplier, SupplierEnum.Supplier, Supplier.Length);
             }
-            set
-            {
-                this.priceField = value;
-            }
+            set { }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("ReturnsConditions", IsNullable = false)]
-        public OnixReturnsConditions[] ReturnsConditions
+        [XmlChoiceIdentifier("XmlChoiceSupplyDate")]
+        [XmlElement("SupplyDate")]
+        [XmlElement("supplydate")]
+        public OnixSupplyDate[] SupplyDate { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SupplyDateEnum { SupplyDate, supplydate }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SupplyDateEnum[] XmlChoiceSupplyDate
         {
             get
             {
-                return this.returnsConditionsField;
+                if (SupplyDate == null) return null;
+                return SerializationHelper.CreateEnumArray(SupplyDateEnum.supplydate, SupplyDateEnum.SupplyDate, SupplyDate.Length);
             }
-            set
-            {
-                this.returnsConditionsField = value;
-            }
+            set { }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Supplier", IsNullable = false)]
-        public OnixSupplier[] Supplier
+        [XmlChoiceIdentifier("XmlChoiceUnpricedItemType")]
+        [XmlElement("UnpricedItemType")]
+        [XmlElement("j192")]
+        public OnixList57 UnpricedItemType { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public UnpricedItemTypeEnum XmlChoiceUnpricedItemType
         {
-            get
-            {
-                return this.supplierField;
-            }
-            set
-            {
-                this.supplierField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("SupplyDate", IsNullable = false)]
-        public OnixSupplyDate[] SupplyDate
-        {
-            get
-            {
-                return this.supplyDateField;
-            }
-            set
-            {
-                this.supplyDateField = value;
-            }
-        }
-
-        /// <remarks/>
-        public string UnpricedItemType
-        {
-            get
-            {
-                return this.unpricedItemTypeField;
-            }
-            set
-            {
-                this.unpricedItemTypeField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string j396
-        {
-            get { return ProductAvailability; }
-            set { ProductAvailability = value; }
-        }
-
-        /// <remarks/>
-        public string j145
-        {
-            get { return PackQuantity; }
-            set { PackQuantity = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("price", IsNullable = false)]
-        public OnixPrice[] price
-        {
-            get { return shortPriceField; }
-            set { shortPriceField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("returnsconditions", IsNullable = false)]
-        public OnixReturnsConditions[] returnsconditions
-        {
-            get { return shortReturnsConditionsField; }
-            set { shortReturnsConditionsField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("supplier", IsNullable = false)]
-        public OnixSupplier[] supplier
-        {
-            get { return shortSupplierField; }
-            set { shortSupplierField = value; }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("supplydate", IsNullable = false)]
-        public OnixSupplyDate[] supplydate
-        {
-            get { return this.shortSupplyDateField; }
-            set { this.shortSupplyDateField = value; }
-        }
-
-        /// <remarks/>
-        public string j192
-        {
-            get { return UnpricedItemType; }
-            set { UnpricedItemType = value; }
+            get { return SerializationSettings.UseShortTags ? UnpricedItemTypeEnum.j192 : UnpricedItemTypeEnum.UnpricedItemType; }
+            set { }
         }
 
         #endregion

@@ -27,4 +27,5 @@ namespace OnixData.Version3.Xml.Enums
     [XmlType(IncludeInSchema = false)] public enum FeatureValueEnum { FeatureValue, x439 }
     [XmlType(IncludeInSchema = false)] public enum FeatureNoteEnum { FeatureNote, x440 }
     [XmlType(IncludeInSchema = false)] public enum ResourceLinkEnum { ResourceLink, x435 }
+    [XmlType(IncludeInSchema = false)] public enum UnpricedItemTypeEnum { UnpricedItemType, j192 }
 }

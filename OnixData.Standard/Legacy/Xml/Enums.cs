@@ -9,4 +9,6 @@ namespace OnixData.Legacy.Xml.Enums
     [XmlType(IncludeInSchema = false)] public enum SubtitleEnum { Subtitle, b029 }
     [XmlType(IncludeInSchema = false)] public enum TitlePrefixEnum { TitlePrefix, b030 }
     [XmlType(IncludeInSchema = false)] public enum TitleWithoutPrefixEnum { TitleWithoutPrefix, b031 }
+    [XmlType(IncludeInSchema = false)] public enum RightsCountryEnum { RightsCountry, b090 }
+    [XmlType(IncludeInSchema = false)] public enum RightsTerritoryEnum { RightsTerritory, b388 }
 }

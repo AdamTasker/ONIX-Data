@@ -1,236 +1,98 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using OnixData.Legacy.Lists;
+using OnixData.Legacy.Xml.Enums;
 
 namespace OnixData.Legacy
 {
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixLegacySalesRights
     {
         #region CONSTANTS
 
-        public const char CONST_LIST_DELIM = ' ';
-
-        public const int  CONST_MISSING_NUM_VALUE = -1;
-
-        public const int CONST_SR_TYPE_FOR_SALE_WITH_EXCL_RIGHTS    = 1;
-        public const int CONST_SR_TYPE_FOR_SALE_WITH_NONEXCL_RIGHTS = 2;
-        public const int CONST_SR_TYPE_NOT_FOR_SALE                 = 3;
+        private const char CONST_LIST_DELIM = ' ';
 
         #endregion
 
-        public OnixLegacySalesRights()
-        {
-            salesRightsTypeField = "";
-            rightsCountryField   = shortRightsCountryField = null;
-            rightsTerritoryField = shortRightsTerritoryField = null;
-            rightsTerritoryList  = new List<string>();
-            rightsCountryList    = new List<string>();
-        }
-
-        private string       salesRightsTypeField;
-
-        private string[]     rightsCountryField;
-        private string[]     shortRightsCountryField;    
-        private List<string> rightsCountryList;
-
-        private string[]     rightsTerritoryField;
-        private string[]     shortRightsTerritoryField;
-        private List<string> rightsTerritoryList;
-
         #region Helpers
 
-        public string[] OnixRightsCountryField
-        {
-            get
-            {
-                string[] asOnixRightsCountryList = new string[0];
+        private string RightsCountries => string.Join(CONST_LIST_DELIM.ToString(), RightsCountry ?? new string[0]);
+        private string RightsTerritories => string.Join(CONST_LIST_DELIM.ToString(), RightsTerritory ?? new string[0]);
 
-                if ((this.shortRightsCountryField != null) && (this.shortRightsCountryField.Length > 0))
-                    asOnixRightsCountryList = this.shortRightsCountryField;
-                else if ((this.rightsCountryField != null) && (this.rightsCountryField.Length > 0))
-                    asOnixRightsCountryList = this.rightsCountryField;
-
-                return asOnixRightsCountryList;
-            }
-        }
-
-        public string[] OnixRightsTerritoryField
-        {
-            get
-            {
-                string[] asOnixRightsTerritoryList = new string[0];
-
-                if ((this.shortRightsTerritoryField != null) && (this.shortRightsTerritoryField.Length > 0))
-                    asOnixRightsTerritoryList = this.shortRightsTerritoryField;
-                else if ((this.rightsTerritoryField != null) && (this.rightsTerritoryField.Length > 0))
-                    asOnixRightsTerritoryList = this.rightsTerritoryField;
-
-                return asOnixRightsTerritoryList;
-            }
-        }
-
-        public List<string> RightsCountryList
-        {
-            get
-            {
-                if (this.rightsCountryList.Count() <= 0)
-                {
-                    if (this.OnixRightsCountryField.Count() > 0)
-                    {
-                        foreach (string sTmpCountryMiniList in this.OnixRightsCountryField)
-                        {
-                            List<string> TmpCountryList = new List<string>();
-
-                            if (sTmpCountryMiniList.Contains(CONST_LIST_DELIM))
-                                TmpCountryList = new List<string>(sTmpCountryMiniList.Split(CONST_LIST_DELIM));
-                            else
-                                TmpCountryList = new List<string>() { sTmpCountryMiniList };
-
-                            this.rightsCountryList.AddRange(TmpCountryList);
-                        }
-                    }
-                }
-
-                return this.rightsCountryList;
-            }
-        }
-
-        public List<string> RightsTerritoryList
-        {
-            get
-            {
-                if (this.rightsTerritoryList.Count() <= 0)
-                {
-                    if (this.OnixRightsTerritoryField.Count() > 0)
-                    {
-                        foreach (string sTmpTerritoryMiniList in this.OnixRightsTerritoryField)
-                        {
-                            List<string> TmpTerritoryList = new List<string>();
-
-                            if (sTmpTerritoryMiniList.Contains(CONST_LIST_DELIM))
-                                TmpTerritoryList = new List<string>(sTmpTerritoryMiniList.Split(CONST_LIST_DELIM));
-                            else
-                                TmpTerritoryList = new List<string>() { sTmpTerritoryMiniList };
-
-                            this.rightsTerritoryList.AddRange(TmpTerritoryList);
-                        }
-                    }
-                }
-
-                return this.rightsTerritoryList;
-            }
-        }
-
-        public int SalesRightsTypeNum
-        {
-            get
-            {
-                int nSRTypeNum = CONST_MISSING_NUM_VALUE;
-
-                if (!String.IsNullOrEmpty(this.salesRightsTypeField))
-                    Int32.TryParse(this.salesRightsTypeField, out nSRTypeNum);
-
-                return nSRTypeNum;
-            }
-        }
+        [XmlIgnore]
+        public List<string> RightsCountryList => RightsCountries.Split(new char[] { CONST_LIST_DELIM }, StringSplitOptions.RemoveEmptyEntries).Distinct().OrderBy(s => s).ToList();
+        [XmlIgnore]
+        public List<string> RightsTerritoryList => RightsTerritories.Split(new char[] { CONST_LIST_DELIM }, StringSplitOptions.RemoveEmptyEntries).Distinct().OrderBy(s => s).ToList();
+        [XmlIgnore]
+        public List<string> FullRightsCountryList => Array.Exists(RightsTerritory ?? new string[0], s => s.Contains("WORLD") || s.Contains("ROW")) ? new List<string>() { "WORLD" } : (RightsCountries + CONST_LIST_DELIM.ToString() + RightsTerritories.Replace("WORLD", "").Replace("ROW", "").Replace("ECZ", "AT BE CY EE FI FR DE ES GR IE IT LT LU LV MT NL PT SI SK AD MC SM VA ME")).Split(new char[] { CONST_LIST_DELIM }, StringSplitOptions.RemoveEmptyEntries).Distinct().OrderBy(s => s).ToList();
 
         #endregion
 
         #region Reference Tags
 
         /// <remarks/>
-        public string SalesRightsType
+        [XmlChoiceIdentifier("XmlChoiceSalesRightsType")]
+        [XmlElement("SalesRightsType")]
+        [XmlElement("b089")]
+        public OnixList46 SalesRightsType { get; set; }
+        [XmlType(IncludeInSchema = false)]
+        public enum SalesRightsTypeEnum { SalesRightsType, b089 }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public SalesRightsTypeEnum XmlChoiceSalesRightsType
         {
-            get
-            {
-                return this.salesRightsTypeField;
-            }
-            set
-            {
-                this.salesRightsTypeField = value;
-            }
+            get { return SerializationSettings.UseShortTags ? SalesRightsTypeEnum.b089 : SalesRightsTypeEnum.SalesRightsType; }
+            set { }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("RightsCountry")]
-        public string[] RightsCountry
+        [XmlChoiceIdentifier("XmlChoiceRightsCountry")]
+        [XmlElement("RightsCountry")]
+        [XmlElement("b090")]
+        public string[] RightsCountry { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RightsCountryEnum[] XmlChoiceRightsCountry
         {
             get
             {
-                return this.rightsCountryField;
+                if (RightsCountry == null) return null;
+                return SerializationHelper.CreateEnumArray(RightsCountryEnum.b090, RightsCountryEnum.RightsCountry, RightsCountry.Length);
             }
-            set
-            {
-                this.rightsCountryField = value;
-            }
+            set { }
         }
 
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("RightsTerritory")]
-        public string[] RightsTerritory
+        [XmlChoiceIdentifier("XmlChoiceRightsTerritory")]
+        [XmlElement("RightsTerritory")]
+        [XmlElement("b388")]
+        public string[] RightsTerritory { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RightsTerritoryEnum[] XmlChoiceRightsTerritory
         {
             get
             {
-                return this.rightsTerritoryField;
+                if (RightsTerritory == null) return null;
+                return SerializationHelper.CreateEnumArray(RightsTerritoryEnum.b388, RightsTerritoryEnum.RightsTerritory, RightsTerritory.Length);
             }
-            set
-            {
-                this.rightsTerritoryField = value;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string b089
-        {
-            get
-            {
-                return SalesRightsType;
-            }
-            set
-            {
-                SalesRightsType = value;
-            }
-        }
-
-        [System.Xml.Serialization.XmlElementAttribute("b090")]
-        public string[] b090
-        {
-            get
-            {
-                return shortRightsCountryField;
-            }
-            set
-            {
-                shortRightsCountryField = value;
-            }
-        }
-
-        [System.Xml.Serialization.XmlElementAttribute("b388")]
-        public string[] b388
-        {
-            get
-            {
-                return shortRightsTerritoryField;
-            }
-            set
-            {
-                shortRightsTerritoryField = value;
-            }
+            set { }
         }
 
         #endregion
     }
 
     /// <remarks/>
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlType(AnonymousType = true)]
     public partial class OnixLegacyNotForSale
     {
         #region CONSTANTS
@@ -239,105 +101,41 @@ namespace OnixData.Legacy
 
         #endregion
 
-        public OnixLegacyNotForSale()
-        {
-            rightsTerritoryField = rightsCountryField = "";
-            rightsTerritoryList  = rightsCountryList = new List<string>();
-        }
+        #region Helpers
 
-        private string       rightsCountryField;
-        private List<string> rightsCountryList;
-        private string       rightsTerritoryField;
-        private List<string> rightsTerritoryList;
+        public List<string> RightsCountryList => RightsCountry?.Split(new char[] { CONST_LIST_DELIM }, StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>();
+        public List<string> RightsTerritoryList => RightsTerritory?.Split(new char[] { CONST_LIST_DELIM }, StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>();
+
+        #endregion
 
         #region Reference Tags
 
         /// <remarks/>
-        public string RightsCountry
+        [XmlChoiceIdentifier("XmlChoiceRightsCountry")]
+        [XmlElement("RightsCountry")]
+        [XmlElement("b090")]
+        public string RightsCountry { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RightsCountryEnum XmlChoiceRightsCountry
         {
-            get
-            {
-                return this.rightsCountryField;
-            }
-            set
-            {
-                this.rightsCountryField = value;
-
-                if (!String.IsNullOrEmpty(this.rightsCountryField))
-                {
-                    if (this.rightsCountryField.Contains(CONST_LIST_DELIM))
-                        this.rightsCountryList = new List<string>(this.rightsCountryField.Split(CONST_LIST_DELIM));
-                    else
-                        this.rightsCountryList = new List<string>() { this.rightsCountryField };
-                }
-            }
-        }
-
-        public List<string> RightsCountryList
-        {
-            get
-            {
-                return this.rightsCountryList;
-            }
+            get { return SerializationSettings.UseShortTags ? RightsCountryEnum.b090 : RightsCountryEnum.RightsCountry; }
+            set { }
         }
 
         /// <remarks/>
-        public string RightsTerritory
+        [XmlChoiceIdentifier("XmlChoiceRightsTerritory")]
+        [XmlElement("RightsTerritory")]
+        [XmlElement("b388")]
+        public string RightsTerritory { get; set; }
+        [XmlIgnore]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public RightsTerritoryEnum XmlChoiceRightsTerritory
         {
-            get
-            {
-                return this.rightsTerritoryField;
-            }
-            set
-            {
-                this.rightsTerritoryField = value;
-
-                if (!String.IsNullOrEmpty(this.rightsTerritoryField))
-                {
-                    if (this.rightsTerritoryField.Contains(CONST_LIST_DELIM))
-                        this.rightsTerritoryList = new List<string>(this.rightsTerritoryField.Split(CONST_LIST_DELIM));
-                    else
-                        this.rightsTerritoryList = new List<string>() { this.rightsTerritoryField };
-                }
-            }
-        }
-
-        public List<string> RightsTerritoryList
-        {
-            get
-            {
-                return this.rightsTerritoryList;
-            }
-        }
-
-        #endregion
-
-        #region Short Tags
-
-        /// <remarks/>
-        public string b090
-        {
-            get
-            {
-                return RightsCountry;
-            }
-            set
-            {
-                RightsCountry = value;
-            }
-        }
-
-        /// <remarks/>
-        public string b388
-        {
-            get
-            {
-                return RightsTerritory;
-            }
-            set
-            {
-                RightsTerritory = value;
-            }
+            get { return SerializationSettings.UseShortTags ? RightsTerritoryEnum.b388 : RightsTerritoryEnum.RightsTerritory; }
+            set { }
         }
 
         #endregion

@@ -90,7 +90,7 @@ namespace OnixData.Legacy
                     if ((TmpSupplyDetail.Price != null) && (TmpSupplyDetail.Price.Length > 0))
                     {
                         bHasFuturePrice =
-                            TmpSupplyDetail.Price.Any(x => !string.IsNullOrEmpty(x.PriceEffectiveFrom) && (x.PriceTypeCode == Lists.OnixList58.RrpExcludingTax));
+                            Array.Exists(TmpSupplyDetail.Price, x => !string.IsNullOrEmpty(x.PriceEffectiveFrom) && (x.PriceTypeCode == OnixList58.RrpExcludingTax));
 
                         if (bHasFuturePrice)
                             break;
@@ -112,7 +112,7 @@ namespace OnixData.Legacy
                     if ((TmpSupplyDetail.Price != null) && (TmpSupplyDetail.Price.Length > 0))
                     {
                         bHasUSDPrice =
-                            TmpSupplyDetail.Price.Any(x => x.HasSoughtPriceTypeCode() && (x.CurrencyCode == "USD"));
+                            Array.Exists(TmpSupplyDetail.Price, x => x.HasSoughtPriceTypeCode() && (x.CurrencyCode == "USD"));
 
                         if (bHasUSDPrice)
                             break;
@@ -134,7 +134,7 @@ namespace OnixData.Legacy
                     if ((TmpSupplyDetail.Price != null) && (TmpSupplyDetail.Price.Length > 0))
                     {
                         bHasUSDPrice =
-                            TmpSupplyDetail.Price.Any(x => x.HasSoughtRetailPriceType() && (x.CurrencyCode == "USD"));
+                            Array.Exists(TmpSupplyDetail.Price, x => x.HasSoughtRetailPriceType() && (x.CurrencyCode == "USD"));
 
                         if (bHasUSDPrice)
                             break;
@@ -588,7 +588,8 @@ namespace OnixData.Legacy
                 else
                 {
                     var supplyDetails = SupplyDetail.Where(
-                        sd => sd.Price.Any(
+                        sd => Array.Exists(
+                            sd.Price, 
                             p =>
                                 (p.MinimumOrderQuantity == null) &&
                                 (p.PriceTypeCode == null || p.HasSoughtRetailPriceType())
@@ -600,7 +601,7 @@ namespace OnixData.Legacy
                     }
                     else
                     {
-                        supplyDetail = SupplyDetail.Where(sd => sd.Price.Any(p => p.MinimumOrderQuantity == null)).First();
+                        supplyDetail = SupplyDetail.Where(sd => Array.Exists(sd.Price, p => p.MinimumOrderQuantity == null)).First();
                     }
                 }
 
@@ -1455,19 +1456,6 @@ namespace OnixData.Legacy
             set { }
         }
 
-        public uint PublicationDateNum
-        {
-            get
-            {
-                uint nPubDateVal = 0;
-
-                if (!string.IsNullOrEmpty(PublicationDate))
-                    uint.TryParse(PublicationDate, out nPubDateVal);
-
-                return nPubDateVal;
-            }
-        }
-
         /// <summary>
         /// The year when the work first appeared in any language or edition, if different from the copyright year.
         /// Optional and non-repeating.
@@ -1691,10 +1679,17 @@ namespace OnixData.Legacy
 
         public void SetRightsFlags()
         {
-            int[] aSalesRightsColl = new int[] { OnixLegacySalesRights.CONST_SR_TYPE_FOR_SALE_WITH_EXCL_RIGHTS,
-                                                 OnixLegacySalesRights.CONST_SR_TYPE_FOR_SALE_WITH_NONEXCL_RIGHTS };
+            OnixList46[] aSalesRightsColl = {
+                OnixList46.ForSaleWithExclusiveRights,
+                OnixList46.ForSaleWithNonExclusiveRights
+            };
 
-            int[] aNonSalesRightsColl = new int[] { OnixLegacySalesRights.CONST_SR_TYPE_NOT_FOR_SALE };
+            OnixList46[] aNonSalesRightsColl = {
+                OnixList46.NotForSale,
+                OnixList46.NotForSalePublisherHoldsExclusiveRights,
+                OnixList46.NotForSalePublisherHoldsNonExclusiveRights,
+                OnixList46.NotForSalePublisherDoesNotHoldRights
+            };
 
             OnixLegacySalesRights[] SalesRightsList = SalesRights;
             OnixLegacyNotForSale[] NotForSaleRightsList = NotForSale;
@@ -1702,19 +1697,19 @@ namespace OnixData.Legacy
             if ((SalesRightsList != null) && (SalesRightsList.Length > 0))
             {
                 SalesRightsInUS =
-                    SalesRightsList.Any(x => aSalesRightsColl.Contains(x.SalesRightsTypeNum) && (x.RightsCountryList.Contains("US")));
+                    Array.Exists(SalesRightsList, x => aSalesRightsColl.Contains(x.SalesRightsType) && (x.RightsCountryList.Contains("US")));
 
                 SalesRightsInNonUSCountry =
-                    SalesRightsList.Any(x => aSalesRightsColl.Contains(x.SalesRightsTypeNum) &&
+                    Array.Exists(SalesRightsList, x => aSalesRightsColl.Contains(x.SalesRightsType) &&
                                              !x.RightsCountryList.Contains("US") &&
                                              !x.RightsTerritoryList.Contains("WORLD") &&
                                              !x.RightsTerritoryList.Contains("ROW"));
 
                 NoSalesRightsInUS =
-                    SalesRightsList.Any(x => aNonSalesRightsColl.Contains(x.SalesRightsTypeNum) && x.RightsCountryList.Contains("US"));
+                    Array.Exists(SalesRightsList, x => aNonSalesRightsColl.Contains(x.SalesRightsType) && x.RightsCountryList.Contains("US"));
 
                 SalesRightsAllWorld =
-                    SalesRightsList.Any(x => aSalesRightsColl.Contains(x.SalesRightsTypeNum) &&
+                    Array.Exists(SalesRightsList, x => aSalesRightsColl.Contains(x.SalesRightsType) &&
                                              (x.RightsTerritoryList.Contains("WORLD") || x.RightsTerritoryList.Contains("ROW")));
             }
 
@@ -1723,7 +1718,7 @@ namespace OnixData.Legacy
                 if (!NoSalesRightsInUS)
                 {
                     NoSalesRightsInUS =
-                        NotForSaleRightsList.Any(x => x.RightsCountryList.Contains("US"));
+                        Array.Exists(NotForSaleRightsList, x => x.RightsCountryList.Contains("US"));
                 }
             }
         }
@@ -1733,13 +1728,13 @@ namespace OnixData.Legacy
             int nAgeVal = 0;
             string sAgeVal = "";
 
-            if (!String.IsNullOrEmpty(psGradeValue))
+            if (!string.IsNullOrEmpty(psGradeValue))
             {
                 if ((psGradeValue == OnixLegacyAudRange.CONST_AUD_GRADE_PRESCHOOL_CD) || (psGradeValue == OnixLegacyAudRange.CONST_AUD_GRADE_PRESCHOOL_TXT))
                     nAgeVal = 4;
                 else if ((psGradeValue == OnixLegacyAudRange.CONST_AUD_GRADE_KNDGRTN_CD) || (psGradeValue == OnixLegacyAudRange.CONST_AUD_GRADE_KNDGRTN_TXT))
                     nAgeVal = 5;
-                else if (Int32.TryParse(psGradeValue, out nAgeVal))
+                else if (int.TryParse(psGradeValue, out nAgeVal))
                     nAgeVal += 5;
             }
 
