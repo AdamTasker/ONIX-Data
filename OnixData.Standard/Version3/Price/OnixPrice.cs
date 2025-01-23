@@ -130,13 +130,20 @@ namespace OnixData.Version3.Price
         {
             get
             {
-                if (Tax == null || Tax.Length == 0)
-                    return PriceAmount;
+                decimal TaxAmount = 0;
 
-                if (Tax.Any(t => t.TaxType == 1 && t.TaxableAmount != null))
-                    return Tax.First(t => t.TaxType == 1).TaxableAmount.Value;
+                if (Tax != null && Array.Exists(Tax, t => t.TaxType == 1))
+                {
+                    foreach (OnixPriceTax PriceTax in Tax.Where(t => t.TaxType == 1))
+                    {
+                        if (PriceTax.TaxAmount != null)
+                            TaxAmount += PriceTax.TaxAmount.Value;
+                        else if (PriceTax.TaxableAmount != null && PriceTax.TaxRatePercent != null)
+                            TaxAmount += Math.Round(PriceTax.TaxableAmount.Value * (PriceTax.TaxRatePercent.Value / 100), 2, MidpointRounding.AwayFromZero);
+                    }
+                }
 
-                return PriceAmount;
+                return PriceAmount - TaxAmount;
             }
         }
 

@@ -85,13 +85,18 @@ namespace OnixData.Legacy
         {
             get
             {
-                if (TaxableAmount1 == null)
-                    return PriceAmount;
+                decimal TaxAmount = 0;
+                if (TaxAmount1 != null)
+                    TaxAmount += TaxAmount1.Value;
+                else if (TaxableAmount1 != null && TaxRatePercent1 != null)
+                    TaxAmount += Math.Round(TaxableAmount1.Value * (TaxRatePercent1.Value / 100), 2, MidpointRounding.AwayFromZero);
 
-                decimal TaxableAmount = TaxableAmount1.Value;
-                if (TaxableAmount2 != null)
-                    TaxableAmount += TaxableAmount2.Value;
-                return TaxableAmount;
+                if (TaxAmount2 != null)
+                    TaxAmount += TaxAmount2.Value;
+                else if (TaxableAmount2 != null && TaxRatePercent2 != null)
+                    TaxAmount += Math.Round(TaxableAmount2.Value * (TaxRatePercent2.Value / 100), 2, MidpointRounding.AwayFromZero);
+                
+                return PriceAmount - TaxAmount;
             }
         }
 

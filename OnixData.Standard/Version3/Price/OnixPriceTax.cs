@@ -47,7 +47,7 @@ namespace OnixData.Version3.Price
         [XmlChoiceIdentifier("TaxRatePercentChoice")]
         [XmlElement("TaxRatePercent")]
         [XmlElement("x472")]
-        public string TaxRatePercent { get; set; }
+        public decimal? TaxRatePercent { get; set; }
         [XmlType(IncludeInSchema = false)]
         public enum TaxRatePercentEnum { TaxRatePercent, x472 }
         [XmlIgnore]
